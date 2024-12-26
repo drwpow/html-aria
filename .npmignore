@@ -1,0 +1,5 @@
+**/*.config.*
+.changeset
+.vscode
+src
+test
