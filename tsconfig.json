@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "lib": ["DOM", "ESNext"],
     "module": "NodeNext",
     "moduleResolution": "nodenext",
-    "target": "ESNext",
-    "strict": true,
     "noFallthroughCasesInSwitch": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ESNext",
     "noUncheckedIndexedAccess": true
   },
   "include": ["src"],
