@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { getRole, type ARIARole } from '../src/index.js';
+import { getRole } from '../src/index.js';
 
 describe('getRole', () => {
   const testCases: [
