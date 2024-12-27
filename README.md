@@ -24,6 +24,21 @@ getRole({ tagName: "div", attributes: { role: "button" } }); // "button"
 
 Follows the [W3C Recommendation](https://www.w3.org/TR/html-aria/) (Dec 2024).
 
+### getValidRoles()
+
+Get valid ARIA roles for a given element.
+
+```ts
+import { getValidRoles } from "html-aria";
+
+getValidRoles(document.createElement("img")); // ["none", "presentation", "img"]
+getValidRoles({ tagName: "img", attributes: { alt: "Image caption" } }); //  ["button", "checkbox", "link", (15 more)]
+```
+
+> ![NOTE]
+>
+> The [spec](https://www.w3.org/TR/html-aria/#docconformance) does prohibit some roles to be set based on the element, and based on other attributes that element has.
+
 ## About
 
 ### Project Goals
@@ -33,5 +48,6 @@ Follows the [W3C Recommendation](https://www.w3.org/TR/html-aria/) (Dec 2024).
 
 ### Differences from aria-query
 
+- Current with ARIA 1.3
 - Simpler API.
 - Ships TypeScript types for advanced usecases
