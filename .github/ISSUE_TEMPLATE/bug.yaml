@@ -1,0 +1,28 @@
+name: Bug Report
+description: I encountered an error when using this library that is NOT specification related
+title: "🐛 [Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: What is the error message or output you received?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+      description: What were you expecting?
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Any other additional information or comments?
+  - type: checkboxes
+    id: checkboxes
+    attributes:
+      label: I am willing to open a Pull Request

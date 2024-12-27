@@ -1,0 +1,37 @@
+name: Specification issue
+description: This library doesn’t match the W3C specification
+title: "📝 [Spec]: "
+labels: ["bug", "spec", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        You’re opening an issue because this library disagrees with the [ARIA in
+        HTML](https://www.w3.org/TR/html-aria/) specification, [WAI ARIA
+        1.3](https://www.w3.org/TR/wai-aria-1.3), or a related document.
+  - type: textarea
+    id: specs
+    attributes:
+      label: Specification reference(s)
+      description: Which specification(s) are you looking at? Please list all specs. Include section
+      placeholder: |
+        - [document 1, section 5.3.1](https://www.w3.org)
+        - [document 2, section 4.3.1](https://www.w3.org)
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: What did this library produce? What were you expecting?
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Any other additional information or comments?
+  - type: checkboxes
+    id: checkboxes
+    attributes:
+      label: I am willing to open a Pull Request

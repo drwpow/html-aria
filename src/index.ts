@@ -1,6 +1,8 @@
+export * from './get-required-attributes.js';
 export * from './get-role.js';
-export * from './get-valid-roles.js';
-export * from './html.js';
-export * from './lib.js';
-export * from './role.js';
+export * from './get-supported-attributes.js';
+export * from './get-supported-roles.js';
+export * from './lib/html.js';
+export * from './lib/role.js';
+export * from './lib/util.js';
 export type * from './types.js';

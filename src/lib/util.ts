@@ -1,14 +1,11 @@
-import type { TagName, VirtualElement } from './types.js';
+import type { ARIARole, TagName, VirtualElement } from '../types.js';
 
-/**
- * Parse a list of roles, e.g. role="graphics-symbol img"
- */
+/** Parse a list of roles, e.g. role="graphics-symbol img" */
 export function parseTokenList(tokenList: string): string[] {
   return tokenList.toLocaleLowerCase().split(' ').filter(Boolean);
 }
 
-/**
- */
+/** Normalize HTML Elements */
 export function virtualizeElement(
   element: HTMLElement | VirtualElement,
 ): VirtualElement {
@@ -41,4 +38,38 @@ export function virtualizeElement(
   }
 
   return { ...element } as VirtualElement;
+}
+
+/**
+ * Determine accessible names for SOME tags (not all)
+ * @see https://www.w3.org/TR/wai-aria-1.3/#namecalculation
+ */
+export function calculateAccessibleName(
+  element: VirtualElement,
+): string | undefined {
+  const { tagName, attributes = {} } = element;
+
+  switch (tagName) {
+    case 'img': {
+      // according to spec, aria-label is technically allowed for <img> (even if alt is preferred)
+      return (attributes.alt ||
+        attributes['aria-label'] ||
+        attributes['aria-labelledby']) as string;
+    }
+  }
+}
+
+/**
+ * Given a lineage, find the first matching ancestor.
+ */
+export function findFirstSignificantAncestor(
+  validRoles: ARIARole[],
+  lineage?: (string | undefined | null)[],
+): ARIARole | undefined {
+  if (!lineage) {
+    return undefined;
+  }
+  return (
+    (lineage as ARIARole[]).find((r) => validRoles.includes(r)) || undefined
+  );
 }
