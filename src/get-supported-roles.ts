@@ -1,9 +1,5 @@
 import { tags } from './lib/html.js';
-import {
-  calculateAccessibleName,
-  findFirstSignificantAncestor,
-  virtualizeElement,
-} from './lib/util.js';
+import { calculateAccessibleName, findFirstSignificantAncestor, virtualizeElement } from './lib/util.js';
 import type { ARIARole, VirtualElement } from './types.js';
 
 export interface SupportedRoleOptions {
@@ -23,10 +19,7 @@ export interface SupportedRoleOptions {
  * Given an HTML element, returns a list of supported ARIA roles for that element.
  * An empty array means no roles are supported (which is true for some elements!)
  */
-export function getSupportedRoles(
-  element: HTMLElement | VirtualElement,
-  options?: SupportedRoleOptions,
-): ARIARole[] {
+export function getSupportedRoles(element: HTMLElement | VirtualElement, options?: SupportedRoleOptions): ARIARole[] {
   const { tagName, attributes = {} } = virtualizeElement(element);
   const tag = tags[tagName];
   if (!tag) {
@@ -41,6 +34,7 @@ export function getSupportedRoles(
       }
       return tag.supportedRoles;
     }
+    case 'footer':
     case 'header': {
       const context = findFirstSignificantAncestor(
         ['article', 'complementary', 'main', 'navigation', 'region'],
@@ -60,10 +54,7 @@ export function getSupportedRoles(
       return tag.supportedRoles;
     }
     case 'td': {
-      const context = findFirstSignificantAncestor(
-        ['table', 'grid', 'treegrid'],
-        options?.lineage,
-      );
+      const context = findFirstSignificantAncestor(['table', 'grid', 'treegrid'], options?.lineage);
       const parentMap: Partial<Record<ARIARole, ARIARole[]>> = {
         table: ['cell'],
         grid: ['gridcell'],
@@ -72,6 +63,9 @@ export function getSupportedRoles(
       return (context && parentMap[context]) || tag.supportedRoles;
     }
   }
+
+  // Known cases that aren’t possible to detect without scanning full DOM:
+  // - <div> directly <dl> MUST be either role="presentation" or role="none"
 
   return tag.supportedRoles;
 }

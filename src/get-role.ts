@@ -1,4 +1,4 @@
-import { parseTokenList, virtualizeElement } from './lib/util.js';
+import { findFirstSignificantAncestor, isHTMLElement, parseTokenList, virtualizeElement } from './lib/util.js';
 import { roles } from './lib/role.js';
 import type { ARIARole, VirtualElement } from './types.js';
 import { tags } from './lib/html.js';
@@ -21,13 +21,11 @@ export interface GetRoleOptions {
 
 /**
  * Get the corresponding ARIA role for a given HTML element.
- * `undefined` means “no corresponding role”
+ * `undefined` means “no corresponding role”.
+ * Note this does NOT traverse the DOM, because we assume it’s not fully available, e.g. in Node.js, React Components, lint rules, etc.
  * @see https://www.w3.org/TR/html-aria/
  */
-export function getRole(
-  element: HTMLElement | VirtualElement,
-  options?: GetRoleOptions,
-): ARIARole | undefined {
+export function getRole(element: HTMLElement | VirtualElement, options?: GetRoleOptions): ARIARole | undefined {
   const { tagName, attributes } = virtualizeElement(element);
 
   // explicit role: use if valid
@@ -49,6 +47,14 @@ export function getRole(
     case 'area': {
       if (typeof attributes?.href === 'string') {
         return 'link';
+      }
+      return tag.defaultRole;
+    }
+    case 'header': {
+      if (
+        findFirstSignificantAncestor(['article', 'complementary', 'main', 'navigation', 'region'], options?.lineage)
+      ) {
+        return 'generic';
       }
       return tag.defaultRole;
     }

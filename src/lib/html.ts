@@ -4,6 +4,8 @@ import type { ARIARole, TagName } from '../types.js';
 export const ALL_ROLES = Object.keys(roles) as ARIARole[];
 export const NO_ROLES: ARIARole[] = []; // explicitly no roles are allowed
 
+export const NO_CORRESPONDING_ROLE = undefined;
+
 export interface TagInfo {
   /**
    * Note: this is very likely to be overridden by custom logic! This won’t even
@@ -31,7 +33,7 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: [], // note: not an accident—this doesn’t allow any ARIA roles
   },
   head: {
-    defaultRole: undefined,
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
   },
   link: {
@@ -65,10 +67,11 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: [],
   },
   footer: {
-    supportedRoles: [],
+    defaultRole: 'contentinfo',
+    supportedRoles: ['contentinfo', 'generic', 'group', 'none', 'presentation'],
   },
   header: {
-    defaultRole: 'generic',
+    defaultRole: 'banner',
     supportedRoles: ['banner', 'generic', 'group', 'none', 'presentation'],
   },
   h1: {
@@ -96,6 +99,7 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: ['heading', 'none', 'presentation', 'tab'],
   },
   hgroup: {
+    defaultRole: 'group',
     supportedRoles: ALL_ROLES,
   },
   main: {
@@ -105,6 +109,7 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: [],
   },
   section: {
+    defaultRole: 'region', // note: for <section>, we can’t determine the accessible name without scanning the entire document. Assume it’s "region".
     supportedRoles: [],
   },
   search: {
@@ -116,25 +121,31 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: [],
   },
   dd: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: NO_ROLES,
   },
   div: {
     defaultRole: 'generic',
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
   },
   dl: {
-    supportedRoles: [],
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: ['group', 'list', 'none', 'presentation'],
   },
   dt: {
-    supportedRoles: [],
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: ['listitem'],
   },
   figcaption: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
   },
   figure: {
-    supportedRoles: [],
+    defaultRole: 'figure',
+    supportedRoles: ALL_ROLES, // Note: there are some minor behavioral quirks here which we gloss over
   },
   hr: {
+    defaultRole: 'separator',
     supportedRoles: ['none', 'presentation', 'separator'],
   },
   li: {
@@ -177,24 +188,31 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: [],
   },
   br: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
   },
   cite: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: ALL_ROLES,
   },
   code: {
+    defaultRole: 'code',
     supportedRoles: ALL_ROLES,
   },
   data: {
+    defaultRole: 'generic',
     supportedRoles: ALL_ROLES,
   },
   dfn: {
-    supportedRoles: [],
+    defaultRole: 'term',
+    supportedRoles: ALL_ROLES,
   },
   em: {
-    supportedRoles: [],
+    defaultRole: 'emphasis',
+    supportedRoles: ALL_ROLES,
   },
   i: {
+    defaultRole: 'generic',
     supportedRoles: ALL_ROLES,
   },
   kbd: {
@@ -272,9 +290,11 @@ export const tags: Record<TagName, TagInfo> = {
 
   // Embedded content
   embed: {
-    supportedRoles: [],
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: ['application', 'document', 'img', 'image', 'none', 'presentation'],
   },
   iframe: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: ['application', 'document', 'img', 'image', 'none', 'presentation'], // biome-ignore format: long list
   },
   object: {
@@ -289,6 +309,7 @@ export const tags: Record<TagName, TagInfo> = {
 
   // SVG and MathML
   svg: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
   },
   math: {
@@ -297,6 +318,7 @@ export const tags: Record<TagName, TagInfo> = {
 
   // Scripting
   canvas: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: ALL_ROLES,
   },
   noscript: {
@@ -307,7 +329,8 @@ export const tags: Record<TagName, TagInfo> = {
   },
 
   del: {
-    supportedRoles: [],
+    defaultRole: 'deletion',
+    supportedRoles: ALL_ROLES,
   },
   ins: {
     supportedRoles: [],
@@ -315,12 +338,15 @@ export const tags: Record<TagName, TagInfo> = {
 
   // Table content
   caption: {
+    defaultRole: 'caption',
     supportedRoles: ['caption'],
   },
   col: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: NO_ROLES,
   },
   colgroup: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: NO_ROLES,
   },
   table: {
@@ -347,16 +373,20 @@ export const tags: Record<TagName, TagInfo> = {
 
   // Forms
   button: {
-    supportedRoles: [],
+    defaultRole: 'button',
+    supportedRoles: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
   },
   datalist: {
+    defaultRole: 'listbox',
     supportedRoles: ['listbox'],
   },
   fieldset: {
-    supportedRoles: [],
+    defaultRole: 'group',
+    supportedRoles: ['group', 'none', 'presentation', 'radiogroup'],
   },
   form: {
-    supportedRoles: [],
+    defaultRole: 'form',
+    supportedRoles: ['form', 'none', 'presentation', 'search'],
   },
   input: {
     supportedRoles: [],
@@ -391,10 +421,12 @@ export const tags: Record<TagName, TagInfo> = {
 
   // Interactive elements
   details: {
-    supportedRoles: [],
+    defaultRole: 'group',
+    supportedRoles: ['group'],
   },
   dialog: {
-    supportedRoles: [],
+    defaultRole: 'dialog',
+    supportedRoles: ['alertdialog', 'dialog'],
   },
   summary: {
     supportedRoles: [],

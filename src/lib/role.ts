@@ -1,44 +1,49 @@
-import type { ARIAAttribute, ARIARole } from '../types.js';
-
-export type RoleType =
-  | 'abstract'
-  | 'widget'
-  | 'document'
-  | 'landmark'
-  | 'liveregion'
-  | 'window';
-
-// note: roles are in widget -> document -> landmark -> liveregion -> window order, alphabetical within each group
-export const roles: Record<
+import type {
+  ARIAAttribute,
   ARIARole,
-  {
-    type: RoleType[];
-    subclass?: ARIARole;
-    superclass?: ARIARole; // note: ignores abstract roles
-    /**
-     * ARIA attributes that MUST be set for this role.
-     * @see https://www.w3.org/TR/wai-aria-1.3/#requiredState
-     */
-    required: ARIAAttribute[];
-    /**
-     * ARIA attributes that MAY be set for this role.
-     * Note: this includes required attributes, supported attributes, and inherited attributes from superclass role types.
-     * @see https://www.w3.org/TR/wai-aria-1.3/#supportedState
-     * @see https://www.w3.org/TR/wai-aria-1.3/#inheritedattributes
-     */
-    supported: ARIAAttribute[];
-    /**
-     * ARIA attributes that are explicitly prohibited for this role, and are considered an error if set.
-     * @see https://www.w3.org/TR/wai-aria-1.3/#prohibitedattributes
-     */
-    prohibited: ARIAAttribute[];
-    /**
-     * If given, states that this role can only exist within this container
-     * @see https://www.w3.org/TR/wai-aria-1.3/#scope
-     */
-    requiredParents?: ARIARole[];
-  }
-> = {
+  DocumentStructureRole,
+  DragAndDropAttribute,
+  GlobalAttribute,
+  LandmarkRole,
+  LiveRegionAttribute,
+  LiveRegionRole,
+  RelationshipAttribute,
+  WidgetAttribute,
+  WidgetRole,
+  WindowRole,
+} from '../types.js';
+
+export type RoleType = 'abstract' | 'widget' | 'document' | 'landmark' | 'liveregion' | 'window';
+
+export interface RoleData {
+  type: RoleType[];
+  subclass?: ARIARole;
+  superclass?: ARIARole; // note: ignores abstract roles
+  /**
+   * ARIA attributes that MUST be set for this role.
+   * @see https://www.w3.org/TR/wai-aria-1.3/#requiredState
+   */
+  required: ARIAAttribute[];
+  /**
+   * ARIA attributes that MAY be set for this role.
+   * Note: this includes required attributes, supported attributes, and inherited attributes from superclass role types.
+   * @see https://www.w3.org/TR/wai-aria-1.3/#supportedState
+   * @see https://www.w3.org/TR/wai-aria-1.3/#inheritedattributes
+   */
+  supported: ARIAAttribute[];
+  /**
+   * ARIA attributes that are explicitly prohibited for this role, and are considered an error if set.
+   * @see https://www.w3.org/TR/wai-aria-1.3/#prohibitedattributes
+   */
+  prohibited: ARIAAttribute[];
+  /**
+   * If given, states that this role can only exist within this container
+   * @see https://www.w3.org/TR/wai-aria-1.3/#scope
+   */
+  requiredParents?: ARIARole[];
+}
+
+export const widgetRoles: Record<WidgetRole, RoleData> = {
   /** An input that allows for user-triggered actions when clicked or pressed. See related link. */
   button: {
     type: ['widget'],
@@ -64,28 +69,28 @@ export const roles: Record<
   grid: {
     type: ['widget'],
     required: [],
-    supported: [],
+    supported: ['aria-activedescendant', 'aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-colcount', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-multiselectable', 'aria-owns', 'aria-readonly', 'aria-relevant', 'aria-roledescription', 'aria-rowcount'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A cell in a grid or treegrid. */
   gridcell: {
     type: ['widget'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-colindex', 'aria-colindextext', 'aria-colspan', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-readonly', 'aria-relevant', 'aria-required', 'aria-roledescription', 'aria-rowindex', 'aria-rowindextext', 'aria-rowspan', 'aria-selected'], // biome-ignore format: long list
     prohibited: [],
   },
   /** An interactive reference to an internal or external resource that, when activated, causes the user agent to navigate to that resource. See related button. */
   link: {
     type: ['widget'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A widget that allows the user to select one or more items from a list of choices. See related combobox and list. */
   listbox: {
     type: ['widget'],
     required: [],
-    supported: [],
+    supported: ['aria-activedescendant', 'aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-multiselectable', 'aria-orientation', 'aria-owns', 'aria-readonly', 'aria-relevant', 'aria-required', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A type of widget that offers a list of choices to the user. */
@@ -245,6 +250,9 @@ export const roles: Record<
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-checked', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-level', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-selected', 'aria-setsize'], // biome-ignore format: long list
     prohibited: [],
   },
+};
+
+export const documentRoles: Record<DocumentStructureRole, RoleData> = {
   /** A structure containing one or more focusable elements requiring user input, such as keyboard or gesture events, that do not follow a standard interaction pattern supported by a widget role. */
   application: {
     type: ['document'],
@@ -332,92 +340,98 @@ export const roles: Record<
   document: {
     type: ['document'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** One or more emphasized characters. See related strong. */
   emphasis: {
     type: ['document'],
     required: [],
-    supported: [],
-    prohibited: [],
+    supported: ['aria-atomic', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    prohibited: ['aria-braillelabel', 'aria-label', 'aria-labelledby'],
   },
   /** A scrollable list of articles where scrolling might cause articles to be added to or removed from either end of the list. */
   feed: {
     type: ['document'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A perceivable section of content that typically contains a graphical document, images, media player, code snippets, or example text. The parts of a figure MAY be user-navigable. */
   figure: {
     type: ['document'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A nameless container element that has no semantic meaning on its own. */
   generic: {
     type: ['document'],
     required: [],
-    supported: [],
-    prohibited: [],
+    supported: ['aria-atomic', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-live', 'aria-owns', 'aria-relevant'], // biome-ignore format: long list
+    prohibited: [
+      'aria-braillelabel',
+      'aria-brailleroledescription',
+      'aria-label',
+      'aria-labelledby',
+      'aria-roledescription',
+    ],
   },
   /** A set of user interface objects that is not intended to be included in a page summary or table of contents by assistive technologies. */
   group: {
     type: ['document'],
     required: [],
-    supported: [],
+    supported: ['aria-activedescendant', 'aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A heading for a section of the page. */
   heading: {
     type: ['document'],
-    required: [],
-    supported: [],
+    required: ['aria-level'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-level', 'aria-level', 'aria-level', 'aria-level', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
-  /** A container for a collection of elements that form an image. See synonym img. */
+  /** Synonym of img. */
   image: {
     type: ['document'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
-  }, // ℹ Alias of "img"
+  },
   /** A container for a collection of elements that form an image. See synonym image. */
   img: {
     type: ['document'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** An insertion contains content that is marked as added or content that is being suggested for addition. See related deletion. */
   insertion: {
     type: ['document'],
     required: [],
-    supported: [],
-    prohibited: [],
+    supported: ['aria-atomic', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    prohibited: ['aria-braillelabel', 'aria-label', 'aria-labelledby'],
   },
   /** A section containing listitem elements. See related listbox. */
   list: {
     type: ['document'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A single item in a list or directory. */
   listitem: {
     type: ['document'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
     prohibited: [],
   },
   /** Content which is marked or highlighted for reference or notation purposes, due to the content's relevance in the enclosing context. */
   mark: {
     type: ['document'],
     required: [],
-    supported: [],
-    prohibited: [],
+    supported: ['aria-atomic', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    prohibited: ['aria-braillelabel', 'aria-label', 'aria-labelledby'],
   },
   /** Content that represents a mathematical expression. */
   math: {
@@ -454,11 +468,11 @@ export const roles: Record<
     supported: ['aria-atomic', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: ['aria-braillelabel', 'aria-label', 'aria-labelledby'],
   },
-  /** An element whose implicit native role semantics will not be mapped to the accessibility API. See synonym none. */
+  /** Synonym of none */
   presentation: {
     type: ['document'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A row of cells in a tabular container. */
@@ -481,6 +495,10 @@ export const roles: Record<
     required: [],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-colindex', 'aria-colindextext', 'aria-colspan', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-readonly', 'aria-relevant', 'aria-required', 'aria-roledescription', 'aria-rowindex', 'aria-rowindextext', 'aria-rowspan', 'aria-selected', 'aria-sort'], // biome-ignore format: long list
     prohibited: [],
+  },
+  /** A divider that separates and distinguishes sections of content or groups of menuitems. */
+  separator: {
+    ...(widgetRoles.separator as RoleData),
   },
   /** Content that is important, serious, or urgent. See related emphasis. */
   strong: {
@@ -545,6 +563,9 @@ export const roles: Record<
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
+};
+
+export const landmarkRoles: Record<LandmarkRole, RoleData> = {
   /** A landmark that contains mostly site-oriented content, rather than page-specific content. */
   banner: {
     type: ['landmark'],
@@ -570,14 +591,14 @@ export const roles: Record<
   form: {
     type: ['landmark'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A landmark containing the main content of a document. */
   main: {
     type: ['landmark'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A landmark containing a collection of navigational elements (usually links) for navigating the document or related documents. */
@@ -601,6 +622,9 @@ export const roles: Record<
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
+};
+
+export const liveRegionRoles: Record<LiveRegionRole, RoleData> = {
   /** A type of live region with important, and usually time-sensitive, information. See related alertdialog and status. */
   alert: {
     type: ['liveregion'],
@@ -612,14 +636,14 @@ export const roles: Record<
   log: {
     type: ['liveregion'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A type of live region where non-essential information changes frequently. See related log. */
   marquee: {
     type: ['liveregion'],
     required: [],
-    supported: [],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A type of live region whose content is advisory information for the user but is not important enough to justify an alert, often but not necessarily presented as a status bar. */
@@ -636,6 +660,9 @@ export const roles: Record<
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     prohibited: [],
   },
+};
+
+export const windowRoles: Record<WindowRole, RoleData> = {
   /** A type of dialog that contains an alert message, where initial focus goes to an element within the dialog. See related alert and dialog. */
   alertdialog: {
     type: ['window'],
@@ -653,28 +680,97 @@ export const roles: Record<
   },
 };
 
+// Note: this would throw a type error if we missed any!
+export const roles: Record<ARIARole, RoleData> = {
+  ...widgetRoles,
+  ...documentRoles,
+  ...landmarkRoles,
+  ...liveRegionRoles,
+  ...windowRoles,
+};
+
+export type AttributeCategory = 'global' | 'widget' | 'liveregion' | 'draganddrop' | 'relationship';
 /** Attribute may essentially allow any value. As a general rule, empty strings are NOT valid. */
 export type StringAttribute = { type: 'string'; values?: never };
 /** Boolean attributes are essentially the same as enum types whose only allowed values are ["true", "false"] */
 export type BooleanAttribute = { type: 'boolean'; values?: never };
-/** Enum attributes only allow one of a list of specific values. Note that if a tokenlist (space-separated list) is allowed, it is type: "string". */
+/**
+ * Enum attributes only allow one of a list of specific values.
+ * Note that if a tokenlist (space-separated list) is allowed, it is type: "string".
+ * Although the spec does allow “undefined” as a valid value (e.g.
+ * aria-checked), that indicates the absence of the attribute altogether; this
+ * only tests the presence of attributes, thus, `undefined` is omitted.
+ */
 export type EnumAttribute = { type: 'enum'; values: string[] };
 /** Number attributes represent both integer and scalar (floating point) types. */
 export type NumberAttribute = { type: 'number'; values?: never };
 
-export type AttributeProperties =
+export type AttributeType = { category: AttributeCategory[] } & (
   | StringAttribute
   | BooleanAttribute
   | EnumAttribute
-  | NumberAttribute;
+  | NumberAttribute
+);
 
-export const attributes: Record<ARIAAttribute, AttributeProperties> = {
-  'aria-atomic': { type: 'boolean' },
-  'aria-checked': { type: 'enum', values: ['true', 'false', 'mixed'] },
-  'aria-disabled': { type: 'boolean' },
-  'aria-readonly': { type: 'boolean' },
-  'aria-relevant': { type: 'string' },
-  'aria-required': { type: 'string' },
-  'aria-roledescription': { type: 'string' },
-  'aria-rowcount': { type: 'string' },
+export const globalAttributes: Record<GlobalAttribute, AttributeType> = {
+  'aria-atomic': { category: ['global'], type: 'boolean' },
+  'aria-busy': { category: ['global'], type: 'boolean' },
+  'aria-controls': { category: ['global'], type: 'string' },
+  'aria-current': { category: ['global'], type: 'string' },
+  'aria-describedby': { category: ['global'], type: 'string' },
+  'aria-details': { category: ['global'], type: 'string' },
+  'aria-disabled': { category: ['global', 'widget'], type: 'boolean' },
+  'aria-dropeffect': { category: ['global'], type: 'string' },
+  'aria-errormessage': { category: ['global', 'widget'], type: 'string' },
+  'aria-flowto': { category: ['global'], type: 'string' },
+  'aria-grabbed': { category: ['global'], type: 'boolean' },
+  /** @deprecated in ARIA 1.2 */
+  'aria-haspopup': { category: ['global', 'widget'], type: 'boolean' },
+  'aria-hidden': { category: ['global', 'widget'], type: 'boolean' },
+  'aria-invalid': { category: ['global', 'widget'], type: 'enum', values: ['grammar', 'false', 'spelling', 'true'] },
+  'aria-keyshortcuts': { category: ['global'], type: 'string' },
+  'aria-label': { category: ['global', 'widget'], type: 'string' },
+  'aria-labelledby': { category: ['global'], type: 'string' },
+  'aria-live': { category: ['global'], type: 'string' },
+  'aria-owns': { category: ['global'], type: 'string' },
+  'aria-relevant': { category: ['global'], type: 'string' },
+  'aria-roledescription': { category: ['global'], type: 'string' },
+};
+
+export const widgetAttributes: Record<WidgetAttribute, AttributeType> = {
+  'aria-autocomplete': { category: ['widget'], type: 'enum', values: ['inline', 'list', 'both', 'none'] },
+  'aria-checked': { category: ['widget'], type: 'enum', values: ['true', 'false', 'mixed'] },
+  'aria-disabled': { ...globalAttributes['aria-disabled'] },
+  'aria-errormessage': { ...globalAttributes['aria-errormessage'] },
+  'aria-expanded': { category: ['widget'], type: 'boolean' },
+  /** @deprecated in ARIA 1.2 */
+  'aria-haspopup': { ...globalAttributes['aria-haspopup'] },
+  'aria-hidden': { ...globalAttributes['aria-hidden'] },
+  'aria-invalid': { ...globalAttributes['aria-invalid'] },
+  'aria-label': { ...globalAttributes['aria-label'] },
+  'aria-level': { category: ['widget'], type: 'string' },
+  'aria-modal': { category: ['widget'], type: 'boolean' },
+  'aria-multiline': { category: ['widget'], type: 'boolean' },
+  'aria-multiselectable': { category: ['widget'], type: 'boolean' },
+  'aria-orientation': { category: ['widget'], type: 'enum', values: ['horizontal', 'vertical'] },
+  'aria-placeholder': { category: ['widget'], type: 'string' },
+  'aria-pressed': { category: ['widget'], type: 'enum', values: ['true', 'false', 'mixed'] },
+  'aria-readonly': { category: ['widget'], type: 'boolean' },
+  'aria-required': { category: ['widget'], type: 'boolean' },
+  'aria-selected': { category: ['widget'], type: 'boolean' },
+};
+
+export const liveregionAttributes: Record<LiveRegionAttribute, AttributeType> = {};
+
+export const draganddropAttributes: Record<DragAndDropAttribute, AttributeType> = {};
+
+export const relationshipAttributes: Record<RelationshipAttribute, AttributeType> = {};
+
+// Note: this would also throw a type error if we missed any!
+export const attributes: Record<ARIAAttribute, AttributeType> = {
+  ...globalAttributes,
+  ...widgetAttributes,
+  ...liveregionAttributes,
+  ...draganddropAttributes,
+  ...relationshipAttributes,
 };

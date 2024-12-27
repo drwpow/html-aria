@@ -20,6 +20,9 @@ export function getSupportedAttributes(
     case 'colgroup': {
       return [];
     }
+    case 'datalist': {
+      return [];
+    }
   }
 
   const role = getRole(element, options);
@@ -37,9 +40,7 @@ export function isSupportedAttribute(
   element: HTMLElement | VirtualElement,
   options?: GetRoleOptions,
 ): boolean {
-  return getSupportedAttributes(element, options).includes(
-    attribute as ARIAAttribute,
-  );
+  return getSupportedAttributes(element, options).includes(attribute as ARIAAttribute);
 }
 
 /**
@@ -49,15 +50,8 @@ export function isSupportedAttribute(
  * - `undefined` and `null` return false, as they are non-values.
  * - Numbers will be coerced into strings, and will return true for most non-enum attributes (this library isn’t concerned with number validation).
  */
-export function isValidAttributeValue(
-  attribute: ARIAAttribute,
-  value: unknown,
-): boolean {
-  if (
-    attribute === undefined ||
-    attribute === null ||
-    typeof attribute === 'object'
-  ) {
+export function isValidAttributeValue(attribute: ARIAAttribute, value: unknown): boolean {
+  if (attribute === undefined || attribute === null || typeof attribute === 'object') {
     return false;
   }
 
