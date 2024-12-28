@@ -26,8 +26,8 @@ To ensure accuracy, there are 2 very important rules to follow:
 
 1. Always pass in all `attributes`, because their values affect the returned role
 
-- e.g. `<th>` is `columnheader`, while `<th scope="row">` is `rowheader`
-- But also, the `role` attribute is always respected
+- e.g. `<th>` → `columnheader` / `<th scope="row">` → `rowheader`
+- `role` always wins if specified
 
 2. For `li`, `td`, `th`, `header`, and `footer`, provide `ancestors` to get an accurate value.
 
@@ -39,8 +39,8 @@ This library **DOES NOT** scan the full HTML document (which may not always be p
 
 ```ts
 // <td>
-getRole({ tagName: "td" }); // "generic"
-getRole({ tagName: "td" }, { ancestors: [{ tagName: "table" }] }); // "cell"
+getRole({ tagName: "td" }); // "cell"
+getRole({ tagName: "td" }, { ancestors: [] }); // "generic"
 getRole(
   { tagName: "td" },
   { ancestors: [{ tagName: "table", attributes: { role: "grid" } }] }
@@ -51,24 +51,12 @@ getRole(
 ); // "gridcell"
 
 // <th>
-getRole({ tagName: "th" }); // "generic"
-getRole({ tagName: "th" }, { ancestors: [{ tagName: "table" }] }); // "columnheader"
-getRole(
-  { tagName: "th", attributes: { scope: "row" } },
-  { ancestors: [{ tagName: "table" }] }
-); // "rowheader"
-getRole(
-  { tagName: "th" },
-  { ancestors: [{ tagName: "table", attributes: { role: "grid" } }] }
-); // "gridcell"
-getRole(
-  { tagName: "th" },
-  { ancestors: [{ tagName: "table", attributes: { role: "treegrid" } }] }
-); // "gridcell"
+getRole({ tagName: "th" }); // "columnheader"
+getRole({ tagName: "th" }, { ancestors: [] }); // "generic"
 
 // <li>
-getRole({ tagName: "li" }); // "generic"
-getRole({ tagName: "li" }, { ancestors: [{ tagName: "ul" }] }); // listitem
+getRole({ tagName: "li" }); // "listitem"
+getRole({ tagName: "li" }, { ancestors: [] }); // listitem
 
 // <header> and <footer>
 getRole({ tagName: "header" }); // "banner" (or "contentinfo" for footer)
@@ -106,8 +94,6 @@ import { getSupportedRoles } from "html-aria";
 
 getSupportedRoles(document.createElement("img")); // ["none", "presentation", "img"]
 getSupportedRoles({ tagName: "img", attributes: { alt: "Image caption" } }); //  ["button", "checkbox", "link", (15 more)]
-getSupportedRoles({ tagName: "td" }, { ancestors: [{ tagName: "table" }] }); // ["cell"]
-getSupportedRoles({ tagName: "td" }); // (all roles supported)
 ```
 
 ### Deviations from the spec
@@ -116,9 +102,9 @@ The following minor deviations were made from the spec.
 
 - `<td>`, `<tr>`, and `<th>` elements only have table-related roles (`cell`, `row`, `columnheader`, etc.) if placed inside a `table`, `grid`, or `treegrid` container. Otherwise they have no role. This library assumes you are using these only in a `table`, `grid`, or `treegrid` without having to specify so. To override this behavior, pass an empty `ancestor` array, e.g.:
 
-      ```ts
-      getRole({ tagName: "td" }, { ancestors: [] }); // `undefined`
-      ```
+  ```ts
+  getRole({ tagName: "td" }, { ancestors: [] }); // `undefined`
+  ```
 
 - `<li>` is similar—it will assume you are using it inside a list-like container (`<ol>`, `<ul>`, `<menu>`, etc.). To use it as a generic element, give it an empty `ancestor` array.
 
