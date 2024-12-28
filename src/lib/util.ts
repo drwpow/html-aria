@@ -1,4 +1,4 @@
-import type { ARIARole, TagName, VirtualElement } from '../types.js';
+import type { ARIAAttribute, AncestorList, TagName, VirtualElement } from '../types.js';
 
 /** Parse a list of roles, e.g. role="graphics-symbol img" */
 export function parseTokenList(tokenList: string): string[] {
@@ -52,13 +52,29 @@ export function calculateAccessibleName(element: VirtualElement): string | undef
   }
 }
 
-/** Given a lineage, find the first matching ancestor. */
+/** Given ancestors, find the first matching ancestor. */
 export function findFirstSignificantAncestor(
-  validRoles: ARIARole[],
-  lineage?: (string | undefined | null)[],
-): ARIARole | undefined {
-  if (!lineage) {
+  validAncestors: VirtualElement[],
+  ancestors?: AncestorList,
+): VirtualElement | undefined {
+  if (!ancestors) {
     return undefined;
   }
-  return (lineage as ARIARole[]).find((r) => validRoles.includes(r)) || undefined;
+  for (const ancestor of ancestors) {
+    if (!ancestor) {
+      continue;
+    }
+    const { tagName, attributes = {} } = virtualizeElement(ancestor);
+    const match = validAncestors.find(
+      (a) => (a.attributes?.role && a.attributes.role === attributes.role) || a.tagName === tagName,
+    );
+    if (match) {
+      return match;
+    }
+  }
+}
+
+/** Remove naming attributes */
+export function namingProhibited(attributes: ARIAAttribute[]): ARIAAttribute[] {
+  return attributes.filter((attr) => attr !== 'aria-label' && attr !== 'aria-labelledby');
 }

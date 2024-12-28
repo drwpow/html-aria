@@ -5,11 +5,7 @@ import { cleandir } from 'rollup-plugin-cleandir';
 /** @type {import("rollup").MergedRollupOptions} */
 export default {
   input: 'src/index.ts',
-  plugins: [
-    ts({ tsconfig: 'tsconfig.build.json' }),
-    commonjs(),
-    cleandir('./dist/'),
-  ],
+  plugins: [ts({ tsconfig: 'tsconfig.build.json' }), commonjs(), cleandir('./dist/')],
   output: [
     {
       dir: './dist/',

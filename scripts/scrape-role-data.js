@@ -4,9 +4,7 @@
  * encourages manual review, which is often better than “just trust it”
  * layers and layers of automation where mistakes are harder to spot.
  */
-const roleContainers = document.querySelectorAll(
-  '#role_definitions section[id].role',
-);
+const roleContainers = document.querySelectorAll('#role_definitions section[id].role');
 for (const roleContainer of roleContainers) {
   const role = roleContainer.getAttribute('id');
   const table = roleContainer.querySelector('table');
@@ -15,11 +13,7 @@ for (const roleContainer of roleContainers) {
     console.warn(`${role} skipped: no data`);
     continue;
   }
-  if (
-    roleContainer
-      .querySelector('.role-description')
-      ?.textContent.includes('abstract role')
-  ) {
+  if (roleContainer.querySelector('.role-description')?.textContent.includes('abstract role')) {
     console.warn(`${role} skipped: abstract`);
     continue;
   }
@@ -49,10 +43,7 @@ for (const roleContainer of roleContainers) {
     supported.push(...required);
 
     // supported
-    if (
-      rowTitle.includes('inherited states and properties') ||
-      rowTitle.includes('supported states and properties')
-    ) {
+    if (rowTitle.includes('inherited states and properties') || rowTitle.includes('supported states and properties')) {
       pushAttrsToList(rowBody, supported);
     }
 

@@ -1,18 +1,20 @@
-import { tags } from './lib/html.js';
-import { calculateAccessibleName, findFirstSignificantAncestor, virtualizeElement } from './lib/util.js';
-import type { ARIARole, VirtualElement } from './types.js';
+import { ALL_ROLES, tags } from './lib/html.js';
+import { calculateAccessibleName, virtualizeElement } from './lib/util.js';
+import { getFooterRole } from './tags/footer.js';
+import { getTDRole } from './tags/td.js';
+import type { ARIARole, AncestorList, VirtualElement } from './types.js';
 
 export interface SupportedRoleOptions {
   /**
-   * Much like getRole(), the lineage determines the intrinsic role. But lineage
-   * also determines _valid_ roles—certain roles MUST NOT contain certain children.
+   * Much like getRole(), the ancestors determines the intrinsic role. But ancestors
+   * also determine _valid_ roles—certain roles MUST NOT contain certain children.
    * For example:
    *
-   * - <td> with lineage ['table'] MAY ONLY be a ['cell'] (all other roles are not supported)
-   * - <td> with lineage ['grid'] or ['treegrid'] MAY ONLY be a ['gridcell'] (all other roles are not supported)
-   * - <td> with NO lineage ([]) will allow any role
+   * - <td> with ancestors ['table'] MAY ONLY be a ['cell'] (all other roles are not supported)
+   * - <td> with ancestors ['grid'] or ['treegrid'] MAY ONLY be a ['gridcell'] (all other roles are not supported)
+   * - <td> with NO ancestors ([]) will allow any role
    */
-  lineage?: (ARIARole | undefined | null)[];
+  ancestors?: AncestorList;
 }
 
 /**
@@ -29,21 +31,18 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
   // special cases: some HTML elements require unique logic to determine supported roles based on attributes, etc.
   switch (tagName) {
     case 'a': {
-      if ('href' in attributes) {
-        return ['link'];
-      }
-      return tag.supportedRoles;
+      return 'href' in attributes ? ['link'] : tag.supportedRoles;
+    }
+    case 'area': {
+      return 'href' in attributes ? ['button', 'link'] : tag.supportedRoles;
     }
     case 'footer':
     case 'header': {
-      const context = findFirstSignificantAncestor(
-        ['article', 'complementary', 'main', 'navigation', 'region'],
-        options?.lineage,
-      );
-      if (context) {
-        return ['generic', 'group', 'none', 'presentation'];
-      }
-      return tag.supportedRoles;
+      const role = getFooterRole(options);
+      return role === 'generic' ? ['generic', 'group', 'none', 'presentation'] : tag.supportedRoles;
+    }
+    case 'div': {
+      return options?.ancestors?.[0]?.tagName === 'dl' ? ['none', 'presentation'] : tag.supportedRoles;
     }
     case 'img': {
       const name = calculateAccessibleName({ tagName, attributes });
@@ -53,14 +52,56 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
       }
       return tag.supportedRoles;
     }
+    case 'input': {
+      const type = ((attributes.type as string) ?? '').toLocaleLowerCase();
+      switch (type) {
+        case 'button': {
+          return ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem']; // biome-ignore format: long list
+        }
+        case 'checkbox': {
+          return 'aria-pressed' in attributes
+            ? ['button', 'menuitemcheckbox', 'option', 'switch', 'checkbox']
+            : ['menuitemcheckbox', 'option', 'switch', 'checkbox'];
+        }
+        case 'color':
+        case 'date':
+        case 'datetime-local':
+        case 'file':
+        case 'hidden':
+        case 'month': {
+          return [];
+        }
+        case 'image': {
+          return ['button', 'checkbox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem']; // biome-ignore format: long list
+        }
+      }
+
+      if ('list' in attributes) {
+        return ['combobox'];
+      }
+
+      return tag.supportedRoles;
+    }
     case 'td': {
-      const context = findFirstSignificantAncestor(['table', 'grid', 'treegrid'], options?.lineage);
-      const parentMap: Partial<Record<ARIARole, ARIARole[]>> = {
-        table: ['cell'],
-        grid: ['gridcell'],
-        treegrid: ['gridcell'],
-      };
-      return (context && parentMap[context]) || tag.supportedRoles;
+      const role = getTDRole(options);
+      switch (role) {
+        case 'cell': {
+          return ['cell'];
+        }
+        case 'gridcell': {
+          return ['gridcell'];
+        }
+        default: {
+          return ALL_ROLES;
+        }
+      }
+    }
+    case 'th': {
+      // Deviation from the spec: only treat as “no corresponding role” if user has explicated this
+      if (options?.ancestors && options.ancestors.length === 0) {
+        return ALL_ROLES;
+      }
+      return ['cell', 'columnheader', 'rowheader'];
     }
   }
 
@@ -71,7 +112,7 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
 }
 
 /** Helper function for getSupportedRoles that returns a boolean instead */
-export function isValidRole(
+export function isSupportedRole(
   role: string,
   element: HTMLElement | VirtualElement,
   options?: SupportedRoleOptions,

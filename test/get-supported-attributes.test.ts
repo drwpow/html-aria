@@ -3,13 +3,17 @@ import {
   type ARIAAttribute,
   getSupportedAttributes,
   isSupportedAttribute,
-  attributes,
   isValidAttributeValue,
   tags,
 } from '../src/index.js';
+import { globalAttributes, widgetAttributes } from '../src/lib/aria-attributes.js';
 import { checkTestAndTagName } from './helpers.js';
 
-const ALL_ATTRIBUTES = Object.keys(attributes) as ARIAAttribute[];
+const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
+const GLOBAL_NO_NAMING = GLOBAL_ATTRIBUTES.filter(
+  (attr) => attr !== 'aria-label' && attr !== 'aria-labelledby',
+) as ARIAAttribute[];
+const WIDGET_ATTRIBUTES = Object.keys(widgetAttributes) as ARIAAttribute[];
 
 const tests: [
   string,
@@ -18,14 +22,60 @@ const tests: [
     want: ReturnType<typeof getSupportedAttributes>;
   },
 ][] = [
-  ['canvas', { given: [{ tagName: 'canvas' }], want: ALL_ATTRIBUTES }],
-  ['cite', { given: [{ tagName: 'cite' }], want: ALL_ATTRIBUTES }],
-  ['code', { given: [{ tagName: 'code' }], want: ALL_ATTRIBUTES }],
+  ['bdi', { given: [{ tagName: 'bdi' }], want: GLOBAL_ATTRIBUTES }],
+  ['bdo', { given: [{ tagName: 'bdo' }], want: GLOBAL_ATTRIBUTES }],
+  ['blockquote', { given: [{ tagName: 'blockquote' }], want: GLOBAL_ATTRIBUTES }],
+  ['br', { given: [{ tagName: 'br' }], want: ['aria-hidden'] }],
+  ['body', { given: [{ tagName: 'body' }], want: [] }],
+  ['canvas', { given: [{ tagName: 'canvas' }], want: GLOBAL_ATTRIBUTES }],
+  ['cite', { given: [{ tagName: 'cite' }], want: GLOBAL_ATTRIBUTES }],
+  ['code', { given: [{ tagName: 'code' }], want: GLOBAL_NO_NAMING }],
   ['col', { given: [{ tagName: 'col' }], want: [] }],
   ['colgroup', { given: [{ tagName: 'col' }], want: [] }],
-  ['data', { given: [{ tagName: 'data' }], want: ALL_ATTRIBUTES }],
+  ['data', { given: [{ tagName: 'data' }], want: GLOBAL_ATTRIBUTES }],
   ['datalist', { given: [{ tagName: 'datalist' }], want: [] }],
-  ['dd', { given: [{ tagName: 'dd' }], want: ALL_ATTRIBUTES }],
+  ['dd', { given: [{ tagName: 'dd' }], want: GLOBAL_ATTRIBUTES }],
+  ['head', { given: [{ tagName: 'head' }], want: [] }],
+  [
+    'input[type="checkbox"]',
+    {
+      given: [{ tagName: 'input', attributes: { type: 'checkbox' } }],
+      want: [...GLOBAL_ATTRIBUTES, ...WIDGET_ATTRIBUTES],
+    },
+  ],
+  [
+    'input[type="radio"]',
+    {
+      given: [{ tagName: 'input', attributes: { type: 'radio' } }],
+      want: [...GLOBAL_ATTRIBUTES, ...WIDGET_ATTRIBUTES],
+    },
+  ],
+  [
+    'input[type="email"]',
+    {
+      given: [{ tagName: 'input', attributes: { type: 'email' } }],
+      want: [...GLOBAL_ATTRIBUTES, ...WIDGET_ATTRIBUTES],
+    },
+  ],
+  ['link', { given: [{ tagName: 'link' }], want: [] }],
+  ['main', { given: [{ tagName: 'main' }], want: GLOBAL_ATTRIBUTES }],
+  ['map', { given: [{ tagName: 'map' }], want: [] }],
+  ['meta', { given: [{ tagName: 'meta' }], want: [] }],
+  ['noscript', { given: [{ tagName: 'noscript' }], want: [] }],
+  ['picture', { given: [{ tagName: 'picture' }], want: ['aria-hidden'] }],
+  ['s', { given: [{ tagName: 's' }], want: [] }],
+  ['samp', { given: [{ tagName: 'samp' }], want: [] }],
+  ['script', { given: [{ tagName: 'script' }], want: [] }],
+  ['search', { given: [{ tagName: 'search' }], want: [] }],
+  ['slot', { given: [{ tagName: 'slot' }], want: [] }],
+  ['span', { given: [{ tagName: 'span' }], want: GLOBAL_NO_NAMING }],
+  ['source', { given: [{ tagName: 'source' }], want: [] }],
+  ['style', { given: [{ tagName: 'style' }], want: [] }],
+  ['template', { given: [{ tagName: 'template' }], want: [] }],
+  ['textarea', { given: [{ tagName: 'textarea' }], want: [...GLOBAL_ATTRIBUTES, ...WIDGET_ATTRIBUTES] }],
+  ['title', { given: [{ tagName: 'title' }], want: [] }],
+  ['track', { given: [{ tagName: 'textarea' }], want: [] }],
+  ['u', { given: [{ tagName: 'textarea' }], want: GLOBAL_NO_NAMING }],
 ];
 
 describe('getSupportedAttributes', () => {
@@ -33,7 +83,14 @@ describe('getSupportedAttributes', () => {
 
   test.each(tests)('%s', (name, { given, want }) => {
     checkTestAndTagName(name, given[0].tagName);
-    expect(getSupportedAttributes(...given)).toEqual(want);
+
+    // dedupe, sort, and alphabetize these to make tests easier to write
+    const supportedAttributes = [...getSupportedAttributes(...given)];
+    supportedAttributes.sort((a, b) => a.localeCompare(b));
+    const normalizedWant = [...new Set(want)];
+    normalizedWant.sort((a, b) => a.localeCompare(b));
+
+    expect(supportedAttributes).toEqual(normalizedWant);
   });
 
   test('all tags are tested', () => {
@@ -74,7 +131,7 @@ const valueTests: [
   ['aria-checked={true}', { given: ['aria-checked', true], want: true }],
   ['aria-checked={false}', { given: ['aria-checked', false], want: true }],
   ['aria-checked=""', { given: ['aria-checked', ''], want: false }], // acceptable for boolean, but this is an enum!
-  ['aria-checked="?"', { given: ['aria-checked', undefined], want: true }], // "undefined" is a spec-defined valid value
+  ['aria-checked="?"', { given: ['aria-checked', undefined], want: false }], // "undefined" is a valid value, however, this method assumes presence of an attribute (undefined is absence)
   ['aria-checked="foobar"', { given: ['aria-checked', 'foobar'], want: false }],
 
   // boolean

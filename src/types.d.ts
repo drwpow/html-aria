@@ -143,6 +143,9 @@ export type TagName =
   | 'canvas'
   | 'template';
 
+export type Ancestor = HTMLElement | VirtualElement;
+export type AncestorList = Ancestor[];
+
 /**
  * 6.4 Translatable Attributes
  * The HTML specification states that other specifications can define
@@ -154,11 +157,7 @@ export type TagName =
  * translated when a page is localized:
  * @see https://www.w3.org/TR/wai-aria-1.3/#translatable-attributes
  */
-export type TranslatableAttributes =
-  | 'aria-label'
-  | 'aria-placeholder'
-  | 'aria-roledescription'
-  | 'aria-valuetext';
+export type TranslatableAttributes = 'aria-label' | 'aria-placeholder' | 'aria-roledescription' | 'aria-valuetext';
 
 /**
  * 6.5 Global States and Properties
@@ -180,14 +179,14 @@ export type GlobalAttribute =
   | 'aria-describedby'
   | 'aria-description'
   | 'aria-details'
-  | 'aria-disabled'
+  // | 'aria-disabled' // @deprecated for global use in ARIA 1.2
   | 'aria-dropeffect'
-  | 'aria-errormessage'
+  // | 'aria-errormessage' // @deprecated for global use in ARIA 1.2
   | 'aria-flowto'
   | 'aria-grabbed'
-  | 'aria-haspopup'
+  // | 'aria-haspopup' // @deprecated for global use in ARIA 1.2
   | 'aria-hidden'
-  | 'aria-invalid'
+  // | 'aria-invalid' // @deprecated for global use in ARIA 1.2
   | 'aria-keyshortcuts'
   | 'aria-label'
   | 'aria-labelledby'
@@ -243,11 +242,7 @@ export type WidgetAttribute =
  * inside a live region (e.g., editing the value of a text field).
  * @see https://www.w3.org/TR/wai-aria-1.3/#attrs_liveregions
  */
-export type LiveRegionAttribute =
-  | 'aria-atomic'
-  | 'aria-busy'
-  | 'aria-live'
-  | 'aria-relevant';
+export type LiveRegionAttribute = 'aria-atomic' | 'aria-busy' | 'aria-live' | 'aria-relevant';
 
 /**
  * 6.6.3 Drag-and-Drop Attributes
@@ -439,12 +434,7 @@ export type LiveRegionRole = 'alert' | 'log' | 'marquee' | 'status' | 'timer';
  */
 export type WindowRole = 'alertdialog' | 'dialog';
 
-export type ARIARole =
-  | WidgetRole
-  | DocumentStructureRole
-  | LandmarkRole
-  | LiveRegionRole
-  | WindowRole;
+export type ARIARole = WidgetRole | DocumentStructureRole | LandmarkRole | LiveRegionRole | WindowRole;
 
 /** Useful in places where the DOM isn’t available, e.g. SSR */
 export interface VirtualElement {

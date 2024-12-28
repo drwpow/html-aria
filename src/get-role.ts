@@ -1,22 +1,26 @@
-import { findFirstSignificantAncestor, isHTMLElement, parseTokenList, virtualizeElement } from './lib/util.js';
-import { roles } from './lib/role.js';
-import type { ARIARole, VirtualElement } from './types.js';
+import { roles } from './lib/aria-roles.js';
 import { tags } from './lib/html.js';
+import { calculateAccessibleName, parseTokenList, virtualizeElement } from './lib/util.js';
+import { getFooterRole } from './tags/footer.js';
+import { getHeaderRole } from './tags/header.js';
+import { getInputRole } from './tags/input.js';
+import { getTDRole } from './tags/td.js';
+import type { ARIARole, AncestorList, VirtualElement } from './types.js';
 
 export interface GetRoleOptions {
   /**
-   * Declare relevant lineage, ordered from most direct parent to furthest
+   * Declare relevant ancestors, ordered from most direct parent to furthest
    * ancestor. This affects the results, e.g.
    *
-   * - <td> with lineage ['table'] will be role 'cell'
-   * - <td> with lineage ['grid'] or ['treegrid'] will be 'gridcell'
-   * - <td> with NO lineage ([]) will be no role (`undefined`)
+   * - <td> with ancestors ['table'] will be role 'cell'
+   * - <td> with ancestors ['grid'] or ['treegrid'] will be 'gridcell'
+   * - <td> with NO ancestors ([]) will be no role (`undefined`)
    *
    * This list does NOT have to be complete; e.g. `'row'`  can be skipped as it
    * doesn’t affect behavior. But irrelevant parents may be supplied for ease of
    * use, and only the first significant ancestor will apply.
    */
-  lineage?: (ARIARole | undefined | null)[];
+  ancestors?: AncestorList;
 }
 
 /**
@@ -26,7 +30,7 @@ export interface GetRoleOptions {
  * @see https://www.w3.org/TR/html-aria/
  */
 export function getRole(element: HTMLElement | VirtualElement, options?: GetRoleOptions): ARIARole | undefined {
-  const { tagName, attributes } = virtualizeElement(element);
+  const { tagName, attributes = {} } = virtualizeElement(element);
 
   // explicit role: use if valid
   if (typeof attributes?.role === 'string') {
@@ -51,10 +55,36 @@ export function getRole(element: HTMLElement | VirtualElement, options?: GetRole
       return tag.defaultRole;
     }
     case 'header': {
-      if (
-        findFirstSignificantAncestor(['article', 'complementary', 'main', 'navigation', 'region'], options?.lineage)
-      ) {
-        return 'generic';
+      return getHeaderRole(options);
+    }
+    case 'img': {
+      const name = calculateAccessibleName({ tagName, attributes });
+      return name ? 'img' : 'none';
+    }
+    case 'input': {
+      return getInputRole({ attributes, ancestors: options?.ancestors });
+    }
+    case 'footer': {
+      return getFooterRole(options);
+    }
+    case 'td': {
+      return getTDRole(options);
+    }
+    case 'th': {
+      if (attributes.scope === 'col') {
+        return 'columnheader';
+      }
+      if (attributes.scope === 'row') {
+        return 'rowheader';
+      }
+      if (options?.ancestors && options.ancestors.length === 0) {
+        return undefined;
+      }
+      return tag.defaultRole;
+    }
+    case 'tr': {
+      if (options?.ancestors && options.ancestors.length === 0) {
+        return undefined;
       }
       return tag.defaultRole;
     }

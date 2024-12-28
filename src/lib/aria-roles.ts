@@ -2,13 +2,8 @@ import type {
   ARIAAttribute,
   ARIARole,
   DocumentStructureRole,
-  DragAndDropAttribute,
-  GlobalAttribute,
   LandmarkRole,
-  LiveRegionAttribute,
   LiveRegionRole,
-  RelationshipAttribute,
-  WidgetAttribute,
   WidgetRole,
   WindowRole,
 } from '../types.js';
@@ -160,7 +155,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   scrollbar: {
     type: ['widget'],
     required: ['aria-controls', 'aria-valuenow'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-controls', 'aria-controls', 'aria-controls', 'aria-controls', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-orientation', 'aria-owns', 'aria-relevant', 'aria-roledescription', 'aria-valuemax', 'aria-valuemin', 'aria-valuenow', 'aria-valuenow', 'aria-valuenow', 'aria-valuenow', 'aria-valuenow', 'aria-valuenow', 'aria-valuetext'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-controls', 'aria-controls', 'aria-controls', 'aria-controls', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-orientation', 'aria-owns', 'aria-relevant', 'aria-roledescription', 'aria-valuemax', 'aria-valuemin', 'aria-valuenow', 'aria-valuetext'], // biome-ignore format: long list
     prohibited: [],
   },
   /** A type of textbox intended for specifying search criteria. See related textbox and search. */
@@ -173,9 +168,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   /** A divider that separates and distinguishes sections of content or groups of menuitems. */
   separator: {
     type: ['widget', 'document'],
-    required: [
-      'aria-valuenow', // note: only when focusable (special behavior is required)
-    ],
+    required: [],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-orientation', 'aria-owns', 'aria-relevant', 'aria-roledescription', 'aria-valuemax', 'aria-valuemin', 'aria-valuenow', 'aria-valuenow', 'aria-valuenow', 'aria-valuenow', 'aria-valuenow', 'aria-valuenow', 'aria-valuetext'], // biome-ignore format: long list
     prohibited: [],
   },
@@ -687,90 +680,4 @@ export const roles: Record<ARIARole, RoleData> = {
   ...landmarkRoles,
   ...liveRegionRoles,
   ...windowRoles,
-};
-
-export type AttributeCategory = 'global' | 'widget' | 'liveregion' | 'draganddrop' | 'relationship';
-/** Attribute may essentially allow any value. As a general rule, empty strings are NOT valid. */
-export type StringAttribute = { type: 'string'; values?: never };
-/** Boolean attributes are essentially the same as enum types whose only allowed values are ["true", "false"] */
-export type BooleanAttribute = { type: 'boolean'; values?: never };
-/**
- * Enum attributes only allow one of a list of specific values.
- * Note that if a tokenlist (space-separated list) is allowed, it is type: "string".
- * Although the spec does allow “undefined” as a valid value (e.g.
- * aria-checked), that indicates the absence of the attribute altogether; this
- * only tests the presence of attributes, thus, `undefined` is omitted.
- */
-export type EnumAttribute = { type: 'enum'; values: string[] };
-/** Number attributes represent both integer and scalar (floating point) types. */
-export type NumberAttribute = { type: 'number'; values?: never };
-
-export type AttributeType = { category: AttributeCategory[] } & (
-  | StringAttribute
-  | BooleanAttribute
-  | EnumAttribute
-  | NumberAttribute
-);
-
-export const globalAttributes: Record<GlobalAttribute, AttributeType> = {
-  'aria-atomic': { category: ['global'], type: 'boolean' },
-  'aria-busy': { category: ['global'], type: 'boolean' },
-  'aria-controls': { category: ['global'], type: 'string' },
-  'aria-current': { category: ['global'], type: 'string' },
-  'aria-describedby': { category: ['global'], type: 'string' },
-  'aria-details': { category: ['global'], type: 'string' },
-  'aria-disabled': { category: ['global', 'widget'], type: 'boolean' },
-  'aria-dropeffect': { category: ['global'], type: 'string' },
-  'aria-errormessage': { category: ['global', 'widget'], type: 'string' },
-  'aria-flowto': { category: ['global'], type: 'string' },
-  'aria-grabbed': { category: ['global'], type: 'boolean' },
-  /** @deprecated in ARIA 1.2 */
-  'aria-haspopup': { category: ['global', 'widget'], type: 'boolean' },
-  'aria-hidden': { category: ['global', 'widget'], type: 'boolean' },
-  'aria-invalid': { category: ['global', 'widget'], type: 'enum', values: ['grammar', 'false', 'spelling', 'true'] },
-  'aria-keyshortcuts': { category: ['global'], type: 'string' },
-  'aria-label': { category: ['global', 'widget'], type: 'string' },
-  'aria-labelledby': { category: ['global'], type: 'string' },
-  'aria-live': { category: ['global'], type: 'string' },
-  'aria-owns': { category: ['global'], type: 'string' },
-  'aria-relevant': { category: ['global'], type: 'string' },
-  'aria-roledescription': { category: ['global'], type: 'string' },
-};
-
-export const widgetAttributes: Record<WidgetAttribute, AttributeType> = {
-  'aria-autocomplete': { category: ['widget'], type: 'enum', values: ['inline', 'list', 'both', 'none'] },
-  'aria-checked': { category: ['widget'], type: 'enum', values: ['true', 'false', 'mixed'] },
-  'aria-disabled': { ...globalAttributes['aria-disabled'] },
-  'aria-errormessage': { ...globalAttributes['aria-errormessage'] },
-  'aria-expanded': { category: ['widget'], type: 'boolean' },
-  /** @deprecated in ARIA 1.2 */
-  'aria-haspopup': { ...globalAttributes['aria-haspopup'] },
-  'aria-hidden': { ...globalAttributes['aria-hidden'] },
-  'aria-invalid': { ...globalAttributes['aria-invalid'] },
-  'aria-label': { ...globalAttributes['aria-label'] },
-  'aria-level': { category: ['widget'], type: 'string' },
-  'aria-modal': { category: ['widget'], type: 'boolean' },
-  'aria-multiline': { category: ['widget'], type: 'boolean' },
-  'aria-multiselectable': { category: ['widget'], type: 'boolean' },
-  'aria-orientation': { category: ['widget'], type: 'enum', values: ['horizontal', 'vertical'] },
-  'aria-placeholder': { category: ['widget'], type: 'string' },
-  'aria-pressed': { category: ['widget'], type: 'enum', values: ['true', 'false', 'mixed'] },
-  'aria-readonly': { category: ['widget'], type: 'boolean' },
-  'aria-required': { category: ['widget'], type: 'boolean' },
-  'aria-selected': { category: ['widget'], type: 'boolean' },
-};
-
-export const liveregionAttributes: Record<LiveRegionAttribute, AttributeType> = {};
-
-export const draganddropAttributes: Record<DragAndDropAttribute, AttributeType> = {};
-
-export const relationshipAttributes: Record<RelationshipAttribute, AttributeType> = {};
-
-// Note: this would also throw a type error if we missed any!
-export const attributes: Record<ARIAAttribute, AttributeType> = {
-  ...globalAttributes,
-  ...widgetAttributes,
-  ...liveregionAttributes,
-  ...draganddropAttributes,
-  ...relationshipAttributes,
 };

@@ -1,5 +1,5 @@
-import { roles } from './role.js';
-import type { ARIARole, TagName } from '../types.js';
+import type { ARIAAttribute, ARIARole, TagName } from '../types.js';
+import { roles } from './aria-roles.js';
 
 export const ALL_ROLES = Object.keys(roles) as ARIARole[];
 export const NO_ROLES: ARIARole[] = []; // explicitly no roles are allowed
@@ -10,48 +10,70 @@ export interface TagInfo {
   /**
    * Note: this is very likely to be overridden by custom logic! This won’t even
    * apply for half of elements since they are influenced by attribute and
-   * Accessibility Tree lineage.
+   * Accessibility Tree ancestors.
    */
   defaultRole: ARIARole | undefined;
   /**
-   * ⚠️ This is the widest possible set of roles. Many elements have special conditioning
+   * ⚠️ This is the default set of allowed roles. Many elements have special conditioning
    * that narrow the allowed roles, that’s not easily serializable. That logic can be found
    * in getSupportedRoles().
    */
   supportedRoles: ARIARole[];
+  /**
+   * If this conflicts with the role’s allowed attributes, this takes precedence.
+   */
+  supportedAttributesOverride?: ARIAAttribute[];
+  /**
+   * If this element DOES NOT allow aria-label and related attributes (which
+   * must be subtracted from its role attributes)
+   */
+  namingProhibited?: boolean;
 }
 
 export const tags: Record<TagName, TagInfo> = {
   // Main root
   html: {
     defaultRole: 'document',
-    supportedRoles: [],
+    supportedRoles: ['document'],
   },
 
   // Document metadata
   base: {
-    supportedRoles: [], // note: not an accident—this doesn’t allow any ARIA roles
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: NO_ROLES,
+    supportedAttributesOverride: [],
   },
   head: {
     defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: [],
   },
   link: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: [],
   },
   meta: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: [],
   },
   style: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: [],
   },
   title: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: [],
   },
 
   // Sectioning root
   body: {
+    defaultRole: 'generic',
     supportedRoles: ['generic'],
+    namingProhibited: true,
   },
 
   // Content sectioning
@@ -64,7 +86,8 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: ['article', 'application', 'document', 'feed', 'main', 'none', 'presentation', 'region'], // biome-ignore format: long list
   },
   aside: {
-    supportedRoles: [],
+    defaultRole: 'complementary',
+    supportedRoles: ['complementary', 'feed', 'none', 'note', 'presentation', 'region', 'search'],
   },
   footer: {
     defaultRole: 'contentinfo',
@@ -103,22 +126,26 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: ALL_ROLES,
   },
   main: {
+    defaultRole: 'list',
     supportedRoles: [],
   },
   nav: {
-    supportedRoles: [],
+    defaultRole: 'navigation',
+    supportedRoles: ['menu', 'menubar', 'navigation', 'none', 'presentation', 'tablist'],
   },
   section: {
     defaultRole: 'region', // note: for <section>, we can’t determine the accessible name without scanning the entire document. Assume it’s "region".
-    supportedRoles: [],
+    supportedRoles: ['alert', 'alertdialog', 'application', 'banner', 'complementary', 'contentinfo', 'dialog', 'document', 'feed', 'generic', 'group', 'log', 'main', 'marquee', 'navigation', 'none', 'note', 'presentation', 'region', 'search', 'status', 'tabpanel'], // biome-ignore format: long list
   },
   search: {
-    supportedRoles: [],
+    defaultRole: 'search',
+    supportedRoles: ['form', 'group', 'none', 'presentation', 'region', 'search'],
   },
 
   // Text content
   blockquote: {
-    supportedRoles: [],
+    defaultRole: 'blockquote',
+    supportedRoles: ALL_ROLES,
   },
   dd: {
     defaultRole: NO_CORRESPONDING_ROLE,
@@ -138,7 +165,8 @@ export const tags: Record<TagName, TagInfo> = {
   },
   figcaption: {
     defaultRole: NO_CORRESPONDING_ROLE,
-    supportedRoles: [],
+    supportedRoles: ['group', 'none', 'presentation'],
+    namingProhibited: true,
   },
   figure: {
     defaultRole: 'figure',
@@ -149,22 +177,30 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: ['none', 'presentation', 'separator'],
   },
   li: {
-    supportedRoles: [],
+    defaultRole: 'listitem',
+    supportedRoles: ['listitem'],
   },
   menu: {
-    supportedRoles: [],
+    defaultRole: 'list',
+    supportedRoles: ['group', 'list', 'listbox', 'menu', 'menubar', 'none', 'presentation', 'radiogroup', 'tablist', 'toolbar', 'tree'], // biome-ignore format: long list
   },
   ol: {
-    supportedRoles: [],
+    defaultRole: 'list',
+    supportedRoles: ['group', 'list', 'listbox', 'menu', 'menubar', 'none', 'presentation', 'radiogroup', 'tablist', 'toolbar', 'tree'], // biome-ignore format: long list
   },
   p: {
-    supportedRoles: [],
+    defaultRole: 'paragraph',
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   pre: {
-    supportedRoles: [],
+    defaultRole: 'generic',
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   ul: {
-    supportedRoles: [],
+    defaultRole: 'list',
+    supportedRoles: ['group', 'list', 'listbox', 'menu', 'menubar', 'none', 'presentation', 'radiogroup', 'tablist', 'toolbar', 'tree'], // biome-ignore format: long list
   },
 
   // Inline text semantics
@@ -173,23 +209,27 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: ALL_ROLES, // Note: has special behavior in getSupportedRoles()
   },
   abbr: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   b: {
     defaultRole: 'generic',
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   bdi: {
     defaultRole: 'generic',
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
   },
   bdo: {
     defaultRole: 'generic',
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
   },
   br: {
     defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: ['aria-hidden'],
   },
   cite: {
     defaultRole: NO_CORRESPONDING_ROLE,
@@ -210,82 +250,122 @@ export const tags: Record<TagName, TagInfo> = {
   em: {
     defaultRole: 'emphasis',
     supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   i: {
     defaultRole: 'generic',
     supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   kbd: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    namingProhibited: true,
   },
   mark: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    namingProhibited: true,
   },
   q: {
+    defaultRole: 'generic',
     supportedRoles: [],
+    namingProhibited: true,
   },
   rp: {
-    supportedRoles: [],
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   rt: {
-    supportedRoles: [],
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   ruby: {
-    supportedRoles: [],
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: ALL_ROLES,
   },
   s: {
-    supportedRoles: [],
+    defaultRole: 'deletion',
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   samp: {
-    supportedRoles: [],
+    defaultRole: 'generic',
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   small: {
-    supportedRoles: [],
+    defaultRole: 'generic',
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   span: {
     defaultRole: 'generic',
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   strong: {
+    defaultRole: 'strong',
     supportedRoles: [],
+    namingProhibited: true,
   },
   sub: {
+    defaultRole: 'subscript',
     supportedRoles: [],
+    namingProhibited: true,
   },
   sup: {
+    defaultRole: 'superscript',
     supportedRoles: [],
+    namingProhibited: true,
   },
   time: {
-    supportedRoles: [],
+    defaultRole: 'time',
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   u: {
-    supportedRoles: [],
+    defaultRole: 'generic',
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   var: {
-    supportedRoles: [],
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   wbr: {
-    supportedRoles: [],
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: ['none', 'presentation'],
   },
 
   // Image and multimedia
   area: {
-    supportedRoles: ['button', 'link', 'generic'],
+    defaultRole: 'generic',
+    supportedRoles: ['button', 'generic', 'link'],
   },
   audio: {
-    supportedRoles: [],
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: ['application'],
   },
   img: {
+    defaultRole: 'none',
     supportedRoles: ['img', 'image', 'none', 'presentation'],
   },
   map: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: [],
   },
   track: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
   },
   video: {
-    supportedRoles: [],
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: ['application'],
   },
 
   // Embedded content
@@ -298,13 +378,18 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: ['application', 'document', 'img', 'image', 'none', 'presentation'], // biome-ignore format: long list
   },
   object: {
-    supportedRoles: [],
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: ['application', 'document', 'img', 'image'],
   },
   picture: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: ['aria-hidden'],
   },
   source: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: [],
   },
 
   // SVG and MathML
@@ -313,6 +398,7 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: [],
   },
   math: {
+    defaultRole: 'math',
     supportedRoles: ['math'],
   },
 
@@ -322,10 +408,14 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: ALL_ROLES,
   },
   noscript: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: [],
   },
   script: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: [],
   },
 
   del: {
@@ -333,7 +423,9 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: ALL_ROLES,
   },
   ins: {
-    supportedRoles: [],
+    defaultRole: 'insertion',
+    supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
 
   // Table content
@@ -350,25 +442,32 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: NO_ROLES,
   },
   table: {
-    supportedRoles: [],
+    defaultRole: 'table',
+    supportedRoles: ALL_ROLES,
   },
   tbody: {
-    supportedRoles: [],
+    defaultRole: 'rowgroup',
+    supportedRoles: ALL_ROLES,
   },
   td: {
-    supportedRoles: ALL_ROLES, // Note: has special behavior in getSupportedRoles()
+    defaultRole: 'cell',
+    supportedRoles: ['cell'],
   },
   tfoot: {
-    supportedRoles: [],
+    defaultRole: 'rowgroup',
+    supportedRoles: ALL_ROLES,
   },
   th: {
-    supportedRoles: [],
+    defaultRole: 'columnheader',
+    supportedRoles: ['columnheader', 'rowheader', 'cell'],
   },
   thead: {
-    supportedRoles: [],
+    defaultRole: 'rowgroup',
+    supportedRoles: ALL_ROLES,
   },
   tr: {
-    supportedRoles: [],
+    defaultRole: 'row',
+    supportedRoles: ['row'],
   },
 
   // Forms
@@ -389,34 +488,46 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: ['form', 'none', 'presentation', 'search'],
   },
   input: {
+    defaultRole: 'textbox',
     supportedRoles: [],
   },
   label: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    namingProhibited: true,
   },
   legend: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    namingProhibited: true,
   },
   meter: {
-    supportedRoles: [],
+    defaultRole: 'meter',
+    supportedRoles: ['meter'],
   },
   optgroup: {
-    supportedRoles: [],
+    defaultRole: 'group',
+    supportedRoles: ['group'],
   },
   option: {
-    supportedRoles: [],
+    defaultRole: 'option',
+    supportedRoles: ['option'],
   },
   output: {
-    supportedRoles: [],
+    defaultRole: 'status',
+    supportedRoles: ALL_ROLES,
   },
   progress: {
-    supportedRoles: [],
+    defaultRole: 'progressbar',
+    supportedRoles: ['progressbar'],
   },
   select: {
+    defaultRole: 'combobox',
     supportedRoles: [],
   },
   textarea: {
-    supportedRoles: [],
+    defaultRole: 'textbox',
+    supportedRoles: ['textbox'],
   },
 
   // Interactive elements
@@ -429,14 +540,19 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: ['alertdialog', 'dialog'],
   },
   summary: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
   },
 
   // Web Components
   slot: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: [],
   },
   template: {
+    defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: [],
   },
 };

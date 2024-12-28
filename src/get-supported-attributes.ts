@@ -1,9 +1,13 @@
 import { type GetRoleOptions, getRole } from './get-role.js';
-import { attributes, roles } from './lib/role.js';
-import { virtualizeElement } from './lib/util.js';
-import type { ARIAAttribute, ARIARole, VirtualElement } from './types.js';
+import { attributes, globalAttributes } from './lib/aria-attributes.js';
+import { roles } from './lib/aria-roles.js';
+import { tags } from './lib/html.js';
+import { namingProhibited, virtualizeElement } from './lib/util.js';
+import { getHeaderRole } from './tags/header.js';
+import type { ARIAAttribute, VirtualElement } from './types.js';
 
-const ALL_ATTRIBUTES = Object.keys(attributes) as ARIAAttribute[];
+const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
+const GLOBAL_NO_NAMING = namingProhibited(GLOBAL_ATTRIBUTES);
 
 /**
  * Given an ARIA role returns a list of supported/inherited ARIA attributes.
@@ -13,23 +17,42 @@ export function getSupportedAttributes(
   options?: GetRoleOptions,
 ): ARIAAttribute[] {
   const { tagName, attributes = {} } = virtualizeElement(element);
-
-  // special cases: some elements have special handling of roles and attributes
-  switch (tagName) {
-    case 'col':
-    case 'colgroup': {
-      return [];
-    }
-    case 'datalist': {
-      return [];
-    }
+  const tag = tags[tagName];
+  if (!tag) {
+    return [];
+  }
+  if (tag.supportedAttributesOverride) {
+    return tag.supportedAttributesOverride;
   }
 
   const role = getRole(element, options);
-  if (!role) {
-    return ALL_ATTRIBUTES;
+  const roleData = role && roles[role];
+  if (!roleData) {
+    // by default, only global attributes are supported
+    return tag.namingProhibited ? GLOBAL_NO_NAMING : GLOBAL_ATTRIBUTES;
   }
-  return roles[role]?.supported ?? [];
+
+  // special cases
+  switch (tagName) {
+    case 'body': {
+      return GLOBAL_ATTRIBUTES.filter((a) => a !== 'aria-hidden');
+    }
+    case 'header':
+    case 'footer': {
+      const role = getHeaderRole(options);
+      if (role === 'generic') {
+        return namingProhibited(roles.generic.supported);
+      }
+      return roleData.supported;
+    }
+    case 'input': {
+      if (attributes.type === 'hidden') {
+        return [];
+      }
+    }
+  }
+
+  return tag.namingProhibited ? namingProhibited(roleData.supported) : roleData.supported;
 }
 
 /**
