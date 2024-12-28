@@ -39,14 +39,19 @@ export function getRole(element: HTMLElement | VirtualElement, options?: GetRole
     // it can contain fallbacks the browser may not understand. According to spec, an arbitrary
     // role is to be ignored, so we take the first match (if any), or `undefined`.
     const roleList = parseTokenList(attributes.role);
-    return roleList.find((role) => role in roles) as ARIARole | undefined;
+    const firstValidRole = roleList.find((role) => role in roles) as ARIARole | undefined;
+    // Note: even though the spec forbids certain elements from having certain
+    // roles, most browsers will ignore this and simply take `role` at face
+    // value. We’ll follow that behavior, taking the author at their word.
+    if (firstValidRole) {
+      return firstValidRole;
+    }
   }
 
   const tag = tags[tagName];
   if (!tag) {
     return undefined;
   }
-
   const explicitEmptyAncestors = options?.ancestors && options.ancestors.length === 0;
 
   switch (tagName) {

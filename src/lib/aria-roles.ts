@@ -15,19 +15,19 @@ export interface RoleData {
   subclass?: ARIARole;
   superclass?: ARIARole; // note: ignores abstract roles
   /**
-   * ARIA attributes that MUST be set for this role.
+   * aria-* attributes that MUST be set for this role.
    * @see https://www.w3.org/TR/wai-aria-1.3/#requiredState
    */
   required: ARIAAttribute[];
   /**
-   * ARIA attributes that MAY be set for this role.
+   * aria-* attributes that MAY be set for this role.
    * Note: this includes required attributes, supported attributes, and inherited attributes from superclass role types.
    * @see https://www.w3.org/TR/wai-aria-1.3/#supportedState
    * @see https://www.w3.org/TR/wai-aria-1.3/#inheritedattributes
    */
   supported: ARIAAttribute[];
   /**
-   * ARIA attributes that are explicitly prohibited for this role, and are considered an error if set.
+   * aria-* attributes that are explicitly prohibited for this role, and are considered an error if set.
    * @see https://www.w3.org/TR/wai-aria-1.3/#prohibitedattributes
    */
   prohibited: ARIAAttribute[];

@@ -1,7 +1,7 @@
 import { roles } from './lib/aria-roles.js';
 import type { ARIAAttribute, ARIARole } from './types.js';
 
-/** Given an HTML element, returns a list of required ARIA attributes for that element */
+/** Given an HTML element, returns a list of required aria-* attributes for that element */
 export function getRequiredAttributes(role: ARIARole): ARIAAttribute[] {
   return roles[role]?.required ?? [];
 }

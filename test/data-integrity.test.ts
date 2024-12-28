@@ -21,7 +21,7 @@ describe('role data', () => {
       test(role, () => {
         expect(
           roleData.required.every((a) => roleData.supported.includes(a)),
-          'supported ARIA attributes missing some required ARIA attributes',
+          'supported aria-* attributes missing some required aria-* attributes',
         ).toBe(true);
       });
     }

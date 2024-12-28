@@ -74,7 +74,9 @@ export function findFirstSignificantAncestor(
   }
 }
 
+export const NAME_PROHIBITED_ATTRIBUTES = new Set(['aria-braillelabel', 'aria-label', 'aria-labelledby']);
+
 /** Remove naming attributes */
 export function namingProhibited(attributes: ARIAAttribute[]): ARIAAttribute[] {
-  return attributes.filter((attr) => attr !== 'aria-label' && attr !== 'aria-labelledby');
+  return attributes.filter((attr) => !NAME_PROHIBITED_ATTRIBUTES.has(attr));
 }

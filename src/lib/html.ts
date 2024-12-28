@@ -35,6 +35,7 @@ export const tags: Record<TagName, TagInfo> = {
   html: {
     defaultRole: 'document',
     supportedRoles: ['document'],
+    supportedAttributesOverride: [],
   },
 
   // Document metadata
@@ -73,6 +74,7 @@ export const tags: Record<TagName, TagInfo> = {
   body: {
     defaultRole: 'generic',
     supportedRoles: ['generic'],
+    supportedAttributesOverride: ['aria-hidden'],
     namingProhibited: true,
   },
 
@@ -154,6 +156,7 @@ export const tags: Record<TagName, TagInfo> = {
   div: {
     defaultRole: 'generic',
     supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   dl: {
     defaultRole: NO_CORRESPONDING_ROLE,
@@ -221,10 +224,12 @@ export const tags: Record<TagName, TagInfo> = {
   bdi: {
     defaultRole: 'generic',
     supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   bdo: {
     defaultRole: 'generic',
     supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   br: {
     defaultRole: NO_CORRESPONDING_ROLE,
@@ -234,14 +239,17 @@ export const tags: Record<TagName, TagInfo> = {
   cite: {
     defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   code: {
     defaultRole: 'code',
     supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   data: {
     defaultRole: 'generic',
     supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   dfn: {
     defaultRole: 'term',
@@ -339,6 +347,7 @@ export const tags: Record<TagName, TagInfo> = {
   wbr: {
     defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: ['none', 'presentation'],
+    supportedAttributesOverride: ['aria-hidden'],
   },
 
   // Image and multimedia
@@ -362,6 +371,7 @@ export const tags: Record<TagName, TagInfo> = {
   track: {
     defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
+    supportedAttributesOverride: ['aria-hidden'],
   },
   video: {
     defaultRole: NO_CORRESPONDING_ROLE,
@@ -421,6 +431,7 @@ export const tags: Record<TagName, TagInfo> = {
   del: {
     defaultRole: 'deletion',
     supportedRoles: ALL_ROLES,
+    namingProhibited: true,
   },
   ins: {
     defaultRole: 'insertion',
@@ -432,14 +443,17 @@ export const tags: Record<TagName, TagInfo> = {
   caption: {
     defaultRole: 'caption',
     supportedRoles: ['caption'],
+    namingProhibited: true,
   },
   col: {
     defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: NO_ROLES,
+    supportedAttributesOverride: [],
   },
   colgroup: {
     defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: NO_ROLES,
+    supportedAttributesOverride: [],
   },
   table: {
     defaultRole: 'table',
@@ -478,6 +492,7 @@ export const tags: Record<TagName, TagInfo> = {
   datalist: {
     defaultRole: 'listbox',
     supportedRoles: ['listbox'],
+    supportedAttributesOverride: [],
   },
   fieldset: {
     defaultRole: 'group',

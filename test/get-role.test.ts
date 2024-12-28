@@ -4,7 +4,7 @@ import { checkTestAndTagName } from './helpers.js';
 
 describe('getRole', () => {
   /**
-   * Document conformance requirements for use of ARIA attributes in HTML
+   * Document conformance requirements for use of aria-* attributes in HTML
    *
    * The following table provides normative per-element document conformance
    * requirements for the use of ARIA markup in HTML documents. Additionally, it
@@ -129,6 +129,7 @@ describe('getRole', () => {
     ['select[size=1]', { given: [{ tagName: 'select', attributes: { size: 1 } }], want: 'combobox' }],
     ['select[multiple]', { given: [{ tagName: 'select', attributes: { multiple: true } }], want: 'listbox' }],
     ['select[size=2]', { given: [{ tagName: 'select', attributes: { size: 2 } }], want: 'listbox' }],
+    ['select[role=generic]', { given: [{ tagName: 'select', attributes: { role: 'generic' } }], want: 'combobox' }],
     ['span', { given: [{ tagName: 'span' }], want: 'generic' }],
     ['small', { given: [{ tagName: 'small' }], want: 'generic' }],
     ['source', { given: [{ tagName: 'source' }], want: undefined }],

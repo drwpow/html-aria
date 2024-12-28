@@ -2,7 +2,7 @@ import { type GetRoleOptions, getRole } from './get-role.js';
 import { attributes, globalAttributes } from './lib/aria-attributes.js';
 import { roles } from './lib/aria-roles.js';
 import { tags } from './lib/html.js';
-import { namingProhibited, virtualizeElement } from './lib/util.js';
+import { calculateAccessibleName, namingProhibited, virtualizeElement } from './lib/util.js';
 import { getHeaderRole } from './tags/header.js';
 import type { ARIAAttribute, VirtualElement } from './types.js';
 
@@ -10,7 +10,7 @@ const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
 const GLOBAL_NO_NAMING = namingProhibited(GLOBAL_ATTRIBUTES);
 
 /**
- * Given an ARIA role returns a list of supported/inherited ARIA attributes.
+ * Given an ARIA role returns a list of supported/inherited aria-* attributes.
  */
 export function getSupportedAttributes(
   element: HTMLElement | VirtualElement,
@@ -21,6 +21,9 @@ export function getSupportedAttributes(
   if (!tag) {
     return [];
   }
+
+  // Note: DON’T check for length! Often an empty array is used
+  // to mean “no aria-* attributes supported
   if (tag.supportedAttributesOverride) {
     return tag.supportedAttributesOverride;
   }
@@ -34,25 +37,24 @@ export function getSupportedAttributes(
 
   // special cases
   switch (tagName) {
-    case 'body': {
-      return GLOBAL_ATTRIBUTES.filter((a) => a !== 'aria-hidden');
-    }
     case 'header':
     case 'footer': {
       const role = getHeaderRole(options);
-      if (role === 'generic') {
-        return namingProhibited(roles.generic.supported);
-      }
-      return roleData.supported;
+      return role === 'generic' ? roles.generic.supported : roleData.supported;
+    }
+    case 'img': {
+      const name = calculateAccessibleName({ tagName, attributes });
+      // if no accessible name, only aria-hidden allowed
+      return name ? roleData.supported : ['aria-hidden'];
     }
     case 'input': {
       if (attributes.type === 'hidden') {
-        return [];
+        return ['aria-hidden'];
       }
     }
   }
 
-  return tag.namingProhibited ? namingProhibited(roleData.supported) : roleData.supported;
+  return roleData.supported;
 }
 
 /**
