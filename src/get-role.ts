@@ -1,9 +1,10 @@
 import { roles } from './lib/aria-roles.js';
-import { tags } from './lib/html.js';
+import { NO_CORRESPONDING_ROLE, tags } from './lib/html.js';
 import { calculateAccessibleName, parseTokenList, virtualizeElement } from './lib/util.js';
 import { getFooterRole } from './tags/footer.js';
 import { getHeaderRole } from './tags/header.js';
 import { getInputRole } from './tags/input.js';
+import { getSelectRole } from './tags/select.js';
 import { getTDRole } from './tags/td.js';
 import type { ARIARole, AncestorList, VirtualElement } from './types.js';
 
@@ -46,6 +47,8 @@ export function getRole(element: HTMLElement | VirtualElement, options?: GetRole
     return undefined;
   }
 
+  const explicitEmptyAncestors = options?.ancestors && options.ancestors.length === 0;
+
   switch (tagName) {
     case 'a':
     case 'area': {
@@ -64,8 +67,14 @@ export function getRole(element: HTMLElement | VirtualElement, options?: GetRole
     case 'input': {
       return getInputRole({ attributes, ancestors: options?.ancestors });
     }
+    case 'li': {
+      return explicitEmptyAncestors ? 'generic' : tag.defaultRole;
+    }
     case 'footer': {
       return getFooterRole(options);
+    }
+    case 'select': {
+      return getSelectRole({ attributes });
     }
     case 'td': {
       return getTDRole(options);
@@ -77,16 +86,10 @@ export function getRole(element: HTMLElement | VirtualElement, options?: GetRole
       if (attributes.scope === 'row') {
         return 'rowheader';
       }
-      if (options?.ancestors && options.ancestors.length === 0) {
-        return undefined;
-      }
-      return tag.defaultRole;
+      return explicitEmptyAncestors ? NO_CORRESPONDING_ROLE : tag.defaultRole;
     }
     case 'tr': {
-      if (options?.ancestors && options.ancestors.length === 0) {
-        return undefined;
-      }
-      return tag.defaultRole;
+      return explicitEmptyAncestors ? NO_CORRESPONDING_ROLE : tag.defaultRole;
     }
   }
 

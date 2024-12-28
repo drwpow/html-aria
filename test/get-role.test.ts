@@ -116,7 +116,7 @@ describe('getRole', () => {
     ['p', { given: [{ tagName: 'p' }], want: 'paragraph' }],
     ['picture', { given: [{ tagName: 'picture' }], want: undefined }],
     ['pre', { given: [{ tagName: 'pre' }], want: 'generic' }],
-    ['q', { given: [{ tagName: 'q' }], want: undefined }],
+    ['q', { given: [{ tagName: 'q' }], want: 'generic' }],
     ['rp', { given: [{ tagName: 'rp' }], want: undefined }],
     ['rt', { given: [{ tagName: 'rt' }], want: undefined }],
     ['ruby', { given: [{ tagName: 'ruby' }], want: undefined }],

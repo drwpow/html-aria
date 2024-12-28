@@ -10,6 +10,21 @@ describe('getSupportedRoles', () => {
       want: ReturnType<typeof getSupportedRoles>;
     },
   ][] = [
+    ['address', { given: [{ tagName: 'address' }], want: ALL_ROLES }],
+    [
+      'article',
+      {
+        given: [{ tagName: 'article' }],
+        want: ['article', 'application', 'document', 'feed', 'main', 'none', 'presentation', 'region'], // biome-ignore format: long list
+      },
+    ],
+    [
+      'aside',
+      {
+        given: [{ tagName: 'aside' }],
+        want: ['complementary', 'feed', 'none', 'note', 'presentation', 'region', 'search'],
+      },
+    ],
     ['audio', { given: [{ tagName: 'audio' }], want: ['application'] }],
     ['b', { given: [{ tagName: 'b' }], want: ALL_ROLES }],
     ['base', { given: [{ tagName: 'base' }], want: NO_ROLES }],
@@ -68,7 +83,6 @@ describe('getSupportedRoles', () => {
     ['h5', { given: [{ tagName: 'h5' }], want: ['heading', 'none', 'presentation', 'tab'] }],
     ['h6', { given: [{ tagName: 'h6' }], want: ['heading', 'none', 'presentation', 'tab'] }],
     ['head', { given: [{ tagName: 'head' }], want: NO_ROLES }],
-    ['hgroup', { given: [{ tagName: 'hgroup' }], want: ALL_ROLES }],
     [
       'header (landmark)',
       {
@@ -80,6 +94,7 @@ describe('getSupportedRoles', () => {
       'header (default)',
       { given: [{ tagName: 'header' }], want: ['banner', 'generic', 'group', 'none', 'presentation'] },
     ],
+    ['hgroup', { given: [{ tagName: 'hgroup' }], want: ALL_ROLES }],
     ['html', { given: [{ tagName: 'html' }], want: NO_ROLES }],
     ['hr', { given: [{ tagName: 'hr' }], want: ['none', 'presentation', 'separator'] }],
     ['i', { given: [{ tagName: 'i' }], want: ALL_ROLES }],
@@ -145,7 +160,12 @@ describe('getSupportedRoles', () => {
     ['main', { given: [{ tagName: 'main' }], want: ['main'] }],
     ['math', { given: [{ tagName: 'math' }], want: ['math'] }],
     ['map', { given: [{ tagName: 'map' }], want: [] }],
+    ['meta', { given: [{ tagName: 'meta' }], want: [] }],
     ['meter', { given: [{ tagName: 'meter' }], want: ['meter'] }],
+    [
+      'nav',
+      { given: [{ tagName: 'nav' }], want: ['menu', 'menubar', 'navigation', 'none', 'presentation', 'tablist'] },
+    ],
     ['noscript', { given: [{ tagName: 'noscript' }], want: [] }],
     ['object', { given: [{ tagName: 'object' }], want: ['application', 'document', 'img', 'image'] }],
     [
@@ -221,8 +241,9 @@ describe('getSupportedRoles', () => {
   const testedTags = new Set<string>();
 
   test.each(tests)('%s', (name, { given, want }) => {
-    checkTestAndTagName(name, given[0].tagName);
+    testedTags.add(given[0].tagName);
     expect(getSupportedRoles(...given)).toEqual(want);
+    checkTestAndTagName(name, given[0].tagName);
   });
 
   test('all tags are tested', () => {
