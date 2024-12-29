@@ -34,17 +34,17 @@ getRole({ tagName: "input", attributes: { type: "checkbox" } }); // "checkbox"
 getRole({ tagName: "div", attributes: { role: "button" } }); // "button"
 ```
 
-In order to describe how this library follows the W3C spec more closely, it’s important to understand that inferring ARIA roles from HTML isn’t simple! There are essentially 3 categories of roles:
+In order to describe how this library follows the W3C spec more closely, it’s important to understand that inferring ARIA roles from HTML isn’t straightforward! There are essentially 3 categories of roles:
 
-1. **Simple roles**: 1 HTML element = 1 default ARIA role.
+1. **Direct map**: 1 HTML element → 1 default ARIA role.
 2. **Attribute roles**: The proper ARIA role can only be determined from the HTML element’s attributes (e.g. `input[type="radio"]` → `radio`)
 3. **Hierarchial roles**: The proper ARIA role can only be determined by knowing its parent roles.
 
-The 1st type only requres a simple tag name. The 2nd requires a tag name and attributes. The 3rd requires knowing its immediate parent elements. To see a table of all types, see [3 types of roles](#aria-roles-from-html).
+The 1st type only requires a tag name. The 2nd requires a tag name and attributes. The 3rd requires knowing its immediate parent elements. To see a table of all types, see [3 types of roles](#aria-roles-from-html).
 
 ### getSupportedRoles()
 
-The spec dictates that **certain elements may NOT receive certain roles.** For example, `<div role="button">` is allowed (not recommended, but allowed), but `<select role="button">` is not. `getSupportedRoles()` will return all valid roles for a given element (including attributes).
+The spec dictates that **certain elements may NOT receive certain roles.** For example, `<div role="button">` is allowed (not recommended, but allowed), but `<select role="button">` is not. `getSupportedRoles()` will return all valid roles for a given element + attributes.
 
 ```ts
 import { getSupportedRoles } from "html-aria";
@@ -116,7 +116,7 @@ isValidAttributeValue("aria-checked", "checked"); // false
 
 This outlines the requirements to adhere to the [W3C spec](https://www.w3.org/TR/html-aria/#docconformance) when it comes to inferring the correct ARIA roles from HTML. There are 3 basic types:
 
-1. **Simple roles**: 1 HTML element = 1 default ARIA role
+1. **Direct map**: 1 HTML element → 1 default ARIA role.
 2. **Attributes roles**: 1 HTML element = multiple possible ARIA roles, depending on attributes (`input[type="radio"]` → `radio` is a common example)
 3. **Hierarchial roles**: 1 HTML element = multiple possible ARIA roles depending on its parents
 
@@ -212,6 +212,12 @@ From the [spec](https://www.w3.org/TR/html-aria/#dfn-no-corresponding-role):
 In other words, `none` is more of a decisive “this element is presentational and can be ignored” labeling, while “no corresponding role” means “this element doesn’t have predefined behavior that can be automatically determined, and the author should provide additional information such as explicit `role`s and ARIA states and properties.”
 
 In this library, “no corresponding role” is represented as `undefined`.
+
+#### Is there a difference between “unsupported attributes” and “prohibited attributes?”
+
+In the spec, you’ll see 2 terms: _supported_ and _prohibited_. It’s important to note that not all _unsupported_ attributes are necessarily _prohibited_ (i.e. all prohibited attributes are unsupported, but not all unsupported attributes are prohibited)! The distinction is basically **prohibited attributes constitute an error,** where as unsupported attributes are merely ignored.
+
+For the purposes of html-aria, though, we usually want to discourage unsupported attributes to follow best practices, even if it’s not technically an error. So even though there _is_ a technical distinction between the two terms, for the purpose of this library they’re treated as the same—we pretend that all unsupported attributes are prohibited. That’s why there’s currently no `getProhibitedAttributes()` method (you can merely infer it from `getSupportedAttributes()` / `isSupportedAttribute()`).
 
 ## About
 
