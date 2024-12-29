@@ -21,14 +21,12 @@ describe('getRole', () => {
       want: ReturnType<typeof getRole>;
     },
   ][] = [
-    ['a', { given: [{ tagName: 'a' }], want: 'generic' }],
-    ['a[href]', { given: [{ tagName: 'a', attributes: { href: '#' } }], want: 'link' }],
-    ['a[href] (empty)', { given: [{ tagName: 'a', attributes: { href: '' } }], want: 'link' }],
+    ['a', { given: [{ tagName: 'a' }], want: 'link' }],
+    ['a (no href)', { given: [{ tagName: 'a', attributes: {} }], want: 'generic' }],
     ['abbr', { given: [{ tagName: 'abbr' }], want: undefined }],
     ['address', { given: [{ tagName: 'address' }], want: 'group' }],
-    ['area', { given: [{ tagName: 'area' }], want: 'generic' }],
-    ['area[href]', { given: [{ tagName: 'area', attributes: { href: '#' } }], want: 'link' }],
-    ['area[href] (empty)', { given: [{ tagName: 'area', attributes: { href: '' } }], want: 'link' }],
+    ['area', { given: [{ tagName: 'area' }], want: 'link' }],
+    ['area (no href)', { given: [{ tagName: 'area', attributes: {} }], want: 'generic' }],
     ['article', { given: [{ tagName: 'article' }], want: 'article' }],
     ['aside', { given: [{ tagName: 'aside' }], want: 'complementary' }],
     ['audio', { given: [{ tagName: 'audio' }], want: undefined }],

@@ -58,10 +58,7 @@ export function getRole(element: HTMLElement | VirtualElement, options?: GetRole
   switch (tagName) {
     case 'a':
     case 'area': {
-      if (typeof attributes?.href === 'string') {
-        return 'link';
-      }
-      return tag.defaultRole;
+      return attributes && !('href' in attributes) ? 'generic' : tag.defaultRole;
     }
     case 'header': {
       return getHeaderRole(options);
@@ -71,7 +68,7 @@ export function getRole(element: HTMLElement | VirtualElement, options?: GetRole
       return name ? 'img' : 'none';
     }
     case 'input': {
-      return getInputRole({ attributes, ancestors: options?.ancestors });
+      return getInputRole({ attributes });
     }
     case 'li': {
       return explicitEmptyAncestors ? 'generic' : tag.defaultRole;

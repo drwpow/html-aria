@@ -23,6 +23,10 @@ describe('role data', () => {
           roleData.required.every((a) => roleData.supported.includes(a)),
           'supported aria-* attributes missing some required aria-* attributes',
         ).toBe(true);
+        expect(
+          roleData.prohibited.every((a) => !roleData.supported.includes(a)),
+          'prohibited aria-* attributes in supported aria-* attributes',
+        ).toBe(true);
       });
     }
   }

@@ -1,6 +1,31 @@
 import { NO_CORRESPONDING_ROLE } from '../lib/html.js';
 import type { VirtualElement } from '../types.js';
 
+export const INPUT_TYPES = new Set([
+  'button',
+  'checkbox',
+  'color',
+  'date',
+  'datetime-local',
+  'email',
+  'file',
+  'hidden',
+  'image',
+  'month',
+  'number',
+  'password',
+  'radio',
+  'range',
+  'reset',
+  'search',
+  'submit',
+  'tel',
+  'text',
+  'time',
+  'url',
+  'week',
+]);
+
 export function getInputRole(options: {
   attributes: VirtualElement['attributes'];
 }) {
@@ -14,6 +39,18 @@ export function getInputRole(options: {
     case 'checkbox': {
       return 'checkbox';
     }
+    case 'image': {
+      return 'img';
+    }
+    case 'range': {
+      return 'slider';
+    }
+    case 'radio': {
+      return 'radio';
+    }
+    case 'search': {
+      return 'searchbox';
+    }
     case 'color':
     case 'date':
     case 'datetime-local':
@@ -22,9 +59,6 @@ export function getInputRole(options: {
     case 'month':
     case 'week': {
       return NO_CORRESPONDING_ROLE;
-    }
-    case 'image': {
-      return 'img';
     }
   }
 

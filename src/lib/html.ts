@@ -126,7 +126,7 @@ export const tags: Record<TagName, TagInfo> = {
   },
   main: {
     defaultRole: 'main',
-    supportedRoles: [],
+    supportedRoles: ['main'],
   },
   nav: {
     defaultRole: 'navigation',
@@ -205,7 +205,7 @@ export const tags: Record<TagName, TagInfo> = {
 
   // Inline text semantics
   a: {
-    defaultRole: 'generic',
+    defaultRole: 'link',
     supportedRoles: ['button', 'checkbox', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
   },
   abbr: {
