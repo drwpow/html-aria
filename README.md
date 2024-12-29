@@ -8,10 +8,10 @@ WAI-ARIA utilities for HTML based on the [ARIA 1.3 spec](https://www.w3.org/TR/w
 
 ### aria-query
 
-- aria-query is still on ARIA 1.2; this library supports ARIA 1.3
-- html-aria is > 100× faster, due to aria-query rebuilding large arrays on almost every query.
+- html-aria supports ARIA 1.3 while aria-query is still on ARIA 1.2
+- html-aria is designed to reduce effort and minimize error for common tasks (e.g. determining ARIA roles from HTML). aria-query is a general purpose replication of the ARIA spec that requires more understanding and more boilerplate code.
+- html-aria is more performant (100× faster) due to aria-query [constantly redoing work](https://github.com/A11yance/aria-query/issues/560).
 - html-aria is smaller, weighing only ~5k gzip (aria-query is ~13k gzip)
-- html-aria is more user-friendly, with APIs like `getRole()` rather than having to write boilerplate code
 - html-aria respects more nuance in the spec such as [improved role detection from HTML](#getrole) and [HTML-aware aria-\* attributes](#aria-attributes-from-html)
 
 ## Setup
@@ -34,13 +34,13 @@ getRole({ tagName: "input", attributes: { type: "checkbox" } }); // "checkbox"
 getRole({ tagName: "div", attributes: { role: "button" } }); // "button"
 ```
 
-In order to describe how this library follows the W3C spec more closely, it’s important to understand that inferring ARIA roles from HTML isn’t straightforward! There are essentially 3 categories of roles:
+It’s important to note that inferring ARIA roles from HTML isn’t always straightforward! There are 3 types of role inference:
 
-1. **Direct map**: 1 HTML element → 1 default ARIA role.
-2. **Attribute roles**: The proper ARIA role can only be determined from the HTML element’s attributes (e.g. `input[type="radio"]` → `radio`)
-3. **Hierarchial roles**: The proper ARIA role can only be determined by knowing its parent roles.
+1. **Tag map**: 1 tag → 1 ARIA role.
+2. **Tag + attribute map**: Tags + attributes are needed to determine the ARIA role (e.g. `input[type="radio"]` → `radio`)
+3. **Tag + DOM tree**: Tags + DOM tree structure are needed to determine the ARIA role.
 
-The 1st type only requires a tag name. The 2nd requires a tag name and attributes. The 3rd requires knowing its immediate parent elements. To see a table of all types, see [3 types of roles](#aria-roles-from-html).
+[Learn more](#aria-roles-from-html).
 
 ### getSupportedRoles()
 
@@ -78,10 +78,7 @@ isSupportedAttribute({ tagName: "button" }, "aria-pressed"); // true
 isSupportedAttribute({ tagName: "button" }, "aria-checked"); // false
 ```
 
-It’s worth noting that **HTML elements may factor in** according to the spec. In other words, just providing the `role` isn’t enough. Here are a list of HTML elements where they support different attributes than their corresponding `role`s:
-
-- `<b>`, `<code>`, `<i>`, `<samp>`, `<span>`, and `<small>` don’t allow `aria-label` or `aria-labelledby`
-- `<col>`, `<colgroup>`, `<slot>`, `<source>`, and `<template>` don’t support any aria-\* attributes (whereas by default [global attributes](https://www.w3.org/TR/wai-aria-1.3/#global_states) are usually allowed)
+It’s worth noting that **HTML elements may factor in** according to the spec—providing the `role` isn’t enough. [See aria-\* attributes from HTML](#aria--attributes-from-html).
 
 ### isValidAttributeValue()
 
@@ -114,13 +111,13 @@ isValidAttributeValue("aria-checked", "checked"); // false
 
 ### ARIA roles from HTML
 
-This outlines the requirements to adhere to the [W3C spec](https://www.w3.org/TR/html-aria/#docconformance) when it comes to inferring the correct ARIA roles from HTML. There are 3 basic types:
+This outlines the requirements to adhere to the [W3C spec](https://www.w3.org/TR/html-aria/#docconformance) when it comes to inferring the correct ARIA roles from HTML. Essentially, there are 3 types of inference:
 
-1. **Direct map**: 1 HTML element → 1 default ARIA role.
-2. **Attributes roles**: 1 HTML element = multiple possible ARIA roles, depending on attributes (`input[type="radio"]` → `radio` is a common example)
-3. **Hierarchial roles**: 1 HTML element = multiple possible ARIA roles depending on its parents
+1. **Tag map**: 1 tag → 1 ARIA role.
+2. **Tag + attribute map**: Tags + attributes are needed to determine the ARIA role (e.g. `input[type="radio"]` → `radio`)
+3. **Tag + DOM tree**: Tags + DOM tree structure are needed to determine the ARIA role.
 
-Here are all the HTML elements where either attributes, hierarchy, or both are necessary to determine the correct role (all omitted elements follow a simple mapping pattern):
+Here are all the HTML elements where either attributes, hierarchy, or both are necessary to determine the correct role. Any HTML elements not listed here follow the simple “tag map” approach (keep in mind that [aria-\* attributes may not follow the same rules](#aria--attributes-from-html)!).
 
 | Element     |                                                  Role                                                   | Attribute-based | Hierarchy-based |
 | :---------- | :-----------------------------------------------------------------------------------------------------: | :-------------: | :-------------: |
@@ -223,11 +220,5 @@ For the purposes of html-aria, though, we usually want to discourage unsupported
 
 ### Project Goals
 
-1. Deliver correct, up-to-date information based on the [latest W3C recommendation](https://www.w3.org/TR/html-aria/)
-1. Only provide normative (unopinionated) data
-
-### Differences from aria-query
-
-- Current with ARIA 1.3
-- Simpler API.
-- Ships TypeScript types for advanced usecases
+1. Get annoyingly-close to the WAI-ARIA specification while remaining user-friendly
+1. Don’t be opinionated
