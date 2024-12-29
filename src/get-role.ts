@@ -6,6 +6,7 @@ import { getHeaderRole } from './tags/header.js';
 import { getInputRole } from './tags/input.js';
 import { getSelectRole } from './tags/select.js';
 import { getTDRole } from './tags/td.js';
+import { getTHRole } from './tags/th.js';
 import type { ARIARole, AncestorList, VirtualElement } from './types.js';
 
 export interface GetRoleOptions {
@@ -85,13 +86,7 @@ export function getRole(element: HTMLElement | VirtualElement, options?: GetRole
       return getTDRole(options);
     }
     case 'th': {
-      if (attributes.scope === 'col') {
-        return 'columnheader';
-      }
-      if (attributes.scope === 'row') {
-        return 'rowheader';
-      }
-      return explicitEmptyAncestors ? NO_CORRESPONDING_ROLE : tag.defaultRole;
+      return getTHRole({ attributes, ancestors: options?.ancestors });
     }
     case 'tr': {
       return explicitEmptyAncestors ? NO_CORRESPONDING_ROLE : tag.defaultRole;

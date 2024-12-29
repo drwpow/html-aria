@@ -8,11 +8,11 @@ WAI-ARIA utilities for HTML based on the [ARIA 1.3 spec](https://www.w3.org/TR/w
 
 ### aria-query
 
-- This library not only supports ARIA 1.3
-- This supports the normative W3C [HTML in ARIA](https://www.w3.org/TR/html-aria/) recommendations for more accurate results
-- This library is more performant (> 100× faster), due to aria-query redoing work on almost every query.
-- This library is designed to be more user-friendly
-- This library respects more nuance in the spec such as [improved role detection from HTML](#getrole) and [HTML-aware aria-\* attributes](#aria-attributes-from-html)
+- aria-query is still on ARIA 1.2; this library supports ARIA 1.3
+- html-aria is > 100× faster, due to aria-query rebuilding large arrays on almost every query.
+- html-aria is smaller, weighing only ~5k gzip (aria-query is ~13k gzip)
+- html-aria is more user-friendly, with APIs like `getRole()` rather than having to write boilerplate code
+- html-aria respects more nuance in the spec such as [improved role detection from HTML](#getrole) and [HTML-aware aria-\* attributes](#aria-attributes-from-html)
 
 ## Setup
 
@@ -170,6 +170,14 @@ Further, a common mistake many simple accessibility libraries make is mapping ar
 _Note: `—` = [no corresponding role](#whats-the-difference-between-no-corresponding-role-and-the-none-role-). Also worth pointing out that in other cases, [global aria-\* attributes](https://www.w3.org/TR/wai-aria-1.3/#global_states) are allowed, so this is unique to the element and NOT the ARIA role._
 
 ### Technical deviations from the spec
+
+#### SVG
+
+SVG is tricky. Though the [spec says](https://www.w3.org/TR/html-aria/#el-svg) `<svg>` should get the `graphics-document` role by default, browsers chose chaos. Firefox 134 displays `graphics-document`, Chrome 131 defaults to `image` (previously it returned nothing, or other roles), and Safari defaults to `generic` (which is one of the worst roles you could probably give it).
+
+Since we have 1 spec and 1 browser agreeing, this library defaults to `graphics-document`. Though the best answer is _SVGs should ALWAYS get an explicit `role`_.
+
+#### Ancestor-based roles
 
 In regards to [ARIA roles in HTML](#aria-roles-in-html), the spec gives non-semantic roles to `<td>`, `<th>`, and `<li>` UNLESS they are used inside specific containers (`table`, `grid`, or `gridcell` for `<td>`/`<th>`; `list` or `menu` for `<li>`). This library assumes they’re being used in their proper containers without requiring the `ancestors` array. This is done to avoid the [footgun](https://en.wiktionary.org/wiki/footgun) of requiring missable configuration to produce accurate results, which is bad software design.
 

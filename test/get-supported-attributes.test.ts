@@ -6,7 +6,7 @@ import {
   isValidAttributeValue,
   tags,
 } from '../src/index.js';
-import { globalAttributes, widgetAttributes } from '../src/lib/aria-attributes.js';
+import { attributes, globalAttributes, widgetAttributes } from '../src/lib/aria-attributes.js';
 import { checkTestAndTagName } from './helpers.js';
 
 const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
@@ -22,11 +22,18 @@ const tests: [
     want: ReturnType<typeof getSupportedAttributes>;
   },
 ][] = [
+  ['a', { given: [{ tagName: 'a' }], want: [] }],
+  ['abbr', { given: [{ tagName: 'abbr' }], want: [] }],
+  ['address', { given: [{ tagName: 'address' }], want: [] }],
+  ['area', { given: [{ tagName: 'area' }], want: [] }],
+  ['article', { given: [{ tagName: 'article' }], want: [] }],
+  ['aside', { given: [{ tagName: 'aside' }], want: [] }],
+  ['base', { given: [{ tagName: 'base' }], want: [] }],
   ['bdi', { given: [{ tagName: 'bdi' }], want: GLOBAL_ATTRIBUTES }],
   ['bdo', { given: [{ tagName: 'bdo' }], want: GLOBAL_ATTRIBUTES }],
   ['blockquote', { given: [{ tagName: 'blockquote' }], want: GLOBAL_ATTRIBUTES }],
+  ['body', { given: [{ tagName: 'body' }], want: ['aria-hidden'] }],
   ['br', { given: [{ tagName: 'br' }], want: ['aria-hidden'] }],
-  ['body', { given: [{ tagName: 'body' }], want: [] }],
   ['canvas', { given: [{ tagName: 'canvas' }], want: GLOBAL_ATTRIBUTES }],
   ['cite', { given: [{ tagName: 'cite' }], want: GLOBAL_ATTRIBUTES }],
   ['code', { given: [{ tagName: 'code' }], want: GLOBAL_NO_NAMING }],
@@ -35,7 +42,17 @@ const tests: [
   ['data', { given: [{ tagName: 'data' }], want: GLOBAL_ATTRIBUTES }],
   ['datalist', { given: [{ tagName: 'datalist' }], want: [] }],
   ['dd', { given: [{ tagName: 'dd' }], want: GLOBAL_ATTRIBUTES }],
+  ['footer', { given: [{ tagName: 'footer' }], want: [] }],
+  ['h1', { given: [{ tagName: 'h1' }], want: [] }],
+  ['h2', { given: [{ tagName: 'h1' }], want: [] }],
+  ['h3', { given: [{ tagName: 'h1' }], want: [] }],
+  ['h4', { given: [{ tagName: 'h1' }], want: [] }],
+  ['h5', { given: [{ tagName: 'h1' }], want: [] }],
+  ['h6', { given: [{ tagName: 'h6' }], want: [] }],
   ['head', { given: [{ tagName: 'head' }], want: [] }],
+  ['header', { given: [{ tagName: 'header' }], want: [] }],
+  ['hgroup', { given: [{ tagName: 'hgroup' }], want: [] }],
+  ['html', { given: [{ tagName: 'html' }], want: [] }],
   [
     'input[type="checkbox"]',
     {
@@ -58,15 +75,18 @@ const tests: [
     },
   ],
   ['link', { given: [{ tagName: 'link' }], want: [] }],
+  ['meta', { given: [{ tagName: 'meta' }], want: [] }],
   ['main', { given: [{ tagName: 'main' }], want: GLOBAL_ATTRIBUTES }],
   ['map', { given: [{ tagName: 'map' }], want: [] }],
   ['meta', { given: [{ tagName: 'meta' }], want: [] }],
+  ['nav', { given: [{ tagName: 'nav' }], want: [] }],
   ['noscript', { given: [{ tagName: 'noscript' }], want: [] }],
   ['picture', { given: [{ tagName: 'picture' }], want: ['aria-hidden'] }],
   ['s', { given: [{ tagName: 's' }], want: [] }],
   ['samp', { given: [{ tagName: 'samp' }], want: [] }],
   ['script', { given: [{ tagName: 'script' }], want: [] }],
   ['search', { given: [{ tagName: 'search' }], want: [] }],
+  ['section', { given: [{ tagName: 'section' }], want: [] }],
   ['slot', { given: [{ tagName: 'slot' }], want: [] }],
   ['span', { given: [{ tagName: 'span' }], want: GLOBAL_NO_NAMING }],
   ['source', { given: [{ tagName: 'source' }], want: [] }],
@@ -82,6 +102,7 @@ describe('getSupportedAttributes', () => {
   const testedTags = new Set<string>();
 
   test.each(tests)('%s', (name, { given, want }) => {
+    testedTags.add(given[0].tagName);
     checkTestAndTagName(name, given[0].tagName);
 
     // dedupe, sort, and alphabetize these to make tests easier to write

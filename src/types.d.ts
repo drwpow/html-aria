@@ -434,7 +434,13 @@ export type LiveRegionRole = 'alert' | 'log' | 'marquee' | 'status' | 'timer';
  */
 export type WindowRole = 'alertdialog' | 'dialog';
 
-export type ARIARole = WidgetRole | DocumentStructureRole | LandmarkRole | LiveRegionRole | WindowRole;
+/**
+ * Graphics Roles extensions
+ * @see https://www.w3.org/TR/graphics-aria-1.0/#roles
+ */
+export type GraphicsRole = 'graphics-document' | 'graphics-object' | 'graphics-symbol';
+
+export type ARIARole = WidgetRole | DocumentStructureRole | LandmarkRole | LiveRegionRole | WindowRole | GraphicsRole;
 
 /** Useful in places where the DOM isn’t available, e.g. SSR */
 export interface VirtualElement {

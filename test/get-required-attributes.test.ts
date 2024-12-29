@@ -37,6 +37,9 @@ const tests: [
   ['generic', { given: ['generic'], want: [] }],
   ['grid', { given: ['grid'], want: [] }],
   ['gridcell', { given: ['gridcell'], want: [] }],
+  ['graphics-document', { given: ['graphics-document'], want: [] }],
+  ['graphics-object', { given: ['graphics-object'], want: [] }],
+  ['graphics-symbol', { given: ['graphics-symbol'], want: [] }],
   ['group', { given: ['group'], want: [] }],
   ['heading', { given: ['heading'], want: ['aria-level'] }],
   ['image', { given: ['image'], want: [] }],
@@ -75,6 +78,7 @@ const tests: [
   ['searchbox', { given: ['searchbox'], want: [] }],
   // TODO: handle focusable?
   ['separator', { given: ['separator'], want: [] }],
+  ['suggestion', { given: ['suggestion'], want: [] }],
   ['slider', { given: ['slider'], want: ['aria-valuenow'] }],
   ['spinbutton', { given: ['spinbutton'], want: [] }],
   ['status', { given: ['status'], want: [] }],

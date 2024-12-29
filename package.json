@@ -4,12 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "license": "MIT",
-  "keywords": [
-    "a11y",
-    "accessibility",
-    "aria",
-    "aria-1.3"
-  ],
+  "keywords": ["a11y", "accessibility", "aria", "1.3", "wai-aria"],
   "repository": {
     "type": "git",
     "url": "https://github.com/drwpow/html-aria"
@@ -19,7 +14,7 @@
     ".": {
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
-      "types": "./dist/index.cjs",
+      "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
     "./*": "./dist/*.js",

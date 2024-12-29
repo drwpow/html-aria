@@ -1,12 +1,11 @@
 import { NO_CORRESPONDING_ROLE } from '../lib/html.js';
-import type { AncestorList, VirtualElement } from '../types.js';
+import type { VirtualElement } from '../types.js';
 
 export function getInputRole(options: {
-  attributes: NonNullable<VirtualElement['attributes']>;
-  ancestors?: AncestorList;
+  attributes: VirtualElement['attributes'];
 }) {
   const { attributes } = options;
-  const type = attributes.type;
+  const type = attributes?.type;
 
   switch (type) {
     case 'button': {
@@ -29,9 +28,5 @@ export function getInputRole(options: {
     }
   }
 
-  if ('list' in attributes) {
-    return 'combobox';
-  }
-
-  return 'textbox';
+  return attributes && 'list' in attributes ? 'combobox' : 'textbox';
 }

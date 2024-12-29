@@ -1,9 +1,12 @@
 import { tags } from '../lib/html.js';
-import { findFirstSignificantAncestor } from '../lib/util.js';
+import { firstMatchingAncestor } from '../lib/util.js';
 import type { AncestorList } from '../types.js';
 
 export function getFooterRole(options?: { ancestors?: AncestorList }) {
-  const hasLandmarkParent = findFirstSignificantAncestor(
+  if (!options?.ancestors) {
+    return tags.footer.defaultRole;
+  }
+  const hasLandmarkParent = firstMatchingAncestor(
     [
       { tagName: 'article', attributes: { role: 'article' } },
       { tagName: 'aside', attributes: { role: 'complementary' } },

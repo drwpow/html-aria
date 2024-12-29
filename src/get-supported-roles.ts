@@ -1,6 +1,8 @@
-import { ALL_ROLES, tags } from './lib/html.js';
+import { ALL_ROLES, NO_ROLES } from './lib/aria-roles.js';
+import { tags } from './lib/html.js';
 import { calculateAccessibleName, virtualizeElement } from './lib/util.js';
 import { getFooterRole } from './tags/footer.js';
+import { getInputRole } from './tags/input.js';
 import { getTDRole } from './tags/td.js';
 import type { ARIARole, AncestorList, VirtualElement } from './types.js';
 
@@ -22,7 +24,7 @@ export interface SupportedRoleOptions {
  * An empty array means no roles are supported (which is true for some elements!)
  */
 export function getSupportedRoles(element: HTMLElement | VirtualElement, options?: SupportedRoleOptions): ARIARole[] {
-  const { tagName, attributes = {} } = virtualizeElement(element);
+  const { tagName, attributes } = virtualizeElement(element);
   const tag = tags[tagName];
   if (!tag) {
     return [];
@@ -31,10 +33,12 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
   // special cases: some HTML elements require unique logic to determine supported roles based on attributes, etc.
   switch (tagName) {
     case 'a': {
-      return 'href' in attributes ? ['link'] : tag.supportedRoles;
+      return attributes && !('href' in attributes)
+        ? ALL_ROLES
+        : ['button', 'checkbox', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'switch', 'tab', 'treeitem']; // biome-ignore format: long list
     }
     case 'area': {
-      return 'href' in attributes ? ['button', 'link'] : tag.supportedRoles;
+      return attributes && !('href' in attributes) ? ['button', 'generic', 'link'] : tag.supportedRoles;
     }
     case 'footer':
     case 'header': {
@@ -53,34 +57,30 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
       return tag.supportedRoles;
     }
     case 'input': {
-      const type = ((attributes.type as string) ?? '').toLocaleLowerCase();
+      const type = attributes?.type;
+      const role = getInputRole({ attributes });
+
       switch (type) {
+        case 'file': {
+          return NO_ROLES;
+        }
+      }
+
+      switch (role) {
         case 'button': {
           return ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem']; // biome-ignore format: long list
         }
         case 'checkbox': {
-          return 'aria-pressed' in attributes
-            ? ['button', 'menuitemcheckbox', 'option', 'switch', 'checkbox']
-            : ['menuitemcheckbox', 'option', 'switch', 'checkbox'];
+          const coreRoles: ARIARole[] = ['checkbox', 'menuitemcheckbox', 'option', 'switch'];
+          return attributes && 'aria-pressed' in attributes ? ['button', ...coreRoles] : coreRoles;
         }
-        case 'color':
-        case 'date':
-        case 'datetime-local':
-        case 'file':
-        case 'hidden':
-        case 'month': {
-          return [];
-        }
-        case 'image': {
-          return ['button', 'checkbox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem']; // biome-ignore format: long list
+        default: {
+          return role ? [role] : NO_ROLES;
         }
       }
-
-      if ('list' in attributes) {
-        return ['combobox'];
-      }
-
-      return tag.supportedRoles;
+    }
+    case 'summary': {
+      return options?.ancestors?.some((a) => a.tagName === 'details') ? [] : tag.supportedRoles;
     }
     case 'td': {
       const role = getTDRole(options);
@@ -101,7 +101,7 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
       if (options?.ancestors && options.ancestors.length === 0) {
         return ALL_ROLES;
       }
-      return ['cell', 'columnheader', 'rowheader'];
+      return ['cell', 'columnheader', 'gridcell', 'rowheader'];
     }
   }
 

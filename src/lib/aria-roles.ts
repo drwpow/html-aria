@@ -2,13 +2,14 @@ import type {
   ARIAAttribute,
   ARIARole,
   DocumentStructureRole,
+  GraphicsRole,
   LandmarkRole,
   LiveRegionRole,
   WidgetRole,
   WindowRole,
 } from '../types.js';
 
-export type RoleType = 'abstract' | 'widget' | 'document' | 'landmark' | 'liveregion' | 'window';
+export type RoleType = 'abstract' | 'widget' | 'document' | 'landmark' | 'liveregion' | 'window' | 'graphics';
 
 export interface RoleData {
   type: RoleType[];
@@ -673,6 +674,32 @@ export const windowRoles: Record<WindowRole, RoleData> = {
   },
 };
 
+// graphics extensions from https://www.w3.org/TR/graphics-aam-1.0/
+export const graphicsRoles: Record<GraphicsRole, RoleData> = {
+  /** A type of document in which the visual appearance or layout of content conveys meaning. */
+  'graphics-document': {
+    type: ['graphics'],
+    superclass: 'document',
+    required: [],
+    supported: ['aria-atomic', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    prohibited: [],
+  },
+  'graphics-object': {
+    type: ['graphics'],
+    superclass: 'group',
+    required: [],
+    supported: ['aria-activedescendant', 'aria-atomic', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    prohibited: [],
+  },
+  'graphics-symbol': {
+    type: ['graphics'],
+    superclass: 'img',
+    required: [],
+    supported: ['aria-atomic', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    prohibited: [],
+  },
+};
+
 // Note: this would throw a type error if we missed any!
 export const roles: Record<ARIARole, RoleData> = {
   ...widgetRoles,
@@ -680,4 +707,8 @@ export const roles: Record<ARIARole, RoleData> = {
   ...landmarkRoles,
   ...liveRegionRoles,
   ...windowRoles,
+  ...graphicsRoles,
 };
+
+export const ALL_ROLES = Object.keys(roles) as ARIARole[];
+export const NO_ROLES: ARIARole[] = []; // explicitly no roles are allowed

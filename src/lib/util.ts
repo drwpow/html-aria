@@ -14,7 +14,7 @@ export function isHTMLElement(element: HTMLElement | VirtualElement): boolean {
 export function virtualizeElement(element: HTMLElement | VirtualElement): VirtualElement {
   // handle HTMLElement or VirtualElement
   let tagName = '' as TagName;
-  let attributes: NonNullable<VirtualElement['attributes']> = {};
+  let attributes: VirtualElement['attributes'];
 
   if (isHTMLElement(element)) {
     tagName = element.tagName.toLowerCase() as TagName;
@@ -42,35 +42,29 @@ export function virtualizeElement(element: HTMLElement | VirtualElement): Virtua
  * @see https://www.w3.org/TR/wai-aria-1.3/#namecalculation
  */
 export function calculateAccessibleName(element: VirtualElement): string | undefined {
-  const { tagName, attributes = {} } = element;
+  const { tagName, attributes } = element;
 
   switch (tagName) {
     case 'img': {
       // according to spec, aria-label is technically allowed for <img> (even if alt is preferred)
-      return (attributes.alt || attributes['aria-label'] || attributes['aria-labelledby']) as string;
+      return (attributes?.alt || attributes?.['aria-label'] || attributes?.['aria-labelledby']) as string;
     }
   }
 }
 
 /** Given ancestors, find the first matching ancestor. */
-export function findFirstSignificantAncestor(
+export function firstMatchingAncestor(
   validAncestors: VirtualElement[],
   ancestors?: AncestorList,
 ): VirtualElement | undefined {
-  if (!ancestors) {
-    return undefined;
-  }
-  for (const ancestor of ancestors) {
-    if (!ancestor) {
-      continue;
-    }
-    const { tagName, attributes = {} } = virtualizeElement(ancestor);
-    const match = validAncestors.find(
-      (a) => (a.attributes?.role && a.attributes.role === attributes.role) || a.tagName === tagName,
+  const match = (ancestors ?? []).find((a) => {
+    const { tagName, attributes } = virtualizeElement(a);
+    return validAncestors.some(
+      (v) => (v.attributes?.role && v.attributes.role === attributes?.role) || v.tagName === tagName,
     );
-    if (match) {
-      return match;
-    }
+  });
+  if (match) {
+    return virtualizeElement(match);
   }
 }
 

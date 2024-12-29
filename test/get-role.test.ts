@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { getRole, tags } from '../src/index.js';
+import { AncestorList, getRole, tags, VirtualElement } from '../src/index.js';
 import { checkTestAndTagName } from './helpers.js';
 
 describe('getRole', () => {
@@ -97,16 +97,54 @@ describe('getRole', () => {
     ['input[type="file"]', { given: [{ tagName: 'input', attributes: { type: 'file' } }], want: undefined }],
     ['input[type="hidden"]', { given: [{ tagName: 'input', attributes: { type: 'hidden' } }], want: undefined }],
     ['input[type="month"]', { given: [{ tagName: 'input', attributes: { type: 'month' } }], want: undefined }],
+    ['input[type="number"]', { given: [{ tagName: 'input', attributes: { type: 'number' } }], want: 'spinbutton' }],
+    ['input[type="password"]', { given: [{ tagName: 'input', attributes: { type: 'password' } }], want: undefined }],
+    ['input[type="radio"]', { given: [{ tagName: 'input', attributes: { type: 'radio' } }], want: 'radio' }],
+    ['input[type="range"]', { given: [{ tagName: 'input', attributes: { type: 'range' } }], want: 'slider' }],
+    ['input[type="reset"]', { given: [{ tagName: 'input', attributes: { type: 'reset' } }], want: 'button' }],
+    ['input[type="search"]', { given: [{ tagName: 'input', attributes: { type: 'search' } }], want: 'searchbox' }],
+    ['input[type="submit"]', { given: [{ tagName: 'input', attributes: { type: 'submit' } }], want: 'button' }],
+    ['input[type="tel"]', { given: [{ tagName: 'input', attributes: { type: 'tel' } }], want: 'textbox' }],
+    ['input[type="text"]', { given: [{ tagName: 'input', attributes: { type: 'text' } }], want: 'textbox' }],
+    ['input[type="shrek"]', { given: [{ tagName: 'input', attributes: { type: 'shrek' } }], want: 'textbox' }],
+    [
+      'input (email combobox)',
+      { given: [{ tagName: 'input', attributes: { type: 'email', list: 'emails' } }], want: 'combobox' },
+    ],
+    [
+      'input (text combobox)',
+      { given: [{ tagName: 'input', attributes: { type: 'text', list: 'texts' } }], want: 'combobox' },
+    ],
+    [
+      'input (search combobox)',
+      { given: [{ tagName: 'input', attributes: { type: 'search', list: 'searches' } }], want: 'combobox' },
+    ],
+    [
+      'input (tel combobox)',
+      { given: [{ tagName: 'input', attributes: { type: 'tel', list: 'numbers' } }], want: 'combobox' },
+    ],
+    [
+      'input (url combobox)',
+      { given: [{ tagName: 'input', attributes: { type: 'url', list: 'urls' } }], want: 'combobox' },
+    ],
+    ['input[type="time"]', { given: [{ tagName: 'input', attributes: { type: 'time' } }], want: undefined }],
+    ['input[type="url"]', { given: [{ tagName: 'input', attributes: { type: 'url' } }], want: 'textbox' }],
     ['input[type="week"]', { given: [{ tagName: 'input', attributes: { type: 'week' } }], want: undefined }],
+    ['ins', { given: [{ tagName: 'ins' }], want: 'insertion' }],
     ['label', { given: [{ tagName: 'label' }], want: undefined }],
+    ['legend', { given: [{ tagName: 'legend' }], want: undefined }],
     ['li', { given: [{ tagName: 'li' }], want: 'listitem' }],
     ['li (no ancestors)', { given: [{ tagName: 'li' }, { ancestors: [] }], want: 'generic' }],
     ['link', { given: [{ tagName: 'link' }], want: undefined }],
     ['kbd', { given: [{ tagName: 'kbd' }], want: undefined }],
+    ['main', { given: [{ tagName: 'main' }], want: 'main' }],
     ['map', { given: [{ tagName: 'map' }], want: undefined }],
     ['mark', { given: [{ tagName: 'mark' }], want: undefined }],
     ['math', { given: [{ tagName: 'math' }], want: 'math' }],
+    ['menu', { given: [{ tagName: 'menu' }], want: 'list' }],
+    ['meta', { given: [{ tagName: 'meta' }], want: undefined }],
     ['meter', { given: [{ tagName: 'meter' }], want: 'meter' }],
+    ['nav', { given: [{ tagName: 'nav' }], want: 'navigation' }],
     ['noscript', { given: [{ tagName: 'noscript' }], want: undefined }],
     ['object', { given: [{ tagName: 'object' }], want: undefined }],
     ['ol', { given: [{ tagName: 'ol' }], want: 'list' }],
@@ -116,6 +154,7 @@ describe('getRole', () => {
     ['p', { given: [{ tagName: 'p' }], want: 'paragraph' }],
     ['picture', { given: [{ tagName: 'picture' }], want: undefined }],
     ['pre', { given: [{ tagName: 'pre' }], want: 'generic' }],
+    ['progress', { given: [{ tagName: 'progress' }], want: 'progressbar' }],
     ['q', { given: [{ tagName: 'q' }], want: 'generic' }],
     ['rp', { given: [{ tagName: 'rp' }], want: undefined }],
     ['rt', { given: [{ tagName: 'rt' }], want: undefined }],
@@ -129,7 +168,7 @@ describe('getRole', () => {
     ['select[size=1]', { given: [{ tagName: 'select', attributes: { size: 1 } }], want: 'combobox' }],
     ['select[multiple]', { given: [{ tagName: 'select', attributes: { multiple: true } }], want: 'listbox' }],
     ['select[size=2]', { given: [{ tagName: 'select', attributes: { size: 2 } }], want: 'listbox' }],
-    ['select[role=generic]', { given: [{ tagName: 'select', attributes: { role: 'generic' } }], want: 'combobox' }],
+    ['select[role=generic]', { given: [{ tagName: 'select', attributes: { role: 'generic' } }], want: 'generic' }],
     ['span', { given: [{ tagName: 'span' }], want: 'generic' }],
     ['small', { given: [{ tagName: 'small' }], want: 'generic' }],
     ['source', { given: [{ tagName: 'source' }], want: undefined }],
@@ -139,10 +178,11 @@ describe('getRole', () => {
     ['sub', { given: [{ tagName: 'sub' }], want: 'subscript' }],
     ['summary', { given: [{ tagName: 'summary' }], want: undefined }],
     ['sup', { given: [{ tagName: 'sup' }], want: 'superscript' }],
+    ['svg', { given: [{ tagName: 'svg' }], want: 'graphics-document' }],
     ['svg[role="img"]', { given: [{ tagName: 'svg', attributes: { role: 'img' } }], want: 'img' }],
     [
       'svg[role="graphics-symbol img"]',
-      { given: [{ tagName: 'svg', attributes: { role: 'img' } }], want: 'graphics-symbol' },
+      { given: [{ tagName: 'svg', attributes: { role: 'graphics-symbol img' } }], want: 'graphics-symbol' },
     ],
     ['table', { given: [{ tagName: 'table' }], want: 'table' }],
     ['tbody', { given: [{ tagName: 'tbody' }], want: 'rowgroup' }],
@@ -174,9 +214,12 @@ describe('getRole', () => {
     ['time', { given: [{ tagName: 'time' }], want: 'time' }],
     ['title', { given: [{ tagName: 'title' }], want: undefined }],
     ['tr', { given: [{ tagName: 'tr' }], want: 'row' }],
+    ['track', { given: [{ tagName: 'track' }], want: undefined }],
+    ['u', { given: [{ tagName: 'u' }], want: 'generic' }],
     ['ul', { given: [{ tagName: 'ul' }], want: 'list' }],
     ['var', { given: [{ tagName: 'var' }], want: undefined }],
     ['video', { given: [{ tagName: 'video' }], want: undefined }],
+    ['wbr', { given: [{ tagName: 'wbr' }], want: undefined }],
   ];
 
   describe('from object', () => {
@@ -199,14 +242,25 @@ describe('getRole', () => {
   });
 
   describe('from DOM element', () => {
-    test.each(testCases)('%s', (_, { given, want }) => {
-      const element = document.createElement(given[0].tagName);
-      if (given[0].attributes) {
-        for (const [name, value] of Object.entries(given[0].attributes)) {
+    function elFromVirtual(el: VirtualElement) {
+      const element = document.createElement(el.tagName);
+      if (el.attributes) {
+        for (const [name, value] of Object.entries(el.attributes)) {
           element.setAttribute(name, String(value));
         }
       }
-      expect(getRole(element, given[1])).toBe(want);
+      return element;
+    }
+
+    test.each(testCases)('%s', (_, { given, want }) => {
+      // convert main element to DOM element
+      const mainEl = elFromVirtual(given[0] as VirtualElement);
+      const options = { ...given[1] };
+      // also, to test ancestors, convert those, too
+      if (options.ancestors) {
+        options.ancestors = options.ancestors.map((el) => elFromVirtual(el as VirtualElement));
+      }
+      expect(getRole(mainEl, options)).toBe(want);
     });
   });
 });

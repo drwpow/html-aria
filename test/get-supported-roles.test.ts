@@ -10,7 +10,18 @@ describe('getSupportedRoles', () => {
       want: ReturnType<typeof getSupportedRoles>;
     },
   ][] = [
+    [
+      'a',
+      {
+        given: [{ tagName: 'a' }],
+        want: ['button', 'checkbox', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
+      },
+    ],
+    ['a (no href)', { given: [{ tagName: 'a', attributes: {} }], want: ALL_ROLES }],
     ['address', { given: [{ tagName: 'address' }], want: ALL_ROLES }],
+    ['abbr', { given: [{ tagName: 'abbr' }], want: ALL_ROLES }],
+    ['area', { given: [{ tagName: 'area' }], want: ['link'] }],
+    ['area (no href)', { given: [{ tagName: 'area', attributes: {} }], want: ['button', 'generic', 'link'] }],
     [
       'article',
       {
@@ -28,8 +39,9 @@ describe('getSupportedRoles', () => {
     ['audio', { given: [{ tagName: 'audio' }], want: ['application'] }],
     ['b', { given: [{ tagName: 'b' }], want: ALL_ROLES }],
     ['base', { given: [{ tagName: 'base' }], want: NO_ROLES }],
-    ['bdi', { given: [{ tagName: 'bdo' }], want: ALL_ROLES }],
+    ['bdi', { given: [{ tagName: 'bdi' }], want: ALL_ROLES }],
     ['bdo', { given: [{ tagName: 'bdo' }], want: ALL_ROLES }],
+    ['br', { given: [{ tagName: 'br' }], want: ['none', 'presentation'] }],
     ['blockquote', { given: [{ tagName: 'blockquote' }], want: ALL_ROLES }],
     ['body', { given: [{ tagName: 'body' }], want: ['generic'] }],
     [
@@ -69,12 +81,12 @@ describe('getSupportedRoles', () => {
       'footer (landmark)',
       {
         given: [{ tagName: 'footer' }, { ancestors: [{ tagName: 'main' }] }],
-        want: ['group', 'generic', 'none', 'presentation'],
+        want: ['generic', 'group', 'none', 'presentation'],
       },
     ],
     [
       'footer (default)',
-      { given: [{ tagName: 'footer' }], want: ['banner', 'generic', 'group', 'none', 'presentation'] },
+      { given: [{ tagName: 'footer' }], want: ['contentinfo', 'generic', 'group', 'none', 'presentation'] },
     ],
     ['h1', { given: [{ tagName: 'h1' }], want: ['heading', 'none', 'presentation', 'tab'] }],
     ['h2', { given: [{ tagName: 'h2' }], want: ['heading', 'none', 'presentation', 'tab'] }],
@@ -87,7 +99,7 @@ describe('getSupportedRoles', () => {
       'header (landmark)',
       {
         given: [{ tagName: 'header' }, { ancestors: [{ tagName: 'main' }] }],
-        want: ['group', 'generic', 'none', 'presentation'],
+        want: ['generic', 'group', 'none', 'presentation'],
       },
     ],
     [
@@ -95,7 +107,7 @@ describe('getSupportedRoles', () => {
       { given: [{ tagName: 'header' }], want: ['banner', 'generic', 'group', 'none', 'presentation'] },
     ],
     ['hgroup', { given: [{ tagName: 'hgroup' }], want: ALL_ROLES }],
-    ['html', { given: [{ tagName: 'html' }], want: NO_ROLES }],
+    ['html', { given: [{ tagName: 'html' }], want: ['document'] }],
     ['hr', { given: [{ tagName: 'hr' }], want: ['none', 'presentation', 'separator'] }],
     ['i', { given: [{ tagName: 'i' }], want: ALL_ROLES }],
     [
@@ -105,7 +117,7 @@ describe('getSupportedRoles', () => {
     [
       'img (name)',
       {
-        given: [{ tagName: 'img' }],
+        given: [{ tagName: 'img', attributes: { alt: 'Alternate text' } }],
         want: ['button', 'checkbox', 'image', 'img', 'link', 'math', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'meter', 'option', 'progressbar', 'radio', 'scrollbar', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
       },
     ],
@@ -121,14 +133,14 @@ describe('getSupportedRoles', () => {
       'input[type="checkbox"]',
       {
         given: [{ tagName: 'input', attributes: { type: 'checkbox' } }],
-        want: ['menuitemcheckbox', 'option', 'switch', 'checkbox'],
+        want: ['checkbox', 'menuitemcheckbox', 'option', 'switch'],
       },
     ],
     [
       'input[type="checkbox"] (pressed)',
       {
         given: [{ tagName: 'input', attributes: { type: 'checkbox', 'aria-pressed': true } }],
-        want: ['button', 'menuitemcheckbox', 'option', 'switch', 'checkbox'],
+        want: ['button', 'checkbox', 'menuitemcheckbox', 'option', 'switch'],
       },
     ],
     ['input[type="color"]', { given: [{ tagName: 'input', attributes: { type: 'color' } }], want: [] }],
@@ -150,16 +162,83 @@ describe('getSupportedRoles', () => {
       },
     ],
     ['input[type="month"]', { given: [{ tagName: 'input', attributes: { type: 'month' } }], want: [] }],
+    ['input[type="number"]', { given: [{ tagName: 'input', attributes: { type: 'number' } }], want: ['spinbutton'] }],
+    ['input[type="range"]', { given: [{ tagName: 'input', attributes: { type: 'range' } }], want: ['slider'] }],
+    ['input[type="password"]', { given: [{ tagName: 'input', attributes: { type: 'password' } }], want: [] }],
+    [
+      'input[type="radio"]',
+      { given: [{ tagName: 'input', attributes: { type: 'radio' } }], want: ['menuitemradio', 'radio'] },
+    ],
+    [
+      'input[type="reset"]',
+      {
+        given: [{ tagName: 'input', attributes: { type: 'reset' } }],
+        want: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
+      },
+    ],
+    ['input[type="search"]', { given: [{ tagName: 'input', attributes: { type: 'search' } }], want: ['searchbox'] }],
+    [
+      'input[type="submit"]',
+      {
+        given: [{ tagName: 'input', attributes: { type: 'submit' } }],
+        want: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
+      },
+    ],
+    [
+      'input[type="text"]',
+      {
+        given: [{ tagName: 'input', attributes: { type: 'text' } }],
+        want: ['combobox', 'searchbox', 'spinbutton', 'textbox'],
+      },
+    ],
+    [
+      'input[type="shrek"]',
+      {
+        given: [{ tagName: 'input', attributes: { type: 'shrek' } }],
+        want: ['combobox', 'searchbox', 'spinbutton', 'textbox'],
+      },
+    ],
+    [
+      'input (email combobox)',
+      { given: [{ tagName: 'input', attributes: { type: 'email', list: 'emails' } }], want: ['combobox'] },
+    ],
+    [
+      'input (text combobox)',
+      { given: [{ tagName: 'input', attributes: { type: 'text', list: 'texts' } }], want: ['combobox'] },
+    ],
+    [
+      'input (search combobox)',
+      { given: [{ tagName: 'input', attributes: { type: 'search', list: 'searches' } }], want: ['combobox'] },
+    ],
+    [
+      'input (tel combobox)',
+      { given: [{ tagName: 'input', attributes: { type: 'tel', list: 'numbers' } }], want: ['combobox'] },
+    ],
+    [
+      'input (url combobox)',
+      { given: [{ tagName: 'input', attributes: { type: 'url', list: 'urls' } }], want: ['combobox'] },
+    ],
+    ['input[type="time"]', { given: [{ tagName: 'input', attributes: { type: 'time' } }], want: [] }],
+    ['input[type="url"]', { given: [{ tagName: 'input', attributes: { type: 'url' } }], want: ['textbox'] }],
     ['input[type="week"]', { given: [{ tagName: 'input', attributes: { type: 'week' } }], want: [] }],
-    ['input[type="reset"]', { given: [{ tagName: 'input', attributes: { type: 'reset' } }], want: ['button'] }],
+    ['ins', { given: [{ tagName: 'ins' }], want: ALL_ROLES }],
     ['label', { given: [{ tagName: 'label' }], want: [] }],
+    ['legend', { given: [{ tagName: 'legend' }], want: [] }],
     ['li', { given: [{ tagName: 'li' }], want: ['listitem'] }],
     ['li (no ancestors)', { given: [{ tagName: 'li' }, { ancestors: [] }], want: ALL_ROLES }],
     ['link', { given: [{ tagName: 'link' }], want: [] }],
     ['kbd', { given: [{ tagName: 'kbd' }], want: ALL_ROLES }],
     ['main', { given: [{ tagName: 'main' }], want: ['main'] }],
+    ['mark', { given: [{ tagName: 'mark' }], want: ALL_ROLES }],
     ['math', { given: [{ tagName: 'math' }], want: ['math'] }],
     ['map', { given: [{ tagName: 'map' }], want: [] }],
+    [
+      'menu',
+      {
+        given: [{ tagName: 'menu' }],
+        want: ['group', 'list', 'listbox', 'menu', 'menubar', 'none', 'presentation', 'radiogroup', 'tablist', 'toolbar', 'tree'], // biome-ignore format: long list
+      },
+    ],
     ['meta', { given: [{ tagName: 'meta' }], want: [] }],
     ['meter', { given: [{ tagName: 'meter' }], want: ['meter'] }],
     [
@@ -198,8 +277,19 @@ describe('getSupportedRoles', () => {
       },
     ],
     ['select', { given: [{ tagName: 'select' }], want: ['combobox', 'listbox', 'menu'] }],
+    ['slot', { given: [{ tagName: 'slot' }], want: [] }],
+    ['small', { given: [{ tagName: 'small' }], want: ALL_ROLES }],
     ['source', { given: [{ tagName: 'source' }], want: [] }],
+    ['span', { given: [{ tagName: 'span' }], want: ALL_ROLES }],
+    ['strong', { given: [{ tagName: 'strong' }], want: ALL_ROLES }],
     ['style', { given: [{ tagName: 'style' }], want: [] }],
+    ['summary', { given: [{ tagName: 'summary' }], want: ALL_ROLES }],
+    ['summary (in details)', { given: [{ tagName: 'summary' }, { ancestors: [{ tagName: 'details' }] }], want: [] }],
+    ['sub', { given: [{ tagName: 'sub' }], want: ALL_ROLES }],
+    ['sup', { given: [{ tagName: 'sup' }], want: ALL_ROLES }],
+    ['svg', { given: [{ tagName: 'svg' }], want: ALL_ROLES }],
+    ['table', { given: [{ tagName: 'table' }], want: ALL_ROLES }],
+    ['tbody', { given: [{ tagName: 'tbody' }], want: ALL_ROLES }],
     ['td', { given: [{ tagName: 'td' }], want: ['cell'] }],
     ['td (table)', { given: [{ tagName: 'td' }, { ancestors: [{ tagName: 'table' }] }], want: ['cell'] }],
     ['td (no ancestors)', { given: [{ tagName: 'td' }, { ancestors: [] }], want: ALL_ROLES }],
@@ -217,15 +307,18 @@ describe('getSupportedRoles', () => {
         want: ['gridcell'],
       },
     ],
+    ['thead', { given: [{ tagName: 'thead' }], want: ALL_ROLES }],
     ['template', { given: [{ tagName: 'template' }], want: [] }],
     ['textarea', { given: [{ tagName: 'textarea' }], want: ['textbox'] }],
     ['tfoot', { given: [{ tagName: 'tfoot' }], want: ALL_ROLES }],
-    ['th', { given: [{ tagName: 'th' }], want: ['cell', 'columnheader', 'rowheader'] }],
+    ['th', { given: [{ tagName: 'th' }], want: ['cell', 'columnheader', 'gridcell', 'rowheader'] }],
     ['th (no ancestors)', { given: [{ tagName: 'th' }, { ancestors: [] }], want: ALL_ROLES }],
     ['time', { given: [{ tagName: 'time' }], want: ALL_ROLES }],
     ['title', { given: [{ tagName: 'title' }], want: [] }],
     ['tr', { given: [{ tagName: 'tr' }], want: ['row'] }],
     ['tr (no ancestors)', { given: [{ tagName: 'tr' }, { ancestors: [] }], want: ALL_ROLES }],
+    ['track', { given: [{ tagName: 'track' }, { ancestors: [] }], want: [] }],
+    ['u', { given: [{ tagName: 'u' }], want: ALL_ROLES }],
     [
       'ul',
       {

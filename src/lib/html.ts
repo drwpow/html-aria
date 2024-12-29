@@ -1,8 +1,5 @@
 import type { ARIAAttribute, ARIARole, TagName } from '../types.js';
-import { roles } from './aria-roles.js';
-
-export const ALL_ROLES = Object.keys(roles) as ARIARole[];
-export const NO_ROLES: ARIARole[] = []; // explicitly no roles are allowed
+import { ALL_ROLES, NO_ROLES } from './aria-roles.js';
 
 export const NO_CORRESPONDING_ROLE = undefined;
 
@@ -128,7 +125,7 @@ export const tags: Record<TagName, TagInfo> = {
     supportedRoles: ALL_ROLES,
   },
   main: {
-    defaultRole: 'list',
+    defaultRole: 'main',
     supportedRoles: [],
   },
   nav: {
@@ -209,7 +206,7 @@ export const tags: Record<TagName, TagInfo> = {
   // Inline text semantics
   a: {
     defaultRole: 'generic',
-    supportedRoles: ALL_ROLES, // Note: has special behavior in getSupportedRoles()
+    supportedRoles: ['button', 'checkbox', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
   },
   abbr: {
     defaultRole: NO_CORRESPONDING_ROLE,
@@ -233,7 +230,7 @@ export const tags: Record<TagName, TagInfo> = {
   },
   br: {
     defaultRole: NO_CORRESPONDING_ROLE,
-    supportedRoles: [],
+    supportedRoles: ['none', 'presentation'],
     supportedAttributesOverride: ['aria-hidden'],
   },
   cite: {
@@ -353,7 +350,7 @@ export const tags: Record<TagName, TagInfo> = {
   // Image and multimedia
   area: {
     defaultRole: 'generic',
-    supportedRoles: ['button', 'generic', 'link'],
+    supportedRoles: ['link'],
   },
   audio: {
     defaultRole: NO_CORRESPONDING_ROLE,
@@ -404,7 +401,7 @@ export const tags: Record<TagName, TagInfo> = {
 
   // SVG and MathML
   svg: {
-    defaultRole: NO_CORRESPONDING_ROLE,
+    defaultRole: 'graphics-document',
     supportedRoles: [],
   },
   math: {
