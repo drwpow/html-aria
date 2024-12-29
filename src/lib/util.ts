@@ -49,6 +49,11 @@ export function calculateAccessibleName(element: VirtualElement): string | undef
   }
 }
 
+/** Is an ancestor list provided and is it empty? */
+export function isEmptyAncestorList(ancestors?: AncestorList): boolean {
+  return Array.isArray(ancestors) && ancestors.length === 0;
+}
+
 /** Given ancestors, find the first matching ancestor. */
 export function firstMatchingAncestor(
   validAncestors: VirtualElement[],

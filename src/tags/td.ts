@@ -1,10 +1,10 @@
 import { tags } from '../lib/html.js';
-import { firstMatchingAncestor } from '../lib/util.js';
+import { firstMatchingAncestor, isEmptyAncestorList } from '../lib/util.js';
 import type { AncestorList } from '../types.js';
 
 /** Special behavior for <td> element */
-export function getTDRole(options?: { ancestors?: AncestorList }) {
-  if (!options?.ancestors) {
+export function getTDRole({ ancestors }: { ancestors?: AncestorList } = {}) {
+  if (!ancestors) {
     return tags.td.defaultRole;
   }
 
@@ -12,7 +12,7 @@ export function getTDRole(options?: { ancestors?: AncestorList }) {
   // “no corresponding role” like the spec describes (if we did this by
   // default, it would likely cause bad results because most users would
   // likely skip this optional setup).
-  if (Array.isArray(options?.ancestors) && options.ancestors.length === 0) {
+  if (isEmptyAncestorList(ancestors)) {
     return undefined;
   }
 
@@ -23,7 +23,7 @@ export function getTDRole(options?: { ancestors?: AncestorList }) {
       { tagName: 'table', attributes: { role: 'grid' } },
       { tagName: 'table', attributes: { role: 'treegrid' } },
     ],
-    options?.ancestors,
+    ancestors,
   );
   if (hasGridParent?.attributes?.role === 'grid' || hasGridParent?.attributes?.role === 'treegrid') {
     return 'gridcell';

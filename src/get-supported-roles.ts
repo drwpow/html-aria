@@ -1,8 +1,9 @@
 import { ALL_ROLES, NO_ROLES } from './lib/aria-roles.js';
 import { tags } from './lib/html.js';
-import { calculateAccessibleName, virtualizeElement } from './lib/util.js';
+import { calculateAccessibleName, isEmptyAncestorList, virtualizeElement } from './lib/util.js';
 import { getFooterRole } from './tags/footer.js';
-import { getInputRole } from './tags/input.js';
+import { getInputSupportedRoles } from './tags/input.js';
+import { getSelectSupportedRoles } from './tags/select.js';
 import { getTDRole } from './tags/td.js';
 import type { ARIARole, AncestorList, VirtualElement } from './types.js';
 
@@ -56,28 +57,14 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
       }
       return tag.supportedRoles;
     }
+    case 'li': {
+      return isEmptyAncestorList(options?.ancestors) ? ALL_ROLES : ['listitem'];
+    }
     case 'input': {
-      const type = attributes?.type;
-      const role = getInputRole({ attributes });
-
-      switch (type) {
-        case 'file': {
-          return NO_ROLES;
-        }
-      }
-
-      switch (role) {
-        case 'button': {
-          return ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem']; // biome-ignore format: long list
-        }
-        case 'checkbox': {
-          const coreRoles: ARIARole[] = ['checkbox', 'menuitemcheckbox', 'option', 'switch'];
-          return attributes && 'aria-pressed' in attributes ? ['button', ...coreRoles] : coreRoles;
-        }
-        default: {
-          return role ? [role] : NO_ROLES;
-        }
-      }
+      return getInputSupportedRoles({ attributes });
+    }
+    case 'select': {
+      return getSelectSupportedRoles({ attributes });
     }
     case 'summary': {
       return options?.ancestors?.some((a) => a.tagName === 'details') ? [] : tag.supportedRoles;
@@ -98,10 +85,7 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
     }
     case 'th': {
       // Deviation from the spec: only treat as “no corresponding role” if user has explicated this
-      if (options?.ancestors && options.ancestors.length === 0) {
-        return ALL_ROLES;
-      }
-      return ['cell', 'columnheader', 'gridcell', 'rowheader'];
+      return isEmptyAncestorList(options?.ancestors) ? ALL_ROLES : ['cell', 'columnheader', 'gridcell', 'rowheader'];
     }
   }
 

@@ -264,17 +264,17 @@ export const tags: Record<TagName, TagInfo> = {
   },
   kbd: {
     defaultRole: NO_CORRESPONDING_ROLE,
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
     namingProhibited: true,
   },
   mark: {
     defaultRole: NO_CORRESPONDING_ROLE,
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
     namingProhibited: true,
   },
   q: {
     defaultRole: 'generic',
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
     namingProhibited: true,
   },
   rp: {
@@ -313,7 +313,7 @@ export const tags: Record<TagName, TagInfo> = {
   },
   strong: {
     defaultRole: 'strong',
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
     namingProhibited: true,
   },
   sub: {

@@ -2,8 +2,8 @@ import { tags } from '../lib/html.js';
 import { firstMatchingAncestor } from '../lib/util.js';
 import type { AncestorList } from '../types.js';
 
-export function getHeaderRole(options?: { ancestors?: AncestorList }) {
-  if (!options?.ancestors) {
+export function getHeaderRole({ ancestors }: { ancestors?: AncestorList } = {}) {
+  if (!ancestors) {
     return tags.header.defaultRole;
   }
   const hasLandmarkParent = firstMatchingAncestor(
@@ -14,7 +14,7 @@ export function getHeaderRole(options?: { ancestors?: AncestorList }) {
       { tagName: 'nav', attributes: { role: 'navigation' } },
       { tagName: 'section', attributes: { role: 'region' } },
     ],
-    options?.ancestors,
+    ancestors,
   );
   return hasLandmarkParent ? 'generic' : tags.header.defaultRole;
 }

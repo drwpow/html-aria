@@ -1,6 +1,6 @@
 import { roles } from './lib/aria-roles.js';
 import { NO_CORRESPONDING_ROLE, tags } from './lib/html.js';
-import { calculateAccessibleName, parseTokenList, virtualizeElement } from './lib/util.js';
+import { calculateAccessibleName, isEmptyAncestorList, parseTokenList, virtualizeElement } from './lib/util.js';
 import { getFooterRole } from './tags/footer.js';
 import { getHeaderRole } from './tags/header.js';
 import { getInputRole } from './tags/input.js';
@@ -53,7 +53,6 @@ export function getRole(element: HTMLElement | VirtualElement, options?: GetRole
   if (!tag) {
     return undefined;
   }
-  const explicitEmptyAncestors = options?.ancestors && options.ancestors.length === 0;
 
   switch (tagName) {
     case 'a':
@@ -71,7 +70,7 @@ export function getRole(element: HTMLElement | VirtualElement, options?: GetRole
       return getInputRole({ attributes });
     }
     case 'li': {
-      return explicitEmptyAncestors ? 'generic' : tag.defaultRole;
+      return isEmptyAncestorList(options?.ancestors) ? 'generic' : tag.defaultRole;
     }
     case 'footer': {
       return getFooterRole(options);
@@ -86,7 +85,7 @@ export function getRole(element: HTMLElement | VirtualElement, options?: GetRole
       return getTHRole({ attributes, ancestors: options?.ancestors });
     }
     case 'tr': {
-      return explicitEmptyAncestors ? NO_CORRESPONDING_ROLE : tag.defaultRole;
+      return isEmptyAncestorList(options?.ancestors) ? NO_CORRESPONDING_ROLE : tag.defaultRole;
     }
   }
 
