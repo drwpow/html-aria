@@ -24,10 +24,7 @@ export function virtualizeElement(element: HTMLElement | VirtualElement): Virtua
       const { name } = (element as HTMLElement).attributes[i]!;
       attributes[name] = (element as HTMLElement).getAttribute(name);
     }
-    return {
-      tagName,
-      ...(Object.keys(attributes) && { attributes }),
-    };
+    return { tagName, attributes };
   }
 
   if (!element || typeof element !== 'object' || Array.isArray(element) || typeof element.tagName !== 'string') {

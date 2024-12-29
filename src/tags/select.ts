@@ -1,6 +1,6 @@
 import type { VirtualElement } from '../types.js';
 
-export function getSelectRole({ attributes = {} }: { attributes: NonNullable<VirtualElement['attributes']> }) {
+export function getSelectRole({ attributes = {} }: { attributes?: NonNullable<VirtualElement['attributes']> } = {}) {
   let size = 0;
   if (typeof attributes.size === 'number') {
     size = attributes.size;

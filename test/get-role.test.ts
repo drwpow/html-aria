@@ -22,10 +22,12 @@ describe('getRole', () => {
     },
   ][] = [
     ['a', { given: [{ tagName: 'a' }], want: 'link' }],
+    ['a (href)', { given: [{ tagName: 'a', attributes: { href: '/about' } }], want: 'link' }],
     ['a (no href)', { given: [{ tagName: 'a', attributes: {} }], want: 'generic' }],
     ['abbr', { given: [{ tagName: 'abbr' }], want: undefined }],
     ['address', { given: [{ tagName: 'address' }], want: 'group' }],
     ['area', { given: [{ tagName: 'area' }], want: 'link' }],
+    ['area (href)', { given: [{ tagName: 'area', attributes: { href: '/about' } }], want: 'link' }],
     ['area (no href)', { given: [{ tagName: 'area', attributes: {} }], want: 'generic' }],
     ['article', { given: [{ tagName: 'article' }], want: 'article' }],
     ['aside', { given: [{ tagName: 'aside' }], want: 'complementary' }],
@@ -80,54 +82,117 @@ describe('getRole', () => {
     ['img (name)', { given: [{ tagName: 'img', attributes: { alt: 'My image' } }], want: 'img' }],
     ['img (no name)', { given: [{ tagName: 'img' }], want: 'none' }],
     ['input', { given: [{ tagName: 'input' }], want: 'textbox' }],
-    ['input[type="button"]', { given: [{ tagName: 'input', attributes: { type: 'button' } }], want: 'button' }],
-    ['input[type="color"]', { given: [{ tagName: 'input', attributes: { type: 'color' } }], want: undefined }],
-    ['input[type="date"]', { given: [{ tagName: 'input', attributes: { type: 'date' } }], want: undefined }],
+    ['input[type=button]', { given: [{ tagName: 'input', attributes: { type: 'button' } }], want: 'button' }],
+    ['input[type=color]', { given: [{ tagName: 'input', attributes: { type: 'color' } }], want: undefined }],
+    ['input[type=date]', { given: [{ tagName: 'input', attributes: { type: 'date' } }], want: undefined }],
     [
-      'input[type="datetime-local"]',
+      'input[type=datetime-local]',
       { given: [{ tagName: 'input', attributes: { type: 'datetime-local' } }], want: undefined },
     ],
-    ['input[type="email"]', { given: [{ tagName: 'input', attributes: { type: 'email' } }], want: 'textbox' }],
+    ['input[type=email]', { given: [{ tagName: 'input', attributes: { type: 'email' } }], want: 'textbox' }],
+    ['input[type=file]', { given: [{ tagName: 'input', attributes: { type: 'file' } }], want: undefined }],
+    ['input[type=hidden]', { given: [{ tagName: 'input', attributes: { type: 'hidden' } }], want: undefined }],
+    ['input[type=month]', { given: [{ tagName: 'input', attributes: { type: 'month' } }], want: undefined }],
+    ['input[type=number]', { given: [{ tagName: 'input', attributes: { type: 'number' } }], want: 'spinbutton' }],
+    ['input[type=password]', { given: [{ tagName: 'input', attributes: { type: 'password' } }], want: undefined }],
+    ['input[type=radio]', { given: [{ tagName: 'input', attributes: { type: 'radio' } }], want: 'radio' }],
+    ['input[type=range]', { given: [{ tagName: 'input', attributes: { type: 'range' } }], want: 'slider' }],
+    ['input[type=reset]', { given: [{ tagName: 'input', attributes: { type: 'reset' } }], want: 'button' }],
+    ['input[type=search]', { given: [{ tagName: 'input', attributes: { type: 'search' } }], want: 'searchbox' }],
+    ['input[type=submit]', { given: [{ tagName: 'input', attributes: { type: 'submit' } }], want: 'button' }],
+    ['input[type=tel]', { given: [{ tagName: 'input', attributes: { type: 'tel' } }], want: 'textbox' }],
+    ['input[type=text]', { given: [{ tagName: 'input', attributes: { type: 'text' } }], want: 'textbox' }],
+    ['input[type=shrek]', { given: [{ tagName: 'input', attributes: { type: 'shrek' } }], want: 'textbox' }],
+    ['input[type=time]', { given: [{ tagName: 'input', attributes: { type: 'time' } }], want: undefined }],
+    ['input[type=url]', { given: [{ tagName: 'input', attributes: { type: 'url' } }], want: 'textbox' }],
+    ['input[type=week]', { given: [{ tagName: 'input', attributes: { type: 'week' } }], want: undefined }],
+
+    // Note: for input lists, ONLY text, search, tel, url, email, and invalid
+    // should produce a combobox. Other lists are ignored. But we want to test
+    // all of them to guarantee this behavior is correct.
+    // @see https://www.w3.org/TR/html-aria/#el-input-text-list
+    ['input (list)', { given: [{ tagName: 'input', attributes: { list: 'things' } }], want: 'combobox' }],
+    ['input[type=button] (list)', { given: [{ tagName: 'input', attributes: { type: 'button' } }], want: 'button' }],
     [
-      'input[type="email"] (list)',
+      'input[type=color] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'color', list: 'colors' } }], want: undefined },
+    ],
+    [
+      'input[type=date] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'date', list: 'dates' } }], want: undefined },
+    ],
+    [
+      'input[type=datetime-local] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'datetime-local', list: 'datetimes' } }], want: undefined },
+    ],
+    [
+      'input[type=email] (list)',
       { given: [{ tagName: 'input', attributes: { type: 'email', list: 'emails' } }], want: 'combobox' },
     ],
-    ['input[type="file"]', { given: [{ tagName: 'input', attributes: { type: 'file' } }], want: undefined }],
-    ['input[type="hidden"]', { given: [{ tagName: 'input', attributes: { type: 'hidden' } }], want: undefined }],
-    ['input[type="month"]', { given: [{ tagName: 'input', attributes: { type: 'month' } }], want: undefined }],
-    ['input[type="number"]', { given: [{ tagName: 'input', attributes: { type: 'number' } }], want: 'spinbutton' }],
-    ['input[type="password"]', { given: [{ tagName: 'input', attributes: { type: 'password' } }], want: undefined }],
-    ['input[type="radio"]', { given: [{ tagName: 'input', attributes: { type: 'radio' } }], want: 'radio' }],
-    ['input[type="range"]', { given: [{ tagName: 'input', attributes: { type: 'range' } }], want: 'slider' }],
-    ['input[type="reset"]', { given: [{ tagName: 'input', attributes: { type: 'reset' } }], want: 'button' }],
-    ['input[type="search"]', { given: [{ tagName: 'input', attributes: { type: 'search' } }], want: 'searchbox' }],
-    ['input[type="submit"]', { given: [{ tagName: 'input', attributes: { type: 'submit' } }], want: 'button' }],
-    ['input[type="tel"]', { given: [{ tagName: 'input', attributes: { type: 'tel' } }], want: 'textbox' }],
-    ['input[type="text"]', { given: [{ tagName: 'input', attributes: { type: 'text' } }], want: 'textbox' }],
-    ['input[type="shrek"]', { given: [{ tagName: 'input', attributes: { type: 'shrek' } }], want: 'textbox' }],
     [
-      'input (email combobox)',
-      { given: [{ tagName: 'input', attributes: { type: 'email', list: 'emails' } }], want: 'combobox' },
+      'input[type=file] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'file', list: 'files' } }], want: undefined },
     ],
     [
-      'input (text combobox)',
-      { given: [{ tagName: 'input', attributes: { type: 'text', list: 'texts' } }], want: 'combobox' },
+      'input[type=hidden] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'hidden', list: 'secrets' } }], want: undefined },
     ],
     [
-      'input (search combobox)',
+      'input[type=month] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'month', list: 'months' } }], want: undefined },
+    ],
+    [
+      'input[type=number] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'number', list: 'numbers' } }], want: 'spinbutton' },
+    ],
+    [
+      'input[type=password] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'password', list: 'passwords' } }], want: undefined },
+    ],
+    [
+      'input[type=radio] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'radio', list: 'radios' } }], want: 'radio' },
+    ],
+    [
+      'input[type=range] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'range', list: 'ranges' } }], want: 'slider' },
+    ],
+    [
+      'input[type=reset] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'reset', list: 'buttons' } }], want: 'button' },
+    ],
+    [
+      'input[type=search] (list)',
       { given: [{ tagName: 'input', attributes: { type: 'search', list: 'searches' } }], want: 'combobox' },
     ],
     [
-      'input (tel combobox)',
-      { given: [{ tagName: 'input', attributes: { type: 'tel', list: 'numbers' } }], want: 'combobox' },
+      'input[type=submit] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'submit', list: 'buttons' } }], want: 'button' },
     ],
     [
-      'input (url combobox)',
+      'input[type=tel] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'tel', list: 'phone numbers' } }], want: 'combobox' },
+    ],
+    [
+      'input[type=text] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'text', list: 'texts' } }], want: 'combobox' },
+    ],
+    [
+      'input[type=shrek] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'shrek', list: 'ogres' } }], want: 'combobox' },
+    ],
+    [
+      'input[type=time] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'time', list: 'times' } }], want: undefined },
+    ],
+    [
+      'input[type=url] (list)',
       { given: [{ tagName: 'input', attributes: { type: 'url', list: 'urls' } }], want: 'combobox' },
     ],
-    ['input[type="time"]', { given: [{ tagName: 'input', attributes: { type: 'time' } }], want: undefined }],
-    ['input[type="url"]', { given: [{ tagName: 'input', attributes: { type: 'url' } }], want: 'textbox' }],
-    ['input[type="week"]', { given: [{ tagName: 'input', attributes: { type: 'week' } }], want: undefined }],
+    [
+      'input[type=week] (list)',
+      { given: [{ tagName: 'input', attributes: { type: 'week', list: 'weeks' } }], want: undefined },
+    ],
     ['ins', { given: [{ tagName: 'ins' }], want: 'insertion' }],
     ['label', { given: [{ tagName: 'label' }], want: undefined }],
     ['legend', { given: [{ tagName: 'legend' }], want: undefined }],
@@ -177,9 +242,9 @@ describe('getRole', () => {
     ['summary', { given: [{ tagName: 'summary' }], want: undefined }],
     ['sup', { given: [{ tagName: 'sup' }], want: 'superscript' }],
     ['svg', { given: [{ tagName: 'svg' }], want: 'graphics-document' }],
-    ['svg[role="img"]', { given: [{ tagName: 'svg', attributes: { role: 'img' } }], want: 'img' }],
+    ['svg[role=img]', { given: [{ tagName: 'svg', attributes: { role: 'img' } }], want: 'img' }],
     [
-      'svg[role="graphics-symbol img"]',
+      'svg[role=graphics-symbol img]',
       { given: [{ tagName: 'svg', attributes: { role: 'graphics-symbol img' } }], want: 'graphics-symbol' },
     ],
     ['table', { given: [{ tagName: 'table' }], want: 'table' }],
@@ -207,8 +272,8 @@ describe('getRole', () => {
     ['tfoot', { given: [{ tagName: 'tfoot' }], want: 'rowgroup' }],
     ['th', { given: [{ tagName: 'th' }], want: 'columnheader' }],
     ['th (no ancestors)', { given: [{ tagName: 'th' }, { ancestors: [] }], want: undefined }],
-    ['th[scope="col"]', { given: [{ tagName: 'th', attributes: { scope: 'col' } }], want: 'columnheader' }],
-    ['th[scope="rol"]', { given: [{ tagName: 'th', attributes: { scope: 'row' } }], want: 'rowheader' }],
+    ['th[scope=col]', { given: [{ tagName: 'th', attributes: { scope: 'col' } }], want: 'columnheader' }],
+    ['th[scope=row]', { given: [{ tagName: 'th', attributes: { scope: 'row' } }], want: 'rowheader' }],
     ['time', { given: [{ tagName: 'time' }], want: 'time' }],
     ['title', { given: [{ tagName: 'title' }], want: undefined }],
     ['tr', { given: [{ tagName: 'tr' }], want: 'row' }],
@@ -250,7 +315,12 @@ describe('getRole', () => {
       return element;
     }
 
-    test.each(testCases)('%s', (_, { given, want }) => {
+    // Note: because of the way the DOM tests work, we can’t specify
+    // an empty attributes array, so 2 tests written in object
+    // syntax operate differently. Only skip those 2.
+    const domTestCases = testCases.filter(([name]) => !['a', 'area'].includes(name));
+
+    test.each(domTestCases)('%s', (_, { given, want }) => {
       // convert main element to DOM element
       const mainEl = elFromVirtual(given[0] as VirtualElement);
       const options = { ...given[1] };

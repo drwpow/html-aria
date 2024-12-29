@@ -32,7 +32,7 @@ export interface GetRoleOptions {
  * @see https://www.w3.org/TR/html-aria/
  */
 export function getRole(element: HTMLElement | VirtualElement, options?: GetRoleOptions): ARIARole | undefined {
-  const { tagName, attributes = {} } = virtualizeElement(element);
+  const { tagName, attributes } = virtualizeElement(element);
 
   // explicit role: use if valid
   if (typeof attributes?.role === 'string') {

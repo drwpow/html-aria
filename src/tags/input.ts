@@ -1,66 +1,71 @@
 import { NO_CORRESPONDING_ROLE } from '../lib/html.js';
-import type { VirtualElement } from '../types.js';
+import type { ARIARole, VirtualElement } from '../types.js';
 
-export const INPUT_TYPES = new Set([
-  'button',
-  'checkbox',
-  'color',
-  'date',
-  'datetime-local',
-  'email',
-  'file',
-  'hidden',
-  'image',
-  'month',
-  'number',
-  'password',
-  'radio',
-  'range',
-  'reset',
-  'search',
-  'submit',
-  'tel',
-  'text',
-  'time',
-  'url',
-  'week',
-]);
+export type InputType =
+  | 'button'
+  | 'checkbox'
+  | 'color'
+  | 'date'
+  | 'datetime-local'
+  | 'email'
+  | 'file'
+  | 'hidden'
+  | 'image'
+  | 'month'
+  | 'number'
+  | 'password'
+  | 'radio'
+  | 'range'
+  | 'reset'
+  | 'search'
+  | 'submit'
+  | 'tel'
+  | 'text'
+  | 'time'
+  | 'url'
+  | 'week';
+
+export const INPUT_ROLE_MAP: Record<InputType, ARIARole | undefined> = {
+  button: 'button',
+  checkbox: 'checkbox',
+  color: NO_CORRESPONDING_ROLE,
+  date: NO_CORRESPONDING_ROLE,
+  'datetime-local': NO_CORRESPONDING_ROLE,
+  email: 'textbox',
+  file: NO_CORRESPONDING_ROLE,
+  hidden: NO_CORRESPONDING_ROLE,
+  image: 'button',
+  month: NO_CORRESPONDING_ROLE,
+  number: 'spinbutton',
+  password: NO_CORRESPONDING_ROLE,
+  radio: 'radio',
+  range: 'slider',
+  reset: 'button',
+  search: 'searchbox',
+  submit: 'button',
+  tel: 'textbox',
+  text: 'textbox',
+  time: NO_CORRESPONDING_ROLE,
+  url: 'textbox',
+  week: NO_CORRESPONDING_ROLE,
+};
+
+const COMBOBOX_ENABLED_TYPES: (keyof typeof INPUT_ROLE_MAP)[] = ['email', 'url', 'search', 'tel', 'text'];
 
 export function getInputRole(options: {
   attributes: VirtualElement['attributes'];
 }) {
   const { attributes } = options;
-  const type = attributes?.type;
+  const type = attributes?.type as string | undefined;
 
-  switch (type) {
-    case 'button': {
-      return 'button';
-    }
-    case 'checkbox': {
-      return 'checkbox';
-    }
-    case 'image': {
-      return 'img';
-    }
-    case 'range': {
-      return 'slider';
-    }
-    case 'radio': {
-      return 'radio';
-    }
-    case 'search': {
-      return 'searchbox';
-    }
-    case 'color':
-    case 'date':
-    case 'datetime-local':
-    case 'file':
-    case 'hidden':
-    case 'month':
-    case 'week': {
-      return NO_CORRESPONDING_ROLE;
-    }
+  // handle input comboboxes
+  // @see https://www.w3.org/TR/html-aria/#el-input-text-list
+  const hasList = !!attributes?.list;
+  const missingType = !type;
+  const invalidType = type && !(type in INPUT_ROLE_MAP);
+  if (hasList && (missingType || invalidType || COMBOBOX_ENABLED_TYPES.includes(type as keyof typeof INPUT_ROLE_MAP))) {
+    return 'combobox';
   }
 
-  return attributes && 'list' in attributes ? 'combobox' : 'textbox';
+  return (type as InputType) in INPUT_ROLE_MAP ? INPUT_ROLE_MAP[type as InputType] : 'textbox';
 }

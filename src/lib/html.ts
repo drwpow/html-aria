@@ -349,7 +349,7 @@ export const tags: Record<TagName, TagInfo> = {
 
   // Image and multimedia
   area: {
-    defaultRole: 'generic',
+    defaultRole: 'link',
     supportedRoles: ['link'],
   },
   audio: {
