@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { AncestorList, getRole, tags, VirtualElement } from '../src/index.js';
+import { type VirtualElement, getRole, tags } from '../src/index.js';
 import { checkTestAndTagName } from './helpers.js';
 
 describe('getRole', () => {
