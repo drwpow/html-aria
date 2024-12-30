@@ -318,12 +318,12 @@ export const tags: Record<TagName, TagInfo> = {
   },
   sub: {
     defaultRole: 'subscript',
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
     namingProhibited: true,
   },
   sup: {
     defaultRole: 'superscript',
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
     namingProhibited: true,
   },
   time: {
@@ -402,7 +402,7 @@ export const tags: Record<TagName, TagInfo> = {
   // SVG and MathML
   svg: {
     defaultRole: 'graphics-document',
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
   },
   math: {
     defaultRole: 'math',
@@ -470,7 +470,7 @@ export const tags: Record<TagName, TagInfo> = {
   },
   th: {
     defaultRole: 'columnheader',
-    supportedRoles: ['columnheader', 'rowheader', 'cell'],
+    supportedRoles: ['cell', 'columnheader', 'gridcell', 'rowheader'],
   },
   thead: {
     defaultRole: 'rowgroup',
@@ -553,7 +553,7 @@ export const tags: Record<TagName, TagInfo> = {
   },
   summary: {
     defaultRole: NO_CORRESPONDING_ROLE,
-    supportedRoles: [],
+    supportedRoles: ALL_ROLES,
   },
 
   // Web Components

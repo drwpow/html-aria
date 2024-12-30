@@ -5,6 +5,19 @@ export function parseTokenList(tokenList: string): string[] {
   return tokenList.toLocaleLowerCase().split(' ').filter(Boolean);
 }
 
+/**
+ * Get the first matching value in a tokenlist
+ *
+ * Note: according to the spec, `role` can not only be a list of
+ * spring-separated values; it can contain fallbacks the browser may not
+ * understand. According to spec, an arbitrary role is to be ignored, so we take
+ * the first match (if any), or `undefined`.
+ * @see
+ */
+export function firstMatchingToken<T>(tokenList: string, validValues: T[]): T | undefined {
+  return parseTokenList(tokenList).find((value) => validValues.includes(value as T)) as T | undefined;
+}
+
 /** Are we able to traverse the DOM? */
 export function isHTMLElement(element: HTMLElement | VirtualElement): boolean {
   return typeof HTMLElement !== 'undefined' && element instanceof HTMLElement;

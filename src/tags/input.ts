@@ -52,11 +52,11 @@ export const INPUT_ROLE_MAP: Record<InputType, ARIARole | undefined> = {
 
 const COMBOBOX_ENABLED_TYPES: InputType[] = ['email', 'url', 'search', 'tel', 'text'];
 
-export function getInputRole(
-  options: {
-    attributes?: VirtualElement['attributes'];
-  } = {},
-) {
+export interface GetInputRoleOptions {
+  attributes?: VirtualElement['attributes'];
+}
+
+export function getInputRole({ attributes }: GetInputRoleOptions = {}) {
   // For ARIA purposes, missing or invalid types are treated as "text"
   let type = attributes?.type as InputType;
   if (!type || !(type in INPUT_ROLE_MAP)) {
@@ -100,11 +100,7 @@ export const INPUT_SUPPORTED_ROLES_MAP: Record<InputType, ARIARole[]> = {
   week: [],
 };
 
-export function getInputSupportedRoles(
-  options: {
-    attributes?: VirtualElement['attributes'];
-  } = {},
-): ARIARole[] {
+export function getInputSupportedRoles({ attributes }: GetInputRoleOptions = {}): ARIARole[] {
   // For ARIA purposes, missing or invalid types are treated as "text"
   let type = attributes?.type as InputType;
   if (!type || !(type in INPUT_SUPPORTED_ROLES_MAP)) {

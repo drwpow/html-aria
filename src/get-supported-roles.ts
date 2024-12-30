@@ -1,6 +1,6 @@
-import { ALL_ROLES, NO_ROLES } from './lib/aria-roles.js';
+import { ALL_ROLES, roles } from './lib/aria-roles.js';
 import { tags } from './lib/html.js';
-import { calculateAccessibleName, isEmptyAncestorList, virtualizeElement } from './lib/util.js';
+import { calculateAccessibleName, firstMatchingToken, isEmptyAncestorList, virtualizeElement } from './lib/util.js';
 import { getFooterRole } from './tags/footer.js';
 import { getInputSupportedRoles } from './tags/input.js';
 import { getSelectSupportedRoles } from './tags/select.js';
@@ -85,7 +85,10 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
     }
     case 'th': {
       // Deviation from the spec: only treat as “no corresponding role” if user has explicated this
-      return isEmptyAncestorList(options?.ancestors) ? ALL_ROLES : ['cell', 'columnheader', 'gridcell', 'rowheader'];
+      return isEmptyAncestorList(options?.ancestors) ? ALL_ROLES : tag.supportedRoles;
+    }
+    case 'tr': {
+      return isEmptyAncestorList(options?.ancestors) ? ALL_ROLES : tag.supportedRoles;
     }
   }
 

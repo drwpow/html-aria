@@ -1,6 +1,6 @@
-import { roles } from './lib/aria-roles.js';
+import { ALL_ROLES, roles } from './lib/aria-roles.js';
 import { NO_CORRESPONDING_ROLE, tags } from './lib/html.js';
-import { calculateAccessibleName, isEmptyAncestorList, parseTokenList, virtualizeElement } from './lib/util.js';
+import { calculateAccessibleName, firstMatchingToken, isEmptyAncestorList, virtualizeElement } from './lib/util.js';
 import { getFooterRole } from './tags/footer.js';
 import { getHeaderRole } from './tags/header.js';
 import { getInputRole } from './tags/input.js';
@@ -36,16 +36,13 @@ export function getRole(element: HTMLElement | VirtualElement, options?: GetRole
 
   // explicit role: use if valid
   if (typeof attributes?.role === 'string') {
-    // Note: according to the spec, `role` can not only be a list of spring-separated values;
-    // it can contain fallbacks the browser may not understand. According to spec, an arbitrary
-    // role is to be ignored, so we take the first match (if any), or `undefined`.
-    const roleList = parseTokenList(attributes.role);
-    const firstValidRole = roleList.find((role) => role in roles) as ARIARole | undefined;
-    // Note: even though the spec forbids certain elements from having certain
-    // roles, most browsers will ignore this and simply take `role` at face
-    // value. We’ll follow that behavior, taking the author at their word.
-    if (firstValidRole) {
-      return firstValidRole;
+    const firstRole = firstMatchingToken(attributes.role, ALL_ROLES);
+    // Note: according to the spec, certain roles aren’t allowed on certain
+    // elements. However, most browsers ignore this, and accept the role at face
+    // value. So don’t ignore certain combinations of roles; just accept the
+    // role attribute regardless of tag name.
+    if (firstRole) {
+      return firstRole;
     }
   }
 

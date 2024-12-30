@@ -208,13 +208,20 @@ From the [spec](https://www.w3.org/TR/html-aria/#dfn-no-corresponding-role):
 
 In other words, `none` is more of a decisive “this element is presentational and can be ignored” labeling, while “no corresponding role” means “this element doesn’t have predefined behavior that can be automatically determined, and the author should provide additional information such as explicit `role`s and ARIA states and properties.”
 
-In this library, “no corresponding role” is represented as `undefined`.
+In html-aria, “no corresponding role” is represented as `undefined`.
 
-#### Is there a difference between “unsupported attributes” and “prohibited attributes?”
+#### What is the difference between “unsupported attributes” and “prohibited attributes?”
 
-In the spec, you’ll see 2 terms: _supported_ and _prohibited_. It’s important to note that not all _unsupported_ attributes are necessarily _prohibited_ (i.e. all prohibited attributes are unsupported, but not all unsupported attributes are prohibited)! The distinction is basically **prohibited attributes constitute an error,** where as unsupported attributes are merely ignored.
+In the spec, you’ll find language describing both roles and attributes in 4 categories:
 
-For the purposes of html-aria, though, we usually want to discourage unsupported attributes to follow best practices, even if it’s not technically an error. So even though there _is_ a technical distinction between the two terms, for the purpose of this library they’re treated as the same—we pretend that all unsupported attributes are prohibited. That’s why there’s currently no `getProhibitedAttributes()` method (you can merely infer it from `getSupportedAttributes()` / `isSupportedAttribute()`).
+1. **Supported and recommended:** valid and recommended to use
+2. **Supported but not recommended:** valid, but may [cause unpredictable behavior](https://www.w3.org/TR/html-aria/#author-guidance-to-avoid-incorrect-use-of-aria)
+3. **Unsupported, but not prohibited:** these are omitted both from supported and prohibited lists
+4. **Unsupported and prohibited:** explicitly [prohibited](https://www.w3.org/TR/wai-aria-1.3/#prohibitedattributes)
+
+As stated in [Project Goals](#about), html-aria aims to not conflate non-normative recommendations as normative guidelines. So in the API, [getSupportedRoles()](#getsupportedroles--) and [getSupportedAttributes()](#getsupportedattributes--) will return 1 and 2, but not 3 or 4.
+
+While there is a technical distinction between 3 and 4, for the purposees of html-aria they’re treated the same.
 
 ## About
 
