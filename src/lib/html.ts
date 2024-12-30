@@ -71,7 +71,8 @@ export const tags: Record<TagName, TagInfo> = {
   body: {
     defaultRole: 'generic',
     supportedRoles: ['generic'],
-    supportedAttributesOverride: ['aria-hidden'],
+    // <body> supports all global + generic aria-* attributes EXCEPT aria-hidden
+    supportedAttributesOverride: ['aria-atomic', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-keyshortcuts', 'aria-live', 'aria-owns', 'aria-relevant'], // biome-ignore format: long list
     namingProhibited: true,
   },
 
@@ -368,7 +369,7 @@ export const tags: Record<TagName, TagInfo> = {
   track: {
     defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
-    supportedAttributesOverride: ['aria-hidden'],
+    supportedAttributesOverride: [],
   },
   video: {
     defaultRole: NO_CORRESPONDING_ROLE,
