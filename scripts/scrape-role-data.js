@@ -20,13 +20,19 @@ for (const roleContainer of roleContainers) {
 
   const rowHeadings = table.querySelectorAll('tbody th');
 
-  const required = [];
-  const supported = [];
-  const prohibited = [];
+  const required = new Set();
+  const supported = new Set();
+  const prohibited = new Set();
   function pushAttrsToList(rowBody, list) {
-    const links = rowBody.querySelectorAll('a');
-    for (const link of links) {
-      list.push(link.textContent);
+    const attributes = rowBody.querySelectorAll('li');
+    for (const attr of attributes) {
+      if (attr.textContent.includes('deprecated')) {
+        continue;
+      }
+      const link = attr.querySelector('a');
+      if (link) {
+        list.add(link.textContent);
+      }
     }
   }
 
@@ -40,7 +46,9 @@ for (const roleContainer of roleContainers) {
     }
 
     // note: before supported, we MUST push all required attrs to this as well
-    supported.push(...required);
+    for (r of required) {
+      supported.add(r);
+    }
 
     // supported
     if (rowTitle.includes('inherited states and properties') || rowTitle.includes('supported states and properties')) {
@@ -51,16 +59,15 @@ for (const roleContainer of roleContainers) {
     if (rowTitle.includes('prohibited states and properties')) {
       pushAttrsToList(rowBody, prohibited);
     }
-
-    // sort
-    required.sort((a, b) => a.localeCompare(b));
-    supported.sort((a, b) => a.localeCompare(b));
-    prohibited.sort((a, b) => a.localeCompare(b));
   }
 
+  const rSorted = [...required].sort((a, b) => a.localeCompare(b));
+  const sSorted = [...supported].sort((a, b) => a.localeCompare(b));
+  const pSorted = [...prohibited].sort((a, b) => a.localeCompare(b));
+
   console.log(`${role}: {
-  required: [${required.map((v) => `'${v}'`).join(', ')}],
-  supported: [${supported.map((v) => `'${v}'`).join(', ')}], // biome-ignore format: long list
-  prohibited: [${prohibited.map((v) => `'${v}'`).join(', ')}],
+  required: [${rSorted.map((v) => `'${v}'`).join(', ')}],
+  supported: [${sSorted.map((v) => `'${v}'`).join(', ')}], // biome-ignore format: long list
+  prohibited: [${pSorted.map((v) => `'${v}'`).join(', ')}],
 }`);
 }

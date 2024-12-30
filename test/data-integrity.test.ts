@@ -10,6 +10,8 @@ describe('html data', () => {
     if (tagData.defaultRole) {
       test(tag, () => {
         expect(tagData.supportedRoles, 'defaultRole not in supportedRoles').toContain(tagData.defaultRole);
+        const deduped = new Set(tagData.supportedRoles);
+        expect(deduped.size, 'duplicate roles in supportedRoles').toBe(tagData.supportedRoles.length);
       });
     }
   }
@@ -17,17 +19,25 @@ describe('html data', () => {
 
 describe('role data', () => {
   for (const [role, roleData] of Object.entries(roles)) {
-    if (roleData.required.length) {
-      test(role, () => {
-        expect(
-          roleData.required.every((a) => roleData.supported.includes(a)),
-          'supported aria-* attributes missing some required aria-* attributes',
-        ).toBe(true);
+    describe(role, () => {
+      if (roleData.required.length) {
+        test('required', () => {
+          expect(
+            roleData.required.every((a) => roleData.supported.includes(a)),
+            'supported aria-* attributes missing some required aria-* attributes',
+          ).toBe(true);
+        });
+      }
+      test('prohibited', () => {
         expect(
           roleData.prohibited.every((a) => !roleData.supported.includes(a)),
           'prohibited aria-* attributes in supported aria-* attributes',
         ).toBe(true);
       });
-    }
+      test('supported', () => {
+        const deduped = new Set(roleData.supported);
+        expect(deduped.size, 'duplicate attributes').toBe(roleData.supported.length);
+      });
+    });
   }
 });

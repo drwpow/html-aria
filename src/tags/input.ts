@@ -1,4 +1,4 @@
-import { NO_CORRESPONDING_ROLE } from '../lib/html.js';
+import { NO_CORRESPONDING_ROLE, tags } from '../lib/html.js';
 import type { ARIARole, VirtualElement } from '../types.js';
 
 export type InputType =
@@ -44,7 +44,7 @@ export const INPUT_ROLE_MAP: Record<InputType, ARIARole | undefined> = {
   search: 'searchbox',
   submit: 'button',
   tel: 'textbox',
-  text: 'textbox',
+  text: tags.input.defaultRole,
   time: NO_CORRESPONDING_ROLE,
   url: 'textbox',
   week: NO_CORRESPONDING_ROLE,
@@ -92,9 +92,7 @@ export const INPUT_SUPPORTED_ROLES_MAP: Record<InputType, ARIARole[]> = {
   search: ['searchbox'],
   submit: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
   tel: ['textbox'],
-  // Note: "text" is allowed more roles than the other textbox types, for whatever reason
-  // @see https://www.w3.org/TR/html-aria/#el-input-text
-  text: ['combobox', 'searchbox', 'spinbutton', 'textbox'],
+  text: tags.input.supportedRoles,
   time: [],
   url: ['textbox'],
   week: [],

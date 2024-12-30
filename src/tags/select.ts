@@ -1,12 +1,13 @@
-import type { ARIARole } from 'aria-query';
-import type { VirtualElement } from '../types.js';
+import { tags } from '../lib/html.js';
+import type { ARIARole, VirtualElement } from '../types.js';
 
-export function getSelectRole({ attributes = {} }: { attributes?: VirtualElement['attributes'] } = {}) {
+export function getSelectRole({ attributes = {} }: { attributes?: VirtualElement['attributes'] } = {}): ARIARole {
   const size = normalizeSize(attributes.size);
   if ((size && size > 1) || 'multiple' in attributes) {
     return 'listbox';
   }
-  return 'combobox';
+  // biome-ignore lint/style/noNonNullAssertion: this is defined
+  return tags.select.defaultRole!;
 }
 
 export function getSelectSupportedRoles({
@@ -16,8 +17,7 @@ export function getSelectSupportedRoles({
   if ((size && size > 1) || 'multiple' in attributes) {
     return ['listbox'];
   }
-
-  return ['combobox', 'menu'];
+  return tags.select.supportedRoles;
 }
 
 function normalizeSize(size: unknown): number | undefined {

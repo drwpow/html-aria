@@ -501,7 +501,7 @@ export const tags: Record<TagName, TagInfo> = {
   },
   input: {
     defaultRole: 'textbox',
-    supportedRoles: [],
+    supportedRoles: ['combobox', 'searchbox', 'spinbutton', 'textbox'],
   },
   label: {
     defaultRole: NO_CORRESPONDING_ROLE,
@@ -535,7 +535,7 @@ export const tags: Record<TagName, TagInfo> = {
   },
   select: {
     defaultRole: 'combobox',
-    supportedRoles: [],
+    supportedRoles: ['combobox', 'menu'],
   },
   textarea: {
     defaultRole: 'textbox',

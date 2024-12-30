@@ -1,12 +1,18 @@
 import { describe, expect, test } from 'vitest';
 import {
   type ARIAAttribute,
+  type AttributeCategory,
+  attributes,
+  draganddropAttributes,
   getSupportedAttributes,
+  globalAttributes,
   isSupportedAttribute,
   isValidAttributeValue,
+  liveregionAttributes,
+  relationshipAttributes,
   tags,
+  widgetAttributes,
 } from '../src/index.js';
-import { attributes, globalAttributes, widgetAttributes } from '../src/lib/aria-attributes.js';
 import { checkTestAndTagName } from './helpers.js';
 
 const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
@@ -100,6 +106,14 @@ const tests: [
 
 describe('getSupportedAttributes', () => {
   const testedTags = new Set<string>();
+
+  const attributeMap: Record<AttributeCategory, ARIAAttribute[]> = {
+    global: Object.keys(globalAttributes) as ARIAAttribute[],
+    widget: Object.keys(widgetAttributes) as ARIAAttribute[],
+    liveregion: Object.keys(liveregionAttributes) as ARIAAttribute[],
+    draganddrop: Object.keys(draganddropAttributes) as ARIAAttribute[],
+    relationship: Object.keys(relationshipAttributes) as ARIAAttribute[],
+  };
 
   test.each(tests)('%s', (name, { given, want }) => {
     testedTags.add(given[0].tagName);
