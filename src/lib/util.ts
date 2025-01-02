@@ -1,4 +1,11 @@
-import type { ARIAAttribute, AncestorList, TagName, VirtualElement } from '../types.js';
+import type {
+  ARIAAttribute,
+  AncestorList,
+  AttributeData,
+  NameProhibitedAttributes,
+  TagName,
+  VirtualElement,
+} from '../types.js';
 
 /** Parse a list of roles, e.g. role="graphics-symbol img" */
 export function parseTokenList(tokenList: string): string[] {
@@ -83,9 +90,29 @@ export function firstMatchingAncestor(
   }
 }
 
-export const NAME_PROHIBITED_ATTRIBUTES = new Set(['aria-braillelabel', 'aria-label', 'aria-labelledby']);
+export const NAME_PROHIBITED_ATTRIBUTES = new Set<string>([
+  'aria-braillelabel',
+  'aria-brailleroledescription',
+  'aria-label',
+  'aria-labelledby',
+  'aria-roledescription',
+] satisfies NameProhibitedAttributes[]);
 
 /** Remove naming attributes */
-export function namingProhibited(attributes: ARIAAttribute[]): ARIAAttribute[] {
-  return attributes.filter((attr) => !NAME_PROHIBITED_ATTRIBUTES.has(attr));
+export function namingProhibitedList<T extends string[]>(attributeList: T): Exclude<T, NameProhibitedAttributes> {
+  return attributeList.filter((attr) => !NAME_PROHIBITED_ATTRIBUTES.has(attr)) as Exclude<T, NameProhibitedAttributes>;
+}
+
+/** Remove naming attributes */
+export function namingProhibitedMap<T extends Record<string, AttributeData>>(
+  attributeMap: T,
+): Omit<T, NameProhibitedAttributes> {
+  const clone = {} as T;
+
+  for (const [k, v] of Object.entries(attributeMap)) {
+    if (!NAME_PROHIBITED_ATTRIBUTES.has(k)) {
+      (clone as Record<string, unknown>)[k] = v;
+    }
+  }
+  return clone;
 }

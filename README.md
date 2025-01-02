@@ -8,11 +8,11 @@ WAI-ARIA utilities for HTML based on the [ARIA 1.3 spec](https://www.w3.org/TR/w
 
 ### aria-query
 
+- html-aria is an expansion of aria-query that implements the important-but-missing [W3C specification on mapping HTML to ARIA](https://www.w3.org/TR/html-aria). This is necessary to correctly map HTML → ARIA roles, states, and properties.
 - html-aria supports ARIA 1.3 while aria-query is still on ARIA 1.2
-- html-aria is designed to reduce effort and minimize error for common tasks (e.g. determining ARIA roles from HTML). aria-query is a general purpose replication of the ARIA spec that requires more understanding and more boilerplate code.
-- html-aria is more performant (100× faster) due to aria-query [constantly redoing work](https://github.com/A11yance/aria-query/issues/560).
+- html-aria has a simpler API that requires less boilerplate code while requiring less knowledge of the ARIA spec. This reduces mistakes in creating accessible interfaces.
 - html-aria is smaller, weighing only ~5k gzip (aria-query is ~13k gzip)
-- html-aria respects more nuance in the spec such as [improved role detection from HTML](#getrole) and [HTML-aware aria-\* attributes](#aria-attributes-from-html)
+- html-aria is more performant (100× faster) (due to aria-query [constantly redoing work](https://github.com/A11yance/aria-query/issues/560)).
 
 ## Setup
 
@@ -24,7 +24,7 @@ npm i html-aria
 
 ### getRole()
 
-Get a valid ARIA role from HTML. This is the core API.
+Determine which HTML maps to which default ARIA role.
 
 ```ts
 import { getRole } from "html-aria";
@@ -40,9 +40,9 @@ It’s important to note that inferring ARIA roles from HTML isn’t always stra
 2. **Tag + attribute map**: Tags + attributes are needed to determine the ARIA role (e.g. `input[type="radio"]` → `radio`)
 3. **Tag + DOM tree**: Tags + DOM tree structure are needed to determine the ARIA role.
 
-[Learn more](#aria-roles-from-html).
+[See a list of all elements](#aria-roles-from-html).
 
-### getSupportedRoles()
+### getSupportedRoles() / isSupportedRole()
 
 The spec dictates that **certain elements may NOT receive certain roles.** For example, `<div role="button">` is allowed (not recommended, but allowed), but `<select role="button">` is not. `getSupportedRoles()` will return all valid roles for a given element + attributes.
 
@@ -53,7 +53,21 @@ getSupportedRoles(document.createElement("img")); // ["none", "presentation", "i
 getSupportedRoles({ tagName: "img", attributes: { alt: "Image caption" } }); //  ["button", "checkbox", "link", (15 more)]
 ```
 
-### getSupportedAttributes()
+There is also a helper method `isSupportedRole()` to make individual assertions:
+
+```ts
+import { isSupportedRole } from "html-aria";
+
+isSupportedRole({ tagName: "select" }, "combobox"); // true
+isSupportedRole(
+  { tagName: "select", attributes: { multiple: true } },
+  "listbox"
+); // true
+isSupportedRole({ tagName: "select" }, "listbox"); // false
+isSupportedRole({ tagName: "select" }, "button"); // false
+```
+
+### getSupportedAttributes() / isSupportedAttribute()
 
 For any element, list all supported [aria-\* attributes](https://www.w3.org/TR/wai-aria-1.3/#states_and_properties), including attributes inherited from superclasses. This takes in an HTML element, not an ARIA role, because in some cases the HTML element actually affects the list ([see full list](#html-attributes)).
 
@@ -80,6 +94,38 @@ isSupportedAttribute({ tagName: "button" }, "aria-checked"); // false
 
 It’s worth noting that **HTML elements may factor in** according to the spec—providing the `role` isn’t enough. [See aria-\* attributes from HTML](#aria--attributes-from-html).
 
+### getElements()
+
+Return all HTML elements that represent a given ARIA role, if any. If no HTML elements represent this role, `undefined` will be returned. This is essentially the inverse of [`getRole()`](#getrole--).
+
+```ts
+import { getBaseConcepts } from "html-aria";
+
+getBaseConcepts("button"); // [{ tagName: "button" }]
+getBaseConcepts("radio"); // [{ tagName: 'input', attributes: { type: "radio" } }]
+getBaseConcepts("rowheader"); // [{ tagName: "th", attributes: { scope: "row" } }]
+getBaseConcepts("tab"); // undefined
+```
+
+Worth noting that this is slightly-different from a [related concept](https://www.w3.org/TR/wai-aria-1.3/#relatedConcept) or [base concept](https://www.w3.org/TR/wai-aria-1.3/#baseConcept).
+
+### isNameRequired()
+
+For a role, return whether or not an [accessible name](https://www.w3.org/TR/wai-aria-1.3/#namecalculation) is required for screenreaders.
+
+```ts
+import { isNameRequired } from "html-aria";
+
+isNameRequired("link"); // true
+isNameRequired("cell"); // false
+```
+
+_Note: this does NOT mean `aria-label` is required! Quite the opposite—if a name is required, it’s always best to have the name visible in content. See [ARIA 1.3 Accessible Name Calculation](https://www.w3.org/TR/wai-aria-1.3/#namecalculation) for more info._
+
+### isInteractive()
+
+TODO / Not implemented
+
 ### isValidAttributeValue()
 
 Some aria-\* attributes require specific values. `isValidAttributeValue()` returns `false` if, given a specific aria-\* attribute, the value is invalid according to the spec.
@@ -103,6 +149,11 @@ isValidAttributeValue("aria-disabled", "disabled"); // false
 isValidAttributeValue("aria-checked", "true"); // true
 isValidAttributeValue("aria-checked", "mixed"); // true
 isValidAttributeValue("aria-checked", "checked"); // false
+
+// number attributes
+isValidAttribute("aria-valuenow", "15"); // true
+isValidAttribute("aria-valuenow", 15); // true
+isValidAttribute("aria-valuenow", 0); // true
 ```
 
 ⚠️ _Be mindful of cases where a valid value may still be valid, but invoke different behavior according to the ARIA role, e.g. [`mixed` behavior for `radio`/`menuitemradio`/`switch`](https://www.w3.org/TR/wai-aria-1.3/#aria-checked)_
@@ -167,6 +218,12 @@ Further, a common mistake many simple accessibility libraries make is mapping ar
 _Note: `—` = [no corresponding role](#whats-the-difference-between-no-corresponding-role-and-the-none-role-). Also worth pointing out that in other cases, [global aria-\* attributes](https://www.w3.org/TR/wai-aria-1.3/#global_states) are allowed, so this is unique to the element and NOT the ARIA role._
 
 ### Technical deviations from the spec
+
+#### Mark
+
+The `<mark>` tag gets the `mark` role. Seems logical, right? Well, not according to the spec. It’s [not listed in the HTML in ARIA spec](https://www.w3.org/TR/html-aria/#el-mark), and it’s worth noting that `<mark>` is a [_related concept_](https://www.w3.org/TR/wai-aria-1.3/#mark), not a base concept as elements usually are.
+
+But despite the ARIA specs being pretty clear that `<mark>` and `mark` aren’t directly equivalent, all modern browsers today seem to think they are, and `<mark>` always gets a `mark` role. For that reason, html-aria has sided with practical browser implementation rather than the ARIA spec.
 
 #### SVG
 

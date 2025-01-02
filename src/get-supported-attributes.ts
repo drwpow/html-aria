@@ -1,13 +1,13 @@
 import { type GetRoleOptions, getRole } from './get-role.js';
-import { attributes, globalAttributes } from './lib/aria-attributes.js';
+import { attributes, globalAttributes, globalAttributesNamingProhibited } from './lib/aria-attributes.js';
 import { roles } from './lib/aria-roles.js';
 import { tags } from './lib/html.js';
-import { calculateAccessibleName, namingProhibited, virtualizeElement } from './lib/util.js';
+import { calculateAccessibleName, namingProhibitedList, virtualizeElement } from './lib/util.js';
 import { getHeaderRole } from './tags/header.js';
 import type { ARIAAttribute, VirtualElement } from './types.js';
 
 const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
-const GLOBAL_NO_NAMING = namingProhibited(GLOBAL_ATTRIBUTES);
+const GLOBAL_NO_NAMING = Object.keys(globalAttributesNamingProhibited) as ARIAAttribute[];
 
 /**
  * Given an ARIA role returns a list of supported/inherited aria-* attributes.
@@ -54,7 +54,7 @@ export function getSupportedAttributes(
     }
   }
 
-  return roleData.supported;
+  return tag.namingProhibited ? namingProhibitedList(roleData.supported) : roleData.supported;
 }
 
 /**

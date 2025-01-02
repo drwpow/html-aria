@@ -269,7 +269,7 @@ export const tags: Record<TagName, TagInfo> = {
     namingProhibited: true,
   },
   mark: {
-    defaultRole: NO_CORRESPONDING_ROLE,
+    defaultRole: 'mark',
     supportedRoles: ALL_ROLES,
     namingProhibited: true,
   },
@@ -567,5 +567,11 @@ export const tags: Record<TagName, TagInfo> = {
     defaultRole: NO_CORRESPONDING_ROLE,
     supportedRoles: [],
     supportedAttributesOverride: [],
+  },
+
+  // SVG tags (partial)
+  g: {
+    defaultRole: NO_CORRESPONDING_ROLE,
+    supportedRoles: ['group', 'graphics-object'],
   },
 };

@@ -141,7 +141,10 @@ export type TagName =
   | 'template'
   | 'slot'
   | 'canvas'
-  | 'template';
+  | 'template'
+
+  // SVG extensions (partial)
+  | 'g';
 
 export type Ancestor = HTMLElement | VirtualElement;
 export type AncestorList = Ancestor[];
@@ -288,6 +291,35 @@ export type ARIAAttribute =
   | DragAndDropAttribute
   | RelationshipAttribute;
 
+export type AttributeCategory = 'global' | 'widget' | 'liveregion' | 'draganddrop' | 'relationship';
+export type NameProhibitedAttributes =
+  | 'aria-braillelabel'
+  | 'aria-brailleroledescription'
+  | 'aria-label'
+  | 'aria-labelledby'
+  | 'aria-roledescription';
+/** Attribute may essentially allow any value. As a general rule, empty strings are NOT valid. */
+export type StringAttribute = { type: 'string'; default?: never; values?: never };
+/** Boolean attributes are essentially the same as enum types whose only allowed values are ["true", "false"] */
+export type BooleanAttribute = { type: 'boolean'; default: boolean | undefined; values?: never };
+/**
+ * Enum attributes only allow one of a list of specific values.
+ * Note that if a tokenlist (space-separated list) is allowed, it is type: "string".
+ * Although the spec does allow “undefined” as a valid value (e.g.
+ * aria-checked), that indicates the absence of the attribute altogether; this
+ * only tests the presence of attributes, thus, `undefined` is omitted.
+ */
+export type EnumAttribute = { type: 'enum'; default: string | undefined; values: string[] };
+/** Number attributes represent both integer and scalar (floating point) types. */
+export type NumberAttribute = { type: 'number'; default?: never; values?: never };
+
+export type AttributeData = { category: AttributeCategory[] } & (
+  | StringAttribute
+  | BooleanAttribute
+  | EnumAttribute
+  | NumberAttribute
+);
+
 /**
  * 5.3.1 Abstract Roles
  * The following roles are used to support the WAI-ARIA Roles Model for the
@@ -327,6 +359,7 @@ export type WidgetRole =
   | 'option'
   | 'progressbar'
   | 'radio'
+  | 'row' // (when in a treegrid)
   | 'scrollbar'
   | 'searchbox'
   | 'separator' // (when focusable)

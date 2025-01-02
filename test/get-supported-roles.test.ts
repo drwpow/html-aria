@@ -88,6 +88,7 @@ describe('getSupportedRoles', () => {
       'footer (default)',
       { given: [{ tagName: 'footer' }], want: ['contentinfo', 'generic', 'group', 'none', 'presentation'] },
     ],
+    ['g', { given: [{ tagName: 'g' }], want: [] }],
     ['h1', { given: [{ tagName: 'h1' }], want: ['heading', 'none', 'presentation', 'tab'] }],
     ['h2', { given: [{ tagName: 'h2' }], want: ['heading', 'none', 'presentation', 'tab'] }],
     ['h3', { given: [{ tagName: 'h3' }], want: ['heading', 'none', 'presentation', 'tab'] }],

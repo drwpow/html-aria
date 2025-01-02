@@ -1,3 +1,5 @@
+export * from './is-name-required.js';
+export * from './get-elements.js';
 export * from './get-required-attributes.js';
 export * from './get-role.js';
 export * from './get-supported-attributes.js';

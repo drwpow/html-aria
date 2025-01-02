@@ -19,55 +19,79 @@ for (const roleContainer of roleContainers) {
   }
 
   const rowHeadings = table.querySelectorAll('tbody th');
-
-  const required = new Set();
-  const supported = new Set();
-  const prohibited = new Set();
-  function pushAttrsToList(rowBody, list) {
-    const attributes = rowBody.querySelectorAll('li');
-    for (const attr of attributes) {
-      if (attr.textContent.includes('deprecated')) {
-        continue;
-      }
-      const link = attr.querySelector('a');
-      if (link) {
-        list.add(link.textContent);
-      }
-    }
-  }
+  const attrList = {};
+  const hierarchy = {};
+  let nameRequired = false;
 
   for (const rowHeading of rowHeadings) {
-    const rowTitle = rowHeading.textContent.toLocaleLowerCase();
+    const rowTitle = rowHeading.textContent.toLocaleLowerCase().trim().replace(/\:$/, '');
     const rowBody = rowHeading.closest('tr').querySelector('td:last-child');
 
-    // required
-    if (rowTitle.includes('required states and properties')) {
-      pushAttrsToList(rowBody, required);
+    // nameRequired
+    if (rowTitle.includes('accessible name required')) {
+      nameRequired = rowBody.textContent.includes('True');
     }
 
-    // note: before supported, we MUST push all required attrs to this as well
-    for (r of required) {
-      supported.add(r);
+    // superclass
+    if (rowTitle.includes('superclass role') || rowTitle.includes('subclass roles')) {
+      const key = rowTitle.includes('superclass') ? 'superclasses' : 'subclasses';
+      const list = [];
+      for (const role of rowBody.querySelectorAll('a.role-reference')) {
+        list.push(role.textContent);
+      }
+      list.sort((a, b) => a.localeCompare(b));
+      hierarchy[key] = list;
     }
 
-    // supported
-    if (rowTitle.includes('inherited states and properties') || rowTitle.includes('supported states and properties')) {
-      pushAttrsToList(rowBody, supported);
-    }
+    // attributes
+    else if (rowTitle.endsWith('states and properties')) {
+      const list = new Set();
+      for (const attr of rowBody.querySelectorAll('li')) {
+        if (attr.textContent.includes('deprecated')) {
+          continue;
+        }
+        const link = attr.querySelector('a');
+        if (link) {
+          list.add(link.textContent);
+        }
+      }
 
-    // prohibited
-    if (rowTitle.includes('prohibited states and properties')) {
-      pushAttrsToList(rowBody, prohibited);
+      let key;
+      if (rowTitle.includes('required')) {
+        key = 'required';
+      } else if (rowTitle.includes('inherited') || rowTitle.includes('supported')) {
+        key = 'supported';
+      } else if (rowTitle.includes('prohibited')) {
+        key = 'prohibited';
+      }
+      if (key) {
+        attrList[key] = [...(attrList[key] ?? []), ...list];
+        attrList[key] = dedupeArray(attrList[key]);
+        attrList[key].sort((a, b) => a.localeCompare(b));
+        if (key === 'required') {
+          attrList.supported = [...(attrList.supported ?? []), ...list];
+          attrList.supported = dedupeArray(attrList.supported);
+          attrList.supported.sort((a, b) => a.localeCompare(b));
+        }
+      }
     }
   }
 
-  const rSorted = [...required].sort((a, b) => a.localeCompare(b));
-  const sSorted = [...supported].sort((a, b) => a.localeCompare(b));
-  const pSorted = [...prohibited].sort((a, b) => a.localeCompare(b));
-
   console.log(`${role}: {
-  required: [${rSorted.map((v) => `'${v}'`).join(', ')}],
-  supported: [${sSorted.map((v) => `'${v}'`).join(', ')}], // biome-ignore format: long list
-  prohibited: [${pSorted.map((v) => `'${v}'`).join(', ')}],
+  ${Object.entries(hierarchy)
+    .map(([k, v]) => `${k}: ${printArray(v)},`)
+    .join('\n  ')}
+  nameRequired: ${nameRequired},
+  ${Object.entries(attrList)
+    .map(([k, v]) => `${k}: ${printArray(v)}, // biome-ignore format: long list`)
+    .join('\n  ')}
 }`);
+}
+
+function dedupeArray(arr) {
+  return arr.filter((v, i) => arr.indexOf(v) === i);
+}
+
+function printArray(arr) {
+  return `[${arr.map((v) => `'${v}'`).join(', ')}]`;
 }
