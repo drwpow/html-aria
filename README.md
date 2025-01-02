@@ -280,11 +280,12 @@ In the spec, you’ll find language describing both roles and attributes in 4 ca
 
 As stated in [Project Goals](#about), html-aria aims to not conflate non-normative recommendations as normative guidelines. So in the API, [getSupportedRoles()](#getsupportedroles--) and [getSupportedAttributes()](#getsupportedattributes--) will return 1 and 2, but not 3 or 4.
 
-While there is a technical distinction between 3 and 4, for the purposees of html-aria they’re treated the same.
+While there is a technical distinction between 3 and 4, for the purposees of html-aria they’re treated the same (because 3 specifically is not explicitly allowed, we can make a choice to read it as prohibited).
 
 ## About
 
 ### Project Goals
 
-1. Get annoyingly-close to the WAI-ARIA specification while remaining user-friendly
-1. Don’t be opinionated
+1. Implement _all_ ARIA spec docs, not just the roles specification
+1. Stick to _normative_ guidelines (i.e. only implement “MUST” language, not “SHOULD”—the latter is the area of linters)
+1. Try and reduce mistakes by
