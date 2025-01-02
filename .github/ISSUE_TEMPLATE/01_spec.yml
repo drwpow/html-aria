@@ -1,6 +1,6 @@
 name: Specification issue
 description: This library doesn’t match the W3C specification
-title: "📝 [Spec]: "
+title: 📝 Spec issue
 labels:
   - bug
   - spec
@@ -37,4 +37,6 @@ body:
   - type: checkboxes
     id: checkboxes
     attributes:
-      label: I am willing to open a Pull Request
+      label: Contributing
+      options:
+        - label: I am willing to open a Pull Request
