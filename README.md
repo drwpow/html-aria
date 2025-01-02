@@ -91,7 +91,7 @@ It’s worth noting that **HTML elements may factor in** according to the spec�
 
 ### getElements()
 
-Return all HTML elements that represent a given ARIA role, if any. If no HTML elements represent this role, `undefined` will be returned. This is essentially the inverse of [`getRole()`](#getrole--).
+Return all HTML elements that represent a given ARIA role, if any. If no HTML elements represent this role, `undefined` will be returned. This is essentially the inverse of [`getRole()`](#getrole).
 
 ```ts
 import { getBaseConcepts } from "html-aria";
@@ -199,11 +199,11 @@ Here are all the HTML elements where either attributes, hierarchy, or both are n
 | **td**      |                                        `cell`\| `gridcell` \| —                                         |                 |       ✅        |
 | **th**      |                                   `columnheader` \| `rowheader` \| —                                    |       ✅        |       ✅        |
 
-_Note: `—` = [no corresponding role](#whats-the-difference-between-no-corresponding-role-and-the-none-role-)_
+_Note: `—` = [no corresponding role](#whats-the-difference-between-no-corresponding-role-and-the-none-role)_
 
 ### aria-\* attributes from HTML
 
-Further, a common mistake many simple accessibility libraries make is mapping aria-\* attributes to ARIA roles. While that _mostly_ works, there are a few exceptions where HTML information is needed. That is why [`getSupportedAttributes()`](#getsupportedattributes) takes an HTML element. Here is a full list:
+Further, a common mistake many simple accessibility libraries make is mapping aria-\* attributes to ARIA roles. While that _mostly_ works, there are a few exceptions where HTML information is needed. That is why [`getSupportedAttributes()`](#getsupportedattributes--issupportedattribute) takes an HTML element. Here is a full list:
 
 | Element                  | Default Role | Notes                                                                                     |
 | :----------------------- | :----------: | :---------------------------------------------------------------------------------------- |
@@ -238,7 +238,7 @@ Further, a common mistake many simple accessibility libraries make is mapping ar
 | **video**                |      —       | Accepts `application` aria-\* attributes by default                                       |
 | **wbr**                  |      —       | No aria-\* attributes allowed EXCEPT `aria-hidden`                                        |
 
-_Note: `—` = [no corresponding role](#whats-the-difference-between-no-corresponding-role-and-the-none-role-). Also worth pointing out that in other cases, [global aria-\* attributes](https://www.w3.org/TR/wai-aria-1.3/#global_states) are allowed, so this is unique to the element and NOT the ARIA role._
+_Note: `—` = [no corresponding role](#whats-the-difference-between-no-corresponding-role-and-the-none-role). Also worth pointing out that in other cases, [global aria-\* attributes](https://www.w3.org/TR/wai-aria-1.3/#global_states) are allowed, so this is unique to the element and NOT the ARIA role._
 
 ### Technical deviations from the spec
 
@@ -256,7 +256,7 @@ Since we have 1 spec and 1 browser agreeing, this library defaults to `graphics-
 
 #### Ancestor-based roles
 
-In regards to [ARIA roles in HTML](#aria-roles-in-html), the spec gives non-semantic roles to `<td>`, `<th>`, and `<li>` UNLESS they are used inside specific containers (`table`, `grid`, or `gridcell` for `<td>`/`<th>`; `list` or `menu` for `<li>`). This library assumes they’re being used in their proper containers without requiring the `ancestors` array. This is done to avoid the [footgun](https://en.wiktionary.org/wiki/footgun) of requiring missable configuration to produce accurate results, which is bad software design.
+In regards to [ARIA roles in HTML](#aria-roles-from-html), the spec gives non-semantic roles to `<td>`, `<th>`, and `<li>` UNLESS they are used inside specific containers (`table`, `grid`, or `gridcell` for `<td>`/`<th>`; `list` or `menu` for `<li>`). This library assumes they’re being used in their proper containers without requiring the `ancestors` array. This is done to avoid the [footgun](https://en.wiktionary.org/wiki/footgun) of requiring missable configuration to produce accurate results, which is bad software design.
 
 Instead, the non-semantic roles must be “opted in” by passing an explicitly-empty ancestors array:
 
@@ -299,7 +299,7 @@ In the spec, you’ll find language describing both roles and attributes in 4 ca
 3. **Unsupported, but not prohibited:** these are omitted both from supported and prohibited lists
 4. **Unsupported and prohibited:** explicitly [prohibited](https://www.w3.org/TR/wai-aria-1.3/#prohibitedattributes)
 
-As stated in [Project Goals](#about), html-aria aims to not conflate non-normative recommendations as normative guidelines. So in the API, [getSupportedRoles()](#getsupportedroles--) and [getSupportedAttributes()](#getsupportedattributes--) will return 1 and 2, but not 3 or 4.
+As stated in [Project Goals](#about), html-aria aims to not conflate non-normative recommendations as normative guidelines. So in the API, [getSupportedRoles()](#getsupportedroles--issupportedrole) and [getSupportedAttributes()](#getsupportedattributes--issupportedattribute) will return 1 and 2, but not 3 or 4.
 
 While there is a technical distinction between 3 and 4, for the purposees of html-aria they’re treated the same (because 3 specifically is not explicitly allowed, we can make a choice to read it as prohibited).
 
