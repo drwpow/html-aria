@@ -1,6 +1,6 @@
 name: Bug Report
 description: I encountered an error when using this library that is NOT specification related
-title: "🐛 [Bug]: "
+title: 🐛 Bug
 labels:
   - bug
   - triage
@@ -27,4 +27,6 @@ body:
   - type: checkboxes
     id: checkboxes
     attributes:
-      label: I am willing to open a Pull Request
+      label: Contributing
+      options:
+        - label: I am willing to open a Pull Request
