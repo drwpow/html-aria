@@ -313,4 +313,4 @@ While there is a technical distinction between 3 and 4, for the purposees of htm
 
 1. Implement _all_ ARIA spec docs, not just the roles specification
 1. Stick to _normative_ guidelines (i.e. only implement “MUST” language, not “SHOULD”—the latter is the area of linters)
-1. Try and reduce mistakes by
+1. Reduce mistakes with explicit methods and user-friendly API design.
