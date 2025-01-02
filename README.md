@@ -7,7 +7,7 @@ This is designed to be a better replacement for aria-query when working with HTM
 - aria-query neglects the critical [HTML to ARIA spec](https://www.w3.org/TR/html-aria). With just the ARIA spec alone, it’s insufficient for working with HTML.
 - html-aria supports ARIA 1.3 while aria-query is still on ARIA 1.2
 
-html-aria is also designed to be easier-to-use to prevent mistakes, smaller, is ESM tree-shakeable, and more performat (~100× faster than aria-query).
+html-aria is also designed to be easier-to-use to prevent mistakes, smaller, is ESM tree-shakeable, and more performant (~100× faster than aria-query).
 
 ## Setup
 
