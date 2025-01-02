@@ -1,7 +1,7 @@
 {
   "name": "html-aria",
   "description": "WAI-ARIA utilities for HTML based on ARIA 1.3 and the latest recommendations",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "license": "MIT",
   "keywords": ["a11y", "accessibility", "aria", "1.3", "wai-aria"],
