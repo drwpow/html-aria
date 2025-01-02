@@ -189,31 +189,38 @@ _Note: `—` = [no corresponding role](#whats-the-difference-between-no-correspo
 
 Further, a common mistake many simple accessibility libraries make is mapping aria-\* attributes to ARIA roles. While that _mostly_ works, there are a few exceptions where HTML information is needed. That is why [`getSupportedAttributes()`](#getsupportedattributes) takes an HTML element. Here is a full list:
 
-| Element                | Default Role | Notes                                              |
-| :--------------------- | :----------: | :------------------------------------------------- |
-| **base**               |  `generic`   | No aria-\* attributes allowed                      |
-| **body**               |  `generic`   | Does NOT allow `aria-hidden="true"`                |
-| **br**                 |  `generic`   | No aria-\* attributes allowed EXCEPT `aria-hidden` |
-| **col**                |      —       | No aria-\* attributes allowed                      |
-| **colgroup**           |      —       | No aria-\* attributes allowed                      |
-| **datalist**           |  `listbox`   | No aria-\* attributes allowed                      |
-| **head**               |      —       | No aria-\* attributes allowed                      |
-| **html**               |      —       | No aria-\* attributes allowed                      |
-| **img** (no `alt`)     |    `none`    | No aria-\* attributes allowed EXCEPT `aria-hidden` |
-| **input[type=hidden]** |      —       | No aria-\* attributes allowed                      |
-| **link**               |      —       | No aria-\* attributes allowed                      |
-| **map**                |      —       | No aria-\* attributes allowed                      |
-| **meta**               |      —       | No aria-\* attributes allowed                      |
-| **noscript**           |      —       | No aria-\* attributes allowed                      |
-| **picture**            |      —       | No aria-\* attributes allowed EXCEPT `aria-hidden` |
-| **script**             |      —       | No aria-\* attributes allowed                      |
-| **slot**               |      —       | No aria-\* attributes allowed                      |
-| **source**             |      —       | No aria-\* attributes allowed                      |
-| **style**              |      —       | No aria-\* attributes allowed                      |
-| **template**           |      —       | No aria-\* attributes allowed                      |
-| **title**              |      —       | No aria-\* attributes allowed                      |
-| **track**              |      —       | No aria-\* attributes allowed EXCEPT `aria-hidden` |
-| **wbr**                |      —       | No aria-\* attributes allowed EXCEPT `aria-hidden` |
+| Element                  | Default Role | Notes                                                                                     |
+| :----------------------- | :----------: | :---------------------------------------------------------------------------------------- |
+| **audio**                |      —       | Accepts `application` aria-\* attributes by default                                       |
+| **base**                 |  `generic`   | No aria-\* attributes allowed                                                             |
+| **body**                 |  `generic`   | Does NOT allow `aria-hidden="true"`                                                       |
+| **br**                   |  `generic`   | No aria-\* attributes allowed EXCEPT `aria-hidden`                                        |
+| **col**                  |      —       | No aria-\* attributes allowed                                                             |
+| **colgroup**             |      —       | No aria-\* attributes allowed                                                             |
+| **datalist**             |  `listbox`   | No aria-\* attributes allowed                                                             |
+| **head**                 |      —       | No aria-\* attributes allowed                                                             |
+| **html**                 |      —       | No aria-\* attributes allowed                                                             |
+| **img** (no `alt`)       |    `none`    | No aria-\* attributes allowed EXCEPT `aria-hidden`                                        |
+| **input[type=checkbox]** |      —       | Forbids `aria-checked`                                                                    |
+| **input[type=color]**    |      —       | Acts as a generic element but allows `aria-disabled`                                      |
+| **input[type=files]**    |      —       | Acts as a generic element but allows `aria-disabled`, `aria-invalid`, and `aria-required` |
+| **input[type=hidden]**   |      —       | No aria-\* attributes allowed                                                             |
+| **input[type=radio]**    |      —       | Forbids `aria-checked`                                                                    |
+| **link**                 |      —       | No aria-\* attributes allowed                                                             |
+| **map**                  |      —       | No aria-\* attributes allowed                                                             |
+| **meta**                 |      —       | No aria-\* attributes allowed                                                             |
+| **noscript**             |      —       | No aria-\* attributes allowed                                                             |
+| **picture**              |      —       | No aria-\* attributes allowed EXCEPT `aria-hidden`                                        |
+| **script**               |      —       | No aria-\* attributes allowed                                                             |
+| **slot**                 |      —       | No aria-\* attributes allowed                                                             |
+| **source**               |      —       | No aria-\* attributes allowed                                                             |
+| **style**                |      —       | No aria-\* attributes allowed                                                             |
+| **summary**              |      —       | Allows `aria-disabled` and `aria-haspopup` regardless of role                             |
+| **template**             |      —       | No aria-\* attributes allowed                                                             |
+| **title**                |      —       | No aria-\* attributes allowed                                                             |
+| **track**                |      —       | No aria-\* attributes allowed EXCEPT `aria-hidden`                                        |
+| **video**                |      —       | Accepts `application` aria-\* attributes by default                                       |
+| **wbr**                  |      —       | No aria-\* attributes allowed EXCEPT `aria-hidden`                                        |
 
 _Note: `—` = [no corresponding role](#whats-the-difference-between-no-corresponding-role-and-the-none-role-). Also worth pointing out that in other cases, [global aria-\* attributes](https://www.w3.org/TR/wai-aria-1.3/#global_states) are allowed, so this is unique to the element and NOT the ARIA role._
 
