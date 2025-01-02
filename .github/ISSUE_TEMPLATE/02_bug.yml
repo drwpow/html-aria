@@ -1,7 +1,9 @@
 name: Bug Report
 description: I encountered an error when using this library that is NOT specification related
 title: "🐛 [Bug]: "
-labels: ["bug", "triage"]
+labels:
+  - bug
+  - triage
 body:
   - type: textarea
     id: output

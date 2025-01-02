@@ -1,7 +1,10 @@
 name: Specification issue
 description: This library doesn’t match the W3C specification
 title: "📝 [Spec]: "
-labels: ["bug", "spec", "triage"]
+labels:
+  - bug
+  - spec
+  - triage
 body:
   - type: markdown
     attributes:

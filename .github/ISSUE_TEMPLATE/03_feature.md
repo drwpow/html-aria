@@ -1,3 +1,11 @@
+---
+name: ✨ [Feature]
+about: Proposing additional functionality for html-aria
+labels:
+  - feature
+  - triage
+---
+
 ## Proposal
 
 ### Summary
