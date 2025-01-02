@@ -142,10 +142,6 @@ isNameRequired("cell"); // false
 
 _Note: this does NOT mean `aria-label` is required! Quite the opposite—if a name is required, it’s always best to have the name visible in content. See [ARIA 1.3 Accessible Name Calculation](https://www.w3.org/TR/wai-aria-1.3/#namecalculation) for more info._
 
-### isInteractive()
-
-TODO / Not implemented
-
 ### isValidAttributeValue()
 
 Some aria-\* attributes require specific values. `isValidAttributeValue()` returns `false` if, given a specific aria-\* attribute, the value is invalid according to the spec.
