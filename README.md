@@ -104,6 +104,31 @@ getBaseConcepts("tab"); // undefined
 
 Worth noting that this is slightly-different from a [related concept](https://www.w3.org/TR/wai-aria-1.3/#relatedConcept) or [base concept](https://www.w3.org/TR/wai-aria-1.3/#baseConcept).
 
+### isInteractive()
+
+Return `true` if a given HTML tag may be interacted with or not.
+
+```ts
+isInteractive({ tagName: "button" }); // true
+isInteractive({ tagName: "div" }); // false
+isInteractive({ tagName: "div", attributes: { tabindex: 0 } }); // false
+isInteractive({ tagName: "div", attributes: { role: "button", tabindex: 0 } }); // true
+isInteractive({ tagName: "hr" }); // false
+isInteractive({
+  tagName: "hr",
+  attributes: { tabindex: 0, "aria-valuenow": 10 },
+}); // true (see https://www.w3.org/TR/wai-aria-1.3/#separator)
+```
+
+The methodology for this is somewhat complex to follow the complete ARIA specification:
+
+1. If the role is a [widget](https://www.w3.org/TR/wai-aria-1.3/#widget_roles) or [window](https://www.w3.org/TR/wai-aria-1.3/#window_roles) subclass, then it is interactive
+   - Note: if the element manually specifies `role`, and if it natively is NOT a widget or window role, `tabindex`, must also be supplied
+1. If the element is `disabled` or `aria-disabled`, then it is NOT interactive
+1. Handle some explicit edge cases like [separator](https://www.w3.org/TR/wai-aria-1.3/#separator)
+
+Note that `aria-hidden` elements may be interactive (even if it’s not best practice) as a part of [2.4.5 Multiple Ways](https://www.w3.org/WAI/WCAG21/Understanding/multiple-ways.html) if an alternative is made for screenreaders, etc.
+
 ### isNameRequired()
 
 For a role, return whether or not an [accessible name](https://www.w3.org/TR/wai-aria-1.3/#namecalculation) is required for screenreaders.

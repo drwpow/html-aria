@@ -11,7 +11,7 @@ const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
  * Given an ARIA role returns a list of supported/inherited aria-* attributes.
  */
 export function getSupportedAttributes(
-  element: HTMLElement | VirtualElement,
+  element: VirtualElement | HTMLElement,
   options?: GetRoleOptions,
 ): ARIAAttribute[] {
   const { tagName, attributes = {} } = virtualizeElement(element);

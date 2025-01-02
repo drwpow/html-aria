@@ -31,7 +31,7 @@ export interface GetRoleOptions {
  * Note this does NOT traverse the DOM, because we assume it’s not fully available, e.g. in Node.js, React Components, lint rules, etc.
  * @see https://www.w3.org/TR/html-aria/
  */
-export function getRole(element: HTMLElement | VirtualElement, options?: GetRoleOptions): ARIARole | undefined {
+export function getRole(element: VirtualElement | HTMLElement, options?: GetRoleOptions): ARIARole | undefined {
   const { tagName, attributes } = virtualizeElement(element);
 
   // explicit role: use if valid

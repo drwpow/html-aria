@@ -138,3 +138,10 @@ export function injectAttrs(list: ARIAAttribute[], attrs: ARIAAttribute[]): ARIA
   newList.sort((a, b) => a.localeCompare(b));
   return newList;
 }
+
+/** Is this element disabled? */
+export function isDisabled(attributes: Record<string, string | boolean | number | undefined | null>): boolean {
+  return (
+    String(attributes.disabled).toLowerCase() === 'true' || String(attributes['aria-disabled']).toLowerCase() === 'true'
+  );
+}
