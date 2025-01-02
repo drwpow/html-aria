@@ -4,7 +4,7 @@ Utilities for creating accessible HTML based on the [latest ARIA 1.3 specs](http
 
 This is designed to be a better replacement for aria-query when working with HTML. The reasons are:
 
-- aria-query negelects the critical [HTML to ARIA spec](https://www.w3.org/TR/html-aria). With just the ARIA spec alone, it’s insufficient for working with HTML.
+- aria-query neglects the critical [HTML to ARIA spec](https://www.w3.org/TR/html-aria). With just the ARIA spec alone, it’s insufficient for working with HTML.
 - html-aria supports ARIA 1.3 while aria-query is still on ARIA 1.2
 
 html-aria is also designed to be easier-to-use to prevent mistakes, smaller, is ESM tree-shakeable, and more performat (~100× faster than aria-query).
@@ -123,7 +123,7 @@ isInteractive({
 The methodology for this is somewhat complex to follow the complete ARIA specification:
 
 1. If the role is a [widget](https://www.w3.org/TR/wai-aria-1.3/#widget_roles) or [window](https://www.w3.org/TR/wai-aria-1.3/#window_roles) subclass, then it is interactive
-   - Note: if the element manually specifies `role`, and if it natively is NOT a widget or window role, `tabindex`, must also be supplied
+   - Note: if the element manually specifies `role`, and if it natively is NOT a widget or window role, `tabindex` must also be supplied
 1. If the element is `disabled` or `aria-disabled`, then it is NOT interactive
 1. Handle some explicit edge cases like [separator](https://www.w3.org/TR/wai-aria-1.3/#separator)
 
