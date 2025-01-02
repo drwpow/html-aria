@@ -1,13 +1,11 @@
 import { type GetRoleOptions, getRole } from './get-role.js';
-import { attributes, globalAttributes, globalAttributesNamingProhibited } from './lib/aria-attributes.js';
+import { attributes, globalAttributes } from './lib/aria-attributes.js';
 import { roles } from './lib/aria-roles.js';
 import { tags } from './lib/html.js';
-import { calculateAccessibleName, namingProhibitedList, virtualizeElement } from './lib/util.js';
-import { getHeaderRole } from './tags/header.js';
+import { calculateAccessibleName, injectAttrs, removeProhibited, virtualizeElement } from './lib/util.js';
 import type { ARIAAttribute, VirtualElement } from './types.js';
 
 const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
-const GLOBAL_NO_NAMING = Object.keys(globalAttributesNamingProhibited) as ARIAAttribute[];
 
 /**
  * Given an ARIA role returns a list of supported/inherited aria-* attributes.
@@ -30,31 +28,54 @@ export function getSupportedAttributes(
 
   const role = getRole(element, options);
   const roleData = role && roles[role];
-  if (!roleData) {
-    // by default, only global attributes are supported
-    return tag.namingProhibited ? GLOBAL_NO_NAMING : GLOBAL_ATTRIBUTES;
-  }
 
   // special cases
   switch (tagName) {
-    case 'header':
-    case 'footer': {
-      const role = getHeaderRole(options);
-      return role === 'generic' ? roles.generic.supported : roleData.supported;
+    // <audio> and <video> allow application aria-* attributes despite not
+    // being given the role by default
+    case 'audio':
+    case 'video': {
+      return roles.application.supported;
     }
     case 'img': {
       const name = calculateAccessibleName({ tagName, attributes });
       // if no accessible name, only aria-hidden allowed
-      return name ? roleData.supported : ['aria-hidden'];
+      return (name && roleData?.supported) || ['aria-hidden'];
     }
     case 'input': {
-      if (attributes.type === 'hidden') {
-        return ['aria-hidden'];
+      switch (attributes.type) {
+        case 'checkbox':
+        case 'radio': {
+          if (roleData) {
+            return roleData?.supported.filter((a) => a !== 'aria-checked');
+          }
+          break;
+        }
+        case 'color': {
+          return injectAttrs(GLOBAL_ATTRIBUTES, ['aria-disabled']);
+        }
+        case 'file': {
+          return injectAttrs(GLOBAL_ATTRIBUTES, ['aria-disabled', 'aria-invalid', 'aria-required']);
+        }
+        case 'hidden': {
+          return [];
+        }
+        default: {
+          return roleData?.supported || roles.textbox.supported;
+        }
       }
+      break;
+    }
+    case 'summary': {
+      return injectAttrs(roleData?.supported ?? GLOBAL_ATTRIBUTES, ['aria-disabled', 'aria-haspopup']);
     }
   }
 
-  return tag.namingProhibited ? namingProhibitedList(roleData.supported) : roleData.supported;
+  const attrList = [...(roleData?.supported ?? GLOBAL_ATTRIBUTES)];
+  return removeProhibited(attrList, {
+    nameProhibited: tag.namingProhibited,
+    prohibited: roleData?.prohibited,
+  });
 }
 
 /**

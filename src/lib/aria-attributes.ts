@@ -45,7 +45,6 @@ export const globalAttributes: Record<GlobalAttribute, AttributeData> = {
   },
   'aria-roledescription': { category: ['global'], type: 'string' },
 };
-export const globalAttributesNamingProhibited = namingProhibitedMap(globalAttributes);
 
 export const widgetAttributes: Record<WidgetAttribute, AttributeData> = {
   'aria-autocomplete': {

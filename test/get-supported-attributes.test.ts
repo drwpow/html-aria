@@ -7,7 +7,7 @@ import {
   globalAttributes,
   isSupportedAttribute,
   isValidAttributeValue,
-  namingProhibitedList,
+  removeProhibited,
   roles,
   tags,
 } from '../src/index.js';
@@ -62,7 +62,9 @@ import { checkTestAndTagName } from './helpers.js';
 // commonly-used lists
 const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
 const BUTTON_ATTRIBUTES = [...GLOBAL_ATTRIBUTES, ...roles.button.supported];
-const GENERIC_NO_NAMING = namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.generic.supported]);
+const GENERIC_NO_NAMING = removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.generic.supported], {
+  nameProhibited: true,
+});
 const TEXTBOX_ATTRIBUTES = [...GLOBAL_ATTRIBUTES, ...roles.textbox.supported];
 const COMBOBOX_ATTRIBUTES = [...GLOBAL_ATTRIBUTES, ...roles.combobox.supported];
 
@@ -72,18 +74,18 @@ const tests: [
 ][] = [
   ['a', { given: [{ tagName: 'a' }], want: [...GLOBAL_ATTRIBUTES, ...roles.link.supported] }],
   ['area', { given: [{ tagName: 'area' }], want: [...GLOBAL_ATTRIBUTES, ...roles.link.supported] }],
-  ['abbr', { given: [{ tagName: 'abbr' }], want: namingProhibitedList(GLOBAL_ATTRIBUTES) }],
+  ['abbr', { given: [{ tagName: 'abbr' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['address', { given: [{ tagName: 'address' }], want: [...GLOBAL_ATTRIBUTES, ...roles.group.supported] }],
   ['article', { given: [{ tagName: 'article' }], want: [...GLOBAL_ATTRIBUTES, ...roles.article.supported] }],
   ['aside', { given: [{ tagName: 'aside' }], want: [...GLOBAL_ATTRIBUTES, ...roles.complementary.supported] }],
   ['audio', { given: [{ tagName: 'audio' }], want: [...GLOBAL_ATTRIBUTES, ...roles.application.supported] }],
-  ['b', { given: [{ tagName: 'b' }], want: namingProhibitedList(GLOBAL_ATTRIBUTES) }],
+  ['b', { given: [{ tagName: 'b' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['b[role=generic]', { given: [{ tagName: 'b', attributes: { role: 'generic' } }], want: GENERIC_NO_NAMING }],
   [
     'b[role=button]',
     {
       given: [{ tagName: 'b', attributes: { role: 'button' } }],
-      want: namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.button.supported]),
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.button.supported], { nameProhibited: true }),
     },
   ],
   ['base', { given: [{ tagName: 'base' }], want: NO_ATTRIBUTES }],
@@ -94,7 +96,7 @@ const tests: [
     'body',
     {
       given: [{ tagName: 'body' }],
-      want: namingProhibitedList(roles.generic.supported).filter((a) => a !== 'aria-hidden'),
+      want: removeProhibited(roles.generic.supported, { nameProhibited: true, prohibited: ['aria-hidden'] }),
     },
   ],
   ['br', { given: [{ tagName: 'br' }], want: ['aria-hidden'] }],
@@ -102,12 +104,18 @@ const tests: [
   ['canvas', { given: [{ tagName: 'canvas' }], want: [...GLOBAL_ATTRIBUTES] }],
   [
     'caption',
-    { given: [{ tagName: 'caption' }], want: namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.caption.supported]) },
+    {
+      given: [{ tagName: 'caption' }],
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.caption.supported], { nameProhibited: true }),
+    },
   ],
-  ['cite', { given: [{ tagName: 'cite' }], want: namingProhibitedList(GLOBAL_ATTRIBUTES) }],
+  ['cite', { given: [{ tagName: 'cite' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   [
     'code',
-    { given: [{ tagName: 'code' }], want: namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.code.supported]) },
+    {
+      given: [{ tagName: 'code' }],
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.code.supported], { nameProhibited: true }),
+    },
   ],
   ['col', { given: [{ tagName: 'col' }], want: NO_ATTRIBUTES }],
   ['colgroup', { given: [{ tagName: 'colgroup' }], want: NO_ATTRIBUTES }],
@@ -116,10 +124,21 @@ const tests: [
   ['dd', { given: [{ tagName: 'dd' }], want: [...GLOBAL_ATTRIBUTES, ...roles.definition.supported] }],
   [
     'del',
-    { given: [{ tagName: 'del' }], want: namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.deletion.supported]) },
+    {
+      given: [{ tagName: 'del' }],
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.deletion.supported], { nameProhibited: true }),
+    },
   ],
   ['details', { given: [{ tagName: 'details' }], want: [...GLOBAL_ATTRIBUTES, ...roles.group.supported] }],
-  ['dfn', { given: [{ tagName: 'dfn' }], want: [...GLOBAL_ATTRIBUTES, ...roles.term.supported] }],
+  [
+    'dfn',
+    {
+      given: [{ tagName: 'dfn' }],
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.term.supported], {
+        prohibited: ['aria-braillelabel', 'aria-label', 'aria-labelledby'],
+      }),
+    },
+  ],
   ['dialog', { given: [{ tagName: 'dialog' }], want: [...GLOBAL_ATTRIBUTES, ...roles.dialog.supported] }],
   ['div', { given: [{ tagName: 'div' }], want: GENERIC_NO_NAMING }],
   ['dl', { given: [{ tagName: 'dl' }], want: GLOBAL_ATTRIBUTES }],
@@ -127,7 +146,12 @@ const tests: [
   ['em', { given: [{ tagName: 'em' }], want: GENERIC_NO_NAMING }],
   ['embed', { given: [{ tagName: 'embed' }], want: GLOBAL_ATTRIBUTES }],
   ['fieldset', { given: [{ tagName: 'fieldset' }], want: [...GLOBAL_ATTRIBUTES, ...roles.group.supported] }],
-  ['figcaption', { given: [{ tagName: 'figcaption' }], want: namingProhibitedList(GLOBAL_ATTRIBUTES) }],
+  [
+    'figcaption',
+    { given: [{ tagName: 'figcaption' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) },
+  ],
+  ['figure', { given: [{ tagName: 'figure' }], want: [...GLOBAL_ATTRIBUTES, ...roles.figure.supported] }],
+  ['form', { given: [{ tagName: 'form' }], want: [...GLOBAL_ATTRIBUTES, ...roles.form.supported] }],
   ['footer', { given: [{ tagName: 'footer' }], want: [...GLOBAL_ATTRIBUTES, ...roles.contentinfo.supported] }],
   ['g', { given: [{ tagName: 'g' }], want: [...GLOBAL_ATTRIBUTES] }],
   ['h1', { given: [{ tagName: 'h1' }], want: [...GLOBAL_ATTRIBUTES, ...roles.heading.supported] }],
@@ -141,7 +165,7 @@ const tests: [
   ['hgroup', { given: [{ tagName: 'hgroup' }], want: [...GLOBAL_ATTRIBUTES, ...roles.group.supported] }],
   ['hr', { given: [{ tagName: 'hr' }], want: [...GLOBAL_ATTRIBUTES, ...roles.separator.supported] }],
   ['html', { given: [{ tagName: 'html' }], want: NO_ATTRIBUTES }],
-  ['i', { given: [{ tagName: 'i' }], want: namingProhibitedList(GLOBAL_ATTRIBUTES) }],
+  ['i', { given: [{ tagName: 'i' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['iframe', { given: [{ tagName: 'iframe' }], want: GLOBAL_ATTRIBUTES }],
   ['img', { given: [{ tagName: 'img' }], want: ['aria-hidden'] }],
   [
@@ -156,7 +180,7 @@ const tests: [
     'input[type=checkbox]',
     {
       given: [{ tagName: 'input', attributes: { type: 'checkbox' } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.checkbox.supported].filter((a) => a !== 'aria-checked'),
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.checkbox.supported], { prohibited: ['aria-checked'] }),
     },
   ],
   [
@@ -176,7 +200,7 @@ const tests: [
       want: [...GLOBAL_ATTRIBUTES, 'aria-disabled', 'aria-invalid', 'aria-required'],
     },
   ],
-  ['input[type=hidden]', { given: [{ tagName: 'input', attributes: { type: 'file' } }], want: NO_ATTRIBUTES }],
+  ['input[type=hidden]', { given: [{ tagName: 'input', attributes: { type: 'hidden' } }], want: NO_ATTRIBUTES }],
   ['input[type=image]', { given: [{ tagName: 'input', attributes: { type: 'image' } }], want: BUTTON_ATTRIBUTES }],
   ['input[type=month]', { given: [{ tagName: 'input', attributes: { type: 'month' } }], want: TEXTBOX_ATTRIBUTES }],
   [
@@ -194,7 +218,7 @@ const tests: [
     'input[type=radio]',
     {
       given: [{ tagName: 'input', attributes: { type: 'radio' } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.radio.supported].filter((a) => a !== 'aria-checked'),
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.radio.supported], { prohibited: ['aria-checked'] }),
     },
   ],
   [
@@ -338,18 +362,24 @@ const tests: [
   ],
   [
     'ins',
-    { given: [{ tagName: 'ins' }], want: namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.insertion.supported]) },
+    {
+      given: [{ tagName: 'ins' }],
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.insertion.supported], { nameProhibited: true }),
+    },
   ],
-  ['kbd', { given: [{ tagName: 'kbd' }], want: namingProhibitedList(GLOBAL_ATTRIBUTES) }],
-  ['label', { given: [{ tagName: 'label' }], want: namingProhibitedList(GLOBAL_ATTRIBUTES) }],
-  ['legend', { given: [{ tagName: 'legend' }], want: namingProhibitedList(GLOBAL_ATTRIBUTES) }],
+  ['kbd', { given: [{ tagName: 'kbd' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
+  ['label', { given: [{ tagName: 'label' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
+  ['legend', { given: [{ tagName: 'legend' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['li', { given: [{ tagName: 'li' }], want: [...GLOBAL_ATTRIBUTES, ...roles.listitem.supported] }],
   ['link', { given: [{ tagName: 'link' }], want: NO_ATTRIBUTES }],
   ['main', { given: [{ tagName: 'main' }], want: [...GLOBAL_ATTRIBUTES, ...roles.main.supported] }],
   ['map', { given: [{ tagName: 'map' }], want: NO_ATTRIBUTES }],
   [
     'mark',
-    { given: [{ tagName: 'mark' }], want: namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.mark.supported]) },
+    {
+      given: [{ tagName: 'mark' }],
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.mark.supported], { nameProhibited: true }),
+    },
   ],
   ['math', { given: [{ tagName: 'math' }], want: [...GLOBAL_ATTRIBUTES, ...roles.math.supported] }],
   ['menu', { given: [{ tagName: 'menu' }], want: [...GLOBAL_ATTRIBUTES, ...roles.list.supported] }],
@@ -364,16 +394,25 @@ const tests: [
   ['output', { given: [{ tagName: 'output' }], want: [...GLOBAL_ATTRIBUTES, ...roles.status.supported] }],
   [
     'p',
-    { given: [{ tagName: 'p' }], want: namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.paragraph.supported]) },
+    {
+      given: [{ tagName: 'p' }],
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.paragraph.supported], { nameProhibited: true }),
+    },
   ],
   ['picture', { given: [{ tagName: 'picture' }], want: ['aria-hidden'] }],
   ['pre', { given: [{ tagName: 'pre' }], want: GENERIC_NO_NAMING }],
   ['progress', { given: [{ tagName: 'progress' }], want: [...GLOBAL_ATTRIBUTES, ...roles.progressbar.supported] }],
   ['q', { given: [{ tagName: 'q' }], want: GENERIC_NO_NAMING }],
-  ['rp', { given: [{ tagName: 'rp' }], want: GLOBAL_ATTRIBUTES }],
-  ['rt', { given: [{ tagName: 'rt' }], want: GLOBAL_ATTRIBUTES }],
+  ['rp', { given: [{ tagName: 'rp' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
+  ['rt', { given: [{ tagName: 'rt' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['ruby', { given: [{ tagName: 'ruby' }], want: GLOBAL_ATTRIBUTES }],
-  ['s', { given: [{ tagName: 's' }], want: namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.deletion.supported]) }],
+  [
+    's',
+    {
+      given: [{ tagName: 's' }],
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.deletion.supported], { nameProhibited: true }),
+    },
+  ],
   ['samp', { given: [{ tagName: 'samp' }], want: GENERIC_NO_NAMING }],
   ['script', { given: [{ tagName: 'script' }], want: NO_ATTRIBUTES }],
   ['search', { given: [{ tagName: 'search' }], want: [...GLOBAL_ATTRIBUTES, ...roles.search.supported] }],
@@ -397,10 +436,7 @@ const tests: [
   ],
   [
     'select[role=generic]',
-    {
-      given: [{ tagName: 'select', attributes: { role: 'generic' } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.generic.supported],
-    },
+    { given: [{ tagName: 'select', attributes: { role: 'generic' } }], want: roles.generic.supported },
   ],
   ['slot', { given: [{ tagName: 'slot' }], want: NO_ATTRIBUTES }],
   ['small', { given: [{ tagName: 'small' }], want: GENERIC_NO_NAMING }],
@@ -408,17 +444,26 @@ const tests: [
   ['span', { given: [{ tagName: 'span' }], want: GENERIC_NO_NAMING }],
   [
     'strong',
-    { given: [{ tagName: 'strong' }], want: namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.strong.supported]) },
+    {
+      given: [{ tagName: 'strong' }],
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.strong.supported], { nameProhibited: true }),
+    },
   ],
   ['style', { given: [{ tagName: 'style' }], want: NO_ATTRIBUTES }],
   [
     'sub',
-    { given: [{ tagName: 'sub' }], want: namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.subscript.supported]) },
+    {
+      given: [{ tagName: 'sub' }],
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.subscript.supported], { nameProhibited: true }),
+    },
   ],
-  ['summary', { given: [{ tagName: 'summary' }], want: GLOBAL_ATTRIBUTES }],
+  ['summary', { given: [{ tagName: 'summary' }], want: GLOBAL_ATTRIBUTES.concat(['aria-disabled', 'aria-haspopup']) }],
   [
     'sup',
-    { given: [{ tagName: 'sup' }], want: namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.superscript.supported]) },
+    {
+      given: [{ tagName: 'sup' }],
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.superscript.supported], { nameProhibited: true }),
+    },
   ],
   ['svg', { given: [{ tagName: 'svg' }], want: [...GLOBAL_ATTRIBUTES, ...roles['graphics-document'].supported] }],
   ['table', { given: [{ tagName: 'table' }], want: [...GLOBAL_ATTRIBUTES, ...roles.table.supported] }],
@@ -438,14 +483,17 @@ const tests: [
   ['thead', { given: [{ tagName: 'thead' }], want: [...GLOBAL_ATTRIBUTES, ...roles.rowgroup.supported] }],
   [
     'time',
-    { given: [{ tagName: 'time' }], want: namingProhibitedList([...GLOBAL_ATTRIBUTES, ...roles.time.supported]) },
+    {
+      given: [{ tagName: 'time' }],
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.time.supported], { nameProhibited: true }),
+    },
   ],
   ['title', { given: [{ tagName: 'title' }], want: NO_ATTRIBUTES }],
   ['tr', { given: [{ tagName: 'tr' }], want: [...GLOBAL_ATTRIBUTES, ...roles.row.supported] }],
   ['track', { given: [{ tagName: 'track' }], want: NO_ATTRIBUTES }],
   ['u', { given: [{ tagName: 'u' }], want: GENERIC_NO_NAMING }],
   ['ul', { given: [{ tagName: 'ul' }], want: [...GLOBAL_ATTRIBUTES, ...roles.list.supported] }],
-  ['var', { given: [{ tagName: 'var' }], want: namingProhibitedList(GLOBAL_ATTRIBUTES) }],
+  ['var', { given: [{ tagName: 'var' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['video', { given: [{ tagName: 'video' }], want: [...GLOBAL_ATTRIBUTES, ...roles.application.supported] }],
   ['wbr', { given: [{ tagName: 'wbr' }], want: ['aria-hidden'] }],
 ];
@@ -456,7 +504,6 @@ describe('getSupportedAttributes', () => {
   test.each(tests)('%s', (name, { given, want }) => {
     checkTestAndTagName(name, given[0].tagName);
     testedTags.add(given[0].tagName);
-
     const wantSorted = [...new Set(want)].sort((a, b) => a.localeCompare(b));
     expect(getSupportedAttributes(...given)).toEqual(wantSorted);
   });

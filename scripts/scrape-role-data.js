@@ -89,7 +89,7 @@ for (const roleContainer of roleContainers) {
 }
 
 function dedupeArray(arr) {
-  return arr.filter((v, i) => arr.indexOf(v) === i);
+  return [...new Set(arr)];
 }
 
 function printArray(arr) {

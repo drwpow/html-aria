@@ -98,21 +98,43 @@ export const NAME_PROHIBITED_ATTRIBUTES = new Set<string>([
   'aria-roledescription',
 ] satisfies NameProhibitedAttributes[]);
 
-/** Remove naming attributes */
-export function namingProhibitedList<T extends string[]>(attributeList: T): Exclude<T, NameProhibitedAttributes> {
-  return attributeList.filter((attr) => !NAME_PROHIBITED_ATTRIBUTES.has(attr)) as Exclude<T, NameProhibitedAttributes>;
+/** Logic shared by <header> and <footer> when determining role */
+export function hasLandmarkParent(ancestors: AncestorList) {
+  return !!firstMatchingAncestor(
+    [
+      { tagName: 'article', attributes: { role: 'article' } },
+      { tagName: 'aside', attributes: { role: 'complementary' } },
+      { tagName: 'main', attributes: { role: 'main' } },
+      { tagName: 'nav', attributes: { role: 'navigation' } },
+      { tagName: 'section', attributes: { role: 'region' } },
+    ],
+    ancestors,
+  );
 }
 
-/** Remove naming attributes */
-export function namingProhibitedMap<T extends Record<string, AttributeData>>(
-  attributeMap: T,
-): Omit<T, NameProhibitedAttributes> {
-  const clone = {} as T;
+export interface RemoveProhibitedOptions<P extends ARIAAttribute[]> {
+  nameProhibited?: boolean;
+  prohibited?: P;
+}
 
-  for (const [k, v] of Object.entries(attributeMap)) {
-    if (!NAME_PROHIBITED_ATTRIBUTES.has(k)) {
-      (clone as Record<string, unknown>)[k] = v;
-    }
+/** Remove prohibited aria-* attributes from a list */
+export function removeProhibited<T extends ARIAAttribute[], P extends ARIAAttribute[]>(
+  attributeList: T,
+  options?: RemoveProhibitedOptions<P>,
+): Exclude<T, keyof P> {
+  if (!options || (!options.nameProhibited && !options.prohibited)) {
+    return attributeList as Exclude<T, keyof P>;
   }
-  return clone;
+  return attributeList.filter((attr) => {
+    const isProhibited =
+      (options.nameProhibited && NAME_PROHIBITED_ATTRIBUTES.has(attr)) || options.prohibited?.includes(attr);
+    return !isProhibited;
+  }) as Exclude<T, keyof P>;
+}
+
+/** Inject attributes into an array */
+export function injectAttrs(list: ARIAAttribute[], attrs: ARIAAttribute[]): ARIAAttribute[] {
+  const newList = [...new Set([...list, ...attrs])];
+  newList.sort((a, b) => a.localeCompare(b));
+  return newList;
 }
