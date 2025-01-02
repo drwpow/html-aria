@@ -1,18 +1,13 @@
 # html-aria
 
-WAI-ARIA utilities for HTML based on the [ARIA 1.3 spec](https://www.w3.org/TR/wai-aria-1.3) and latest [HTML in ARIA](https://www.w3.org/TR/html-aria/) recommendations (Dec 2024). Lightweight (5k gzip), performant, and zero dependencies.
+Utilities for creating accessible HTML based on the [latest ARIA 1.3 specs](https://www.w3.org/TR/wai-aria-1.3) and latest [HTML in ARIA](https://www.w3.org/TR/html-aria/) recommendations. Lightweight, performant, tree-shakeable, and 0 dependencies.
 
-⚠️ This is in beta and subject to change.
+This is designed to be a better replacement for aria-query when working with HTML. The reasons are:
 
-## VS other libraries
-
-### aria-query
-
-- html-aria is an expansion of aria-query that implements the important-but-missing [W3C specification on mapping HTML to ARIA](https://www.w3.org/TR/html-aria). This is necessary to correctly map HTML → ARIA roles, states, and properties.
+- aria-query negelects the critical [HTML to ARIA spec](https://www.w3.org/TR/html-aria). With just the ARIA spec alone, it’s insufficient for working with HTML.
 - html-aria supports ARIA 1.3 while aria-query is still on ARIA 1.2
-- html-aria has a simpler API that requires less boilerplate code while requiring less knowledge of the ARIA spec. This reduces mistakes in creating accessible interfaces.
-- html-aria is smaller, weighing only ~5k gzip (aria-query is ~13k gzip)
-- html-aria is more performant (100× faster) (due to aria-query [constantly redoing work](https://github.com/A11yance/aria-query/issues/560)).
+
+html-aria is also designed to be easier-to-use to prevent mistakes, smaller, is ESM tree-shakeable, and more performat (~100× faster than aria-query).
 
 ## Setup
 

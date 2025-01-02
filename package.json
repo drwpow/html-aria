@@ -1,10 +1,19 @@
 {
   "name": "html-aria",
-  "description": "WAI-ARIA utilities for HTML based on ARIA 1.3 and the latest recommendations",
+  "description": "Utilities for creating accessible HTML based on the latest ARIA 1.3 specs. Lightweight, performant, tree-shakeable, and 0 dependencies.",
   "version": "0.0.4",
   "type": "module",
   "license": "MIT",
-  "keywords": ["a11y", "accessibility", "aria", "1.3", "wai-aria"],
+  "keywords": [
+    "a11y",
+    "accessibility",
+    "aria",
+    "react",
+    "1.3",
+    "aria-query",
+    "jsx-a11y",
+    "wai-aria"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/drwpow/html-aria"
