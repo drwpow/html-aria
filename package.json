@@ -43,7 +43,8 @@
     "build": "rollup -c",
     "format": "biome format . --write",
     "lint": "biome check .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "version": "pnpm run build && changeset version"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
