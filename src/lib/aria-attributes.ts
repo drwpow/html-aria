@@ -7,7 +7,6 @@ import type {
   RelationshipAttribute,
   WidgetAttribute,
 } from '../types.js';
-import { namingProhibitedMap } from './util.js';
 
 export const globalAttributes: Record<GlobalAttribute, AttributeData> = {
   'aria-atomic': { category: ['global', 'liveregion'], type: 'boolean', default: false },
