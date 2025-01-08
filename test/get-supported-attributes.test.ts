@@ -81,13 +81,7 @@ const tests: [
   ['audio', { given: [{ tagName: 'audio' }], want: [...GLOBAL_ATTRIBUTES, ...roles.application.supported] }],
   ['b', { given: [{ tagName: 'b' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['b[role=generic]', { given: [{ tagName: 'b', attributes: { role: 'generic' } }], want: GENERIC_NO_NAMING }],
-  [
-    'b[role=button]',
-    {
-      given: [{ tagName: 'b', attributes: { role: 'button' } }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.button.supported], { nameProhibited: true }),
-    },
-  ],
+  ['b[role=button]', { given: [{ tagName: 'b', attributes: { role: 'button' } }], want: BUTTON_ATTRIBUTES }],
   ['base', { given: [{ tagName: 'base' }], want: NO_ATTRIBUTES }],
   ['bdi', { given: [{ tagName: 'bdi' }], want: GENERIC_NO_NAMING }],
   ['bdo', { given: [{ tagName: 'bdo' }], want: GENERIC_NO_NAMING }],
@@ -141,6 +135,7 @@ const tests: [
   ],
   ['dialog', { given: [{ tagName: 'dialog' }], want: [...GLOBAL_ATTRIBUTES, ...roles.dialog.supported] }],
   ['div', { given: [{ tagName: 'div' }], want: GENERIC_NO_NAMING }],
+  ['div', { given: [{ tagName: 'div', attributes: { role: 'button' } }], want: BUTTON_ATTRIBUTES }],
   ['dl', { given: [{ tagName: 'dl' }], want: GLOBAL_ATTRIBUTES }],
   ['dt', { given: [{ tagName: 'dt' }], want: GLOBAL_ATTRIBUTES }],
   ['em', { given: [{ tagName: 'em' }], want: GENERIC_NO_NAMING }],

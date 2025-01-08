@@ -72,6 +72,16 @@ export function getSupportedAttributes(
   }
 
   const attrList = [...(roleData?.supported ?? GLOBAL_ATTRIBUTES)];
+
+  // This is confusing, but if the element has manually specified a role, then
+  // namingProhibited is ignored, and the role’s supported attributes are taken
+  // as-is (even if a name would have been prohibited before)
+  // @see https://www.w3.org/TR/html-aria/#dfn-naming-prohibited
+  const hasManualValidRole = attributes.role && !!roleData;
+  if (hasManualValidRole) {
+    return attrList;
+  }
+
   return removeProhibited(attrList, {
     nameProhibited: tag.namingProhibited,
     prohibited: roleData?.prohibited,

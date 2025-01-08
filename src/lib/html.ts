@@ -21,8 +21,8 @@ export interface TagInfo {
    */
   supportedAttributesOverride?: ARIAAttribute[];
   /**
-   * If this element DOES NOT allow aria-label and related attributes (which
-   * must be subtracted from its role attributes)
+   * If this element doesn’t allow aria-label and related attributes by
+   * default (Note: if a `role` is specified, this is ignored!)
    */
   namingProhibited?: boolean;
 }
