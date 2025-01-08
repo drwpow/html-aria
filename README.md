@@ -64,7 +64,7 @@ isSupportedRole({ tagName: "select" }, "button"); // false
 
 ### getSupportedAttributes() / isSupportedAttribute()
 
-For any element, list all supported [aria-\* attributes](https://www.w3.org/TR/wai-aria-1.3/#states_and_properties), including attributes inherited from superclasses. This takes in an HTML element, not an ARIA role, because in some cases the HTML element actually affects the list ([see full list](#html-attributes)).
+For any element, list all supported [aria-\* attributes](https://www.w3.org/TR/wai-aria-1.3/#states_and_properties), including attributes inherited from superclasses. This takes in an HTML element, not an ARIA role, because in some cases the HTML element actually affects the list ([see full list](#aria--attributes-from-html)).
 
 ```ts
 import { getSupportedAttributes } from "html-aria";
