@@ -53,7 +53,7 @@
     "@types/aria-query": "^5.0.4",
     "aria-query": "^5.3.2",
     "jsdom": "^25.0.1",
-    "typescript": "^5.7.2",
+    "typescript": "^5.7.3",
     "unbuild": "^3.2.0",
     "vitest": "^2.1.8"
   }
