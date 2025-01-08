@@ -1,7 +1,7 @@
 {
   "name": "html-aria",
   "description": "Utilities for creating accessible HTML based on the latest ARIA 1.3 specs. Lightweight, performant, tree-shakeable, and 0 dependencies.",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "license": "MIT",
   "keywords": [

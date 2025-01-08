@@ -1,5 +1,11 @@
 # html-aria
 
+## 0.1.5
+
+### Patch Changes
+
+- [#15](https://github.com/drwpow/html-aria/pull/15) [`245f463`](https://github.com/drwpow/html-aria/commit/245f463fe25b9176f0a56d3a468f9137151041a9) Thanks [@drwpow](https://github.com/drwpow)! - Fix getSupportedAttributes behavior
+
 ## 0.1.4
 
 ### Patch Changes
