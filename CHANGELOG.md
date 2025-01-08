@@ -1,5 +1,11 @@
 # html-aria
 
+## 0.1.4
+
+### Patch Changes
+
+- [#13](https://github.com/drwpow/html-aria/pull/13) [`1012427`](https://github.com/drwpow/html-aria/commit/1012427a59c0ce9f189e0d323984084232cf3796) Thanks [@drwpow](https://github.com/drwpow)! - Fix package.json export types
+
 ## 0.1.3
 
 ### Patch Changes
