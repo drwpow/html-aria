@@ -18,20 +18,20 @@
     "type": "git",
     "url": "git+https://github.com/drwpow/html-aria.git"
   },
-  "main": "./dist/index.js",
+  "main": "./dist/index.mjs",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "default": "./dist/index.mjs"
       },
       "require": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.cjs"
       },
-      "default": "./dist/index.js"
+      "default": "./dist/index.mjs"
     },
-    "./*": "./dist/*.js",
+    "./*": "./dist/*.mjs",
     "./package.json": "./package.json"
   },
   "author": {
@@ -40,7 +40,7 @@
   },
   "scripts": {
     "benchmark": "vitest bench",
-    "build": "rollup -c",
+    "build": "unbuild",
     "format": "biome format . --write",
     "lint": "biome check .",
     "test": "vitest run",
@@ -50,15 +50,11 @@
     "@biomejs/biome": "^1.9.4",
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.11",
-    "@rollup/plugin-commonjs": "^28.0.2",
-    "@rollup/plugin-typescript": "^12.1.2",
     "@types/aria-query": "^5.0.4",
     "aria-query": "^5.3.2",
     "jsdom": "^25.0.1",
-    "rollup": "^4.30.0",
-    "rollup-plugin-cleandir": "^3.0.0",
-    "tslib": "^2.8.1",
     "typescript": "^5.7.2",
+    "unbuild": "^3.2.0",
     "vitest": "^2.1.8"
   }
 }
