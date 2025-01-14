@@ -135,7 +135,7 @@ const tests: [
   ],
   ['dialog', { given: [{ tagName: 'dialog' }], want: [...GLOBAL_ATTRIBUTES, ...roles.dialog.supported] }],
   ['div', { given: [{ tagName: 'div' }], want: GENERIC_NO_NAMING }],
-  ['div', { given: [{ tagName: 'div', attributes: { role: 'button' } }], want: BUTTON_ATTRIBUTES }],
+  ['div[role=button]', { given: [{ tagName: 'div', attributes: { role: 'button' } }], want: BUTTON_ATTRIBUTES }],
   ['dl', { given: [{ tagName: 'dl' }], want: GLOBAL_ATTRIBUTES }],
   ['dt', { given: [{ tagName: 'dt' }], want: GLOBAL_ATTRIBUTES }],
   ['em', { given: [{ tagName: 'em' }], want: GENERIC_NO_NAMING }],
