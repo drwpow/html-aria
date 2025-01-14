@@ -1,5 +1,11 @@
 # html-aria
 
+## 0.1.6
+
+### Patch Changes
+
+- [#18](https://github.com/drwpow/html-aria/pull/18) [`11a9fae`](https://github.com/drwpow/html-aria/commit/11a9fae4d65280cd35cfb6a1b68abd50cee299e8) Thanks [@drwpow](https://github.com/drwpow)! - Add missing aria-orientation attribute to toolbar
+
 ## 0.1.5
 
 ### Patch Changes
