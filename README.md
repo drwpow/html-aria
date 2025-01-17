@@ -15,6 +15,92 @@ html-aria is also designed to be easier-to-use to prevent mistakes, smaller, is 
 npm i html-aria
 ```
 
+## Examples
+
+Though this library is NOT a lint plugin, it can do most of the work for you. You only need to traverse the AST of the language you’re using (e.g. HTML vs React vs Svelte), and html-aria can validate the nodes.
+
+### ESLint + React plugin
+
+```ts
+import { ESLintUtils, TSESTree } from "@typescript-eslint/utils";
+import {
+  getSupportedAttributes,
+  type AriaAttribute,
+  type TagName,
+} from "html-aria";
+
+const createRule = ESLintUtils.RuleCreator(
+  (name) => `https://example.com/rule/${name}`
+);
+
+export default createRule({
+  name: "no-unsupported-aria",
+  meta: {
+    type: "problem",
+    docs: { description: "Ensure that ARIA attributes match their role" },
+    messages: {
+      "not-allowed": "Attribute {{ name }} not allowed",
+    },
+  },
+  create(context) {
+    return {
+      JSXOpeningElement(node) {
+        if (node.name.type !== TSESTree.AST_NODE_TYPES.JSXIdentifier) {
+          return; // this is a React component; ignore
+        }
+
+        const tagName = node.name.name as TagName;
+
+        // 1. assemble attributes into a map
+        const attributes: Record<
+          string,
+          string | number | boolean | undefined | null
+        > = {};
+        for (const attr of node.attributes) {
+          if (
+            attr.type === TSESTree.JSXSpreadAttribute ||
+            attr.name.type === TSESTree.JSXNamespacedName ||
+            attr.value?.type === TSESTree.Literal
+          ) {
+            continue;
+          }
+          attributes[attr.name.name] = attr.value.value as
+            | string
+            | number
+            | boolean
+            | undefined
+            | null;
+        }
+
+        // 2. get supported attributes from html-aria (which MUST include the attributes to work properly)
+        const tag: VirtualElement = { tagName, attributes };
+        const supportedAttributes = getSupportedAttributes(tag);
+
+        // 3. validate
+        for (const attr of node.attributes) {
+          if (attr.type !== TSESTree.AST_NODE_TYPES.JSXAttribute) {
+            continue;
+          }
+          const name =
+            typeof attr.name.name === "string"
+              ? attr.name.name
+              : (attr.name.name.name as ARIAAttribute);
+          if (name.startsWith("aria-") && !supportedAttributes.includes(name)) {
+            context.report({
+              node: name,
+              messageId: "not-allowed",
+              data: { name },
+            });
+          }
+        }
+      },
+    };
+  },
+});
+```
+
+_Have an improvement to suggest? Please open a PR!_
+
 ## API
 
 ### getRole()
