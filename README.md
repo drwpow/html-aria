@@ -180,12 +180,12 @@ Itâ€™s worth noting that **HTML elements may factor in** according to the specâ€
 Return all HTML elements that represent a given ARIA role, if any. If no HTML elements represent this role, `undefined` will be returned. This is essentially the inverse of [`getRole()`](#getrole).
 
 ```ts
-import { getBaseConcepts } from "html-aria";
+import { getElements } from "html-aria";
 
-getBaseConcepts("button"); // [{ tagName: "button" }]
-getBaseConcepts("radio"); // [{ tagName: 'input', attributes: { type: "radio" } }]
-getBaseConcepts("rowheader"); // [{ tagName: "th", attributes: { scope: "row" } }]
-getBaseConcepts("tab"); // undefined
+getElements("button"); // [{ tagName: "button" }]
+getElements("radio"); // [{ tagName: 'input', attributes: { type: "radio" } }]
+getElements("rowheader"); // [{ tagName: "th", attributes: { scope: "row" } }]
+getElements("tab"); // undefined
 ```
 
 Worth noting that this is slightly-different from a [related concept](https://www.w3.org/TR/wai-aria-1.3/#relatedConcept) or [base concept](https://www.w3.org/TR/wai-aria-1.3/#baseConcept).
