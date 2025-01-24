@@ -180,7 +180,7 @@ Itâ€™s worth noting that **HTML elements may factor in** according to the specâ€
 Return all HTML elements that represent a given ARIA role, if any. If no HTML elements represent this role, `undefined` will be returned. This is essentially the inverse of [`getRole()`](#getrole).
 
 ```ts
-import { getElementd } from "html-aria";
+import { getElements } from "html-aria";
 
 getElements("button"); // [{ tagName: "button" }]
 getElements("radio"); // [{ tagName: 'input', attributes: { type: "radio" } }]
