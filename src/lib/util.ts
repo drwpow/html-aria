@@ -1,11 +1,4 @@
-import type {
-  ARIAAttribute,
-  AncestorList,
-  AttributeData,
-  NameProhibitedAttributes,
-  TagName,
-  VirtualElement,
-} from '../types.js';
+import type { ARIAAttribute, AncestorList, NameProhibitedAttributes, TagName, VirtualElement } from '../types.js';
 
 /** Parse a list of roles, e.g. role="graphics-symbol img" */
 export function parseTokenList(tokenList: string): string[] {
@@ -62,6 +55,12 @@ export function calculateAccessibleName(element: VirtualElement): string | undef
   const { tagName, attributes } = element;
 
   switch (tagName) {
+    case 'aside': {
+      /**
+       * @see https://www.w3.org/TR/html-aam-1.0/#section-and-grouping-element-accessible-name-computation
+       */
+      return (attributes?.['aria-label'] || attributes?.['aria-labelledby']) as string;
+    }
     case 'img': {
       /**
        * According to spec, aria-label is technically allowed for <img> (even if alt is preferred)

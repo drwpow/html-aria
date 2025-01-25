@@ -31,6 +31,56 @@ describe('getRole', () => {
     ['area (no href)', { given: [{ tagName: 'area', attributes: {} }], want: 'generic' }],
     ['article', { given: [{ tagName: 'article' }], want: 'article' }],
     ['aside', { given: [{ tagName: 'aside' }], want: 'complementary' }],
+    [
+      'aside (name, sectioning article)',
+      {
+        given: [
+          { tagName: 'aside', attributes: { 'aria-label': 'My aside' } },
+          { ancestors: [{ tagName: 'article' }] },
+        ],
+        want: 'complementary',
+      },
+    ],
+    [
+      'aside (name, sectioning aside)',
+      {
+        given: [{ tagName: 'aside', attributes: { 'aria-label': 'My aside' } }, { ancestors: [{ tagName: 'aside' }] }],
+        want: 'complementary',
+      },
+    ],
+    [
+      'aside (name, sectioning nav)',
+      {
+        given: [{ tagName: 'aside', attributes: { 'aria-label': 'My aside' } }, { ancestors: [{ tagName: 'nav' }] }],
+        want: 'complementary',
+      },
+    ],
+    [
+      'aside (name, sectioning section)',
+      {
+        given: [
+          { tagName: 'aside', attributes: { 'aria-label': 'My aside' } },
+          { ancestors: [{ tagName: 'section' }] },
+        ],
+        want: 'complementary',
+      },
+    ],
+    [
+      'aside (no name, sectioning article)',
+      { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'article' }] }], want: 'generic' },
+    ],
+    [
+      'aside (no name, sectioning aside)',
+      { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'aside' }] }], want: 'generic' },
+    ],
+    [
+      'aside (no name, sectioning nav)',
+      { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'nav' }] }], want: 'generic' },
+    ],
+    [
+      'aside (no name, sectioning section)',
+      { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'section' }] }], want: 'generic' },
+    ],
     ['audio', { given: [{ tagName: 'audio' }], want: undefined }],
     ['b', { given: [{ tagName: 'b' }], want: 'generic' }],
     ['base', { given: [{ tagName: 'base' }], want: undefined }],
