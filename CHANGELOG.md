@@ -1,5 +1,11 @@
 # html-aria
 
+## 0.1.7
+
+### Patch Changes
+
+- [#28](https://github.com/drwpow/html-aria/pull/28) [`bbd21ac`](https://github.com/drwpow/html-aria/commit/bbd21ac5174138008ad480484df552eb743a9213) Thanks [@jlp-craigmorten](https://github.com/jlp-craigmorten)! - Fix role for section element with no accessible name
+
 ## 0.1.6
 
 ### Patch Changes
