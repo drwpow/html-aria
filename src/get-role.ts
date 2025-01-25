@@ -72,6 +72,10 @@ export function getRole(element: VirtualElement | HTMLElement, options?: GetRole
     case 'footer': {
       return getFooterRole(options);
     }
+    case 'section': {
+      const name = calculateAccessibleName({ tagName, attributes });
+      return name ? tag.defaultRole : 'generic';
+    }
     case 'select': {
       return getSelectRole({ attributes });
     }
