@@ -1,6 +1,7 @@
-import { ALL_ROLES, roles } from './lib/aria-roles.js';
+import { ALL_ROLES } from './lib/aria-roles.js';
 import { NO_CORRESPONDING_ROLE, tags } from './lib/html.js';
 import { calculateAccessibleName, firstMatchingToken, isEmptyAncestorList, virtualizeElement } from './lib/util.js';
+import { getAsideRole } from './tags/aside.js';
 import { getFooterRole } from './tags/footer.js';
 import { getHeaderRole } from './tags/header.js';
 import { getInputRole } from './tags/input.js';
@@ -55,6 +56,10 @@ export function getRole(element: VirtualElement | HTMLElement, options?: GetRole
     case 'a':
     case 'area': {
       return attributes && !('href' in attributes) ? 'generic' : tag.defaultRole;
+    }
+    case 'aside': {
+      const name = calculateAccessibleName({ tagName, attributes });
+      return name ? tag.defaultRole : getAsideRole(options);
     }
     case 'header': {
       return getHeaderRole(options);
