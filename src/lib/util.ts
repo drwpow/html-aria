@@ -63,8 +63,17 @@ export function calculateAccessibleName(element: VirtualElement): string | undef
 
   switch (tagName) {
     case 'img': {
-      // according to spec, aria-label is technically allowed for <img> (even if alt is preferred)
+      /**
+       * According to spec, aria-label is technically allowed for <img> (even if alt is preferred)
+       * @see https://www.w3.org/TR/html-aam-1.0/#img-element-accessible-name-computation
+       */
       return (attributes?.alt || attributes?.['aria-label'] || attributes?.['aria-labelledby']) as string;
+    }
+    case 'section': {
+      /**
+       * @see https://www.w3.org/TR/html-aam-1.0/#section-and-grouping-element-accessible-name-computation
+       */
+      return (attributes?.['aria-label'] || attributes?.['aria-labelledby']) as string;
     }
   }
 }

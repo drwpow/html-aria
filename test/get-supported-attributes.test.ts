@@ -162,14 +162,14 @@ const tests: [
   ['html', { given: [{ tagName: 'html' }], want: NO_ATTRIBUTES }],
   ['i', { given: [{ tagName: 'i' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['iframe', { given: [{ tagName: 'iframe' }], want: GLOBAL_ATTRIBUTES }],
-  ['img', { given: [{ tagName: 'img' }], want: ['aria-hidden'] }],
   [
-    'img',
+    'img (name)',
     {
       given: [{ tagName: 'img', attributes: { alt: 'Alt text' } }],
       want: [...GLOBAL_ATTRIBUTES, ...roles.img.supported],
     },
   ],
+  ['img (no name)', { given: [{ tagName: 'img' }], want: ['aria-hidden'] }],
   ['input[type=button]', { given: [{ tagName: 'input', attributes: { type: 'button' } }], want: BUTTON_ATTRIBUTES }],
   [
     'input[type=checkbox]',
@@ -411,7 +411,14 @@ const tests: [
   ['samp', { given: [{ tagName: 'samp' }], want: GENERIC_NO_NAMING }],
   ['script', { given: [{ tagName: 'script' }], want: NO_ATTRIBUTES }],
   ['search', { given: [{ tagName: 'search' }], want: [...GLOBAL_ATTRIBUTES, ...roles.search.supported] }],
-  ['section', { given: [{ tagName: 'section' }], want: [...GLOBAL_ATTRIBUTES, ...roles.region.supported] }],
+  [
+    'section (name)',
+    {
+      given: [{ tagName: 'section', attributes: { 'aria-label': 'My section' } }],
+      want: [...GLOBAL_ATTRIBUTES, ...roles.region.supported],
+    },
+  ],
+  ['section (no name)', { given: [{ tagName: 'section' }], want: GENERIC_NO_NAMING }],
   ['select', { given: [{ tagName: 'select' }], want: COMBOBOX_ATTRIBUTES }],
   ['select[size=0]', { given: [{ tagName: 'select', attributes: { size: 0 } }], want: COMBOBOX_ATTRIBUTES }],
   ['select[size=1]', { given: [{ tagName: 'select', attributes: { size: 1 } }], want: COMBOBOX_ATTRIBUTES }],
