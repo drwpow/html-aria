@@ -1,5 +1,11 @@
 # html-aria
 
+## 0.1.8
+
+### Patch Changes
+
+- [#30](https://github.com/drwpow/html-aria/pull/30) [`b6219e8`](https://github.com/drwpow/html-aria/commit/b6219e85d13f2f2eb74d066714e5fd11bc5f6b4e) Thanks [@jlp-craigmorten](https://github.com/jlp-craigmorten)! - Fix role for aside element when nested within sectioning content
+
 ## 0.1.7
 
 ### Patch Changes
