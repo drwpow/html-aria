@@ -78,7 +78,7 @@ export function calculateAccessibleName(element: VirtualElement): string | undef
 }
 
 /** Is an ancestor list provided and is it empty? */
-export function isEmptyAncestorList(ancestors?: AncestorList): boolean {
+export function isEmptyAncestorList(ancestors?: AncestorList): ancestors is [] {
   return Array.isArray(ancestors) && ancestors.length === 0;
 }
 
@@ -118,6 +118,19 @@ export function hasLandmarkParent(ancestors: AncestorList) {
     ],
     ancestors,
   );
+}
+
+/** Logic shared by <td> and <th> when determining role */
+export function hasGridParent(ancestors: AncestorList) {
+  const gridParent = firstMatchingAncestor(
+    [
+      { tagName: 'table', attributes: { role: 'grid' } },
+      { tagName: 'table', attributes: { role: 'treegrid' } },
+    ],
+    ancestors,
+  );
+
+  return gridParent?.attributes?.role === 'grid' || gridParent?.attributes?.role === 'treegrid';
 }
 
 export interface RemoveProhibitedOptions<P extends ARIAAttribute[]> {
