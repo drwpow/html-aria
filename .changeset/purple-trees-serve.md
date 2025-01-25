@@ -2,4 +2,4 @@
 "html-aria": patch
 ---
 
-Fix role for aside element when nested within landmark
+Fix role for aside element when nested within sectioning content
