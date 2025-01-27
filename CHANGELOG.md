@@ -1,5 +1,11 @@
 # html-aria
 
+## 0.1.9
+
+### Patch Changes
+
+- [#33](https://github.com/drwpow/html-aria/pull/33) [`c257353`](https://github.com/drwpow/html-aria/commit/c25735370dd5abdc72d46fb1cdab78f119dd835f) Thanks [@jlp-craigmorten](https://github.com/jlp-craigmorten)! - Fix role for th element in context
+
 ## 0.1.8
 
 ### Patch Changes
