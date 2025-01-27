@@ -337,7 +337,24 @@ describe('getRole', () => {
     ['th', { given: [{ tagName: 'th' }], want: 'columnheader' }],
     ['th (no ancestors)', { given: [{ tagName: 'th' }, { ancestors: [] }], want: undefined }],
     ['th[scope=col]', { given: [{ tagName: 'th', attributes: { scope: 'col' } }], want: 'columnheader' }],
+    ['th[scope=colgroup]', { given: [{ tagName: 'th', attributes: { scope: 'colgroup' } }], want: 'columnheader' }],
     ['th[scope=row]', { given: [{ tagName: 'th', attributes: { scope: 'row' } }], want: 'rowheader' }],
+    ['th[scope=rowgroup]', { given: [{ tagName: 'th', attributes: { scope: 'rowgroup' } }], want: 'rowheader' }],
+    ['th (table)', { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'table' }] }], want: 'cell' }],
+    [
+      'th (grid)',
+      {
+        given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'table', attributes: { role: 'grid' } }] }],
+        want: 'gridcell',
+      },
+    ],
+    [
+      'th (treegrid)',
+      {
+        given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'table', attributes: { role: 'treegrid' } }] }],
+        want: 'gridcell',
+      },
+    ],
     ['time', { given: [{ tagName: 'time' }], want: 'time' }],
     ['title', { given: [{ tagName: 'title' }], want: undefined }],
     ['tr', { given: [{ tagName: 'tr' }], want: 'row' }],
