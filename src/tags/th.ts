@@ -1,60 +1,42 @@
-import { NO_CORRESPONDING_ROLE, tags } from '../lib/html.js';
-import { firstMatchingAncestor, hasGridParent, isEmptyAncestorList } from '../lib/util.js';
-import type { AncestorList, VirtualElement } from '../types.js';
+import { type RoleData, roles } from '../lib/aria-roles.js';
+import { NO_CORRESPONDING_ROLE } from '../lib/html.js';
+import { attr, hasGridParent, hasRowgroupParent, hasTableParent } from '../lib/util.js';
+import type { VirtualAncestorList, VirtualElement } from '../types.js';
 
 /** Special behavior for <th> element */
-export function getTHRole({
-  attributes,
-  ancestors,
-}: { attributes?: VirtualElement['attributes']; ancestors?: AncestorList } = {}) {
-  // Special behavior: require an explicitly empty ancestor array to return
-  // “no corresponding role” like the spec describes (if we did this by
-  // default, it would likely cause bad results because most users would
-  // likely skip this optional setup).
-  if (isEmptyAncestorList(ancestors)) {
-    return NO_CORRESPONDING_ROLE;
-  }
-
+export function getTHRole(
+  element: Element | VirtualElement,
+  options?: {
+    ancestors?: VirtualAncestorList;
+  },
+): RoleData | undefined {
   // Currently deviates from specification as doesn't handle the `auto`
   // behaviour as that would require access to the DOM context.
-  switch (attributes?.scope) {
-    /**
-     * @see https://www.w3.org/TR/html-aam-1.0/#el-th-columnheader
-     */
+  const scope = attr(element, 'scope');
+  switch (scope) {
+    /** @see https://www.w3.org/TR/html-aam-1.0/#el-th-columnheader */
     case 'col':
     case 'colgroup': {
-      return 'columnheader';
+      return roles.columnheader;
     }
-    /**
-     * @see https://www.w3.org/TR/html-aam-1.0/#el-th-rowheader
-     */
+    /** @see https://www.w3.org/TR/html-aam-1.0/#el-th-rowheader */
     case 'row':
     case 'rowgroup': {
-      return 'rowheader';
+      return roles.rowheader;
     }
   }
 
-  // See previous comment r.e. special behaviour.
-  if (!ancestors) {
-    return tags.th.defaultRole;
+  /** @see https://www.w3.org/TR/html-aam-1.0/#el-th-gridcell */
+  if (hasGridParent(element, options?.ancestors)) {
+    return roles.gridcell;
   }
 
-  /**
-   * @see https://www.w3.org/TR/html-aam-1.0/#el-th-gridcell
-   */
-  if (hasGridParent(ancestors)) {
-    return 'gridcell';
-  }
-
-  /**
-   * @see https://www.w3.org/TR/html-aam-1.0/#el-th
-   */
-  const hasTableParent = !!firstMatchingAncestor([{ tagName: 'table', attributes: { role: 'table' } }], ancestors);
-
-  if (hasTableParent) {
-    return 'cell';
+  /** @see https://www.w3.org/TR/html-aam-1.0/#el-th */
+  if (hasTableParent(element, options?.ancestors)) {
+    // Minor spec deviation: if inside a rowgroup, most browsers treat this as a columnheader
+    return hasRowgroupParent(element, options?.ancestors) ? roles.columnheader : roles.cell;
   }
 
   // See previous comment r.e. special behaviour.
-  return tags.th.defaultRole;
+  return NO_CORRESPONDING_ROLE;
 }

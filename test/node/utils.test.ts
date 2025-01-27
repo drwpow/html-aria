@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { removeProhibited } from '../src/index.js';
+import { removeProhibited } from '../../src/index.js';
 
 describe('removeProhibited', () => {
   test('default', () => {

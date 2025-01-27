@@ -8,6 +8,7 @@ import type {
   WidgetAttribute,
 } from '../types.js';
 
+// note: all fields required to be monomorphic
 export const globalAttributes: Record<GlobalAttribute, AttributeData> = {
   'aria-atomic': { category: ['global', 'liveregion'], type: 'boolean', default: false },
   'aria-braillelabel': { category: ['global'], type: 'string' },

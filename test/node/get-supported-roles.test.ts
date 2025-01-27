@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { ALL_ROLES, NO_ROLES, getSupportedRoles, isSupportedRole, tags } from '../src/index.js';
-import { checkTestAndTagName } from './helpers.js';
+import { ALL_ROLES, NO_ROLES, getSupportedRoles, isSupportedRole, tags } from '../../src/index.js';
+import { checkTestAndTagName } from '../helpers.js';
 
 describe('getSupportedRoles', () => {
   const tests: [
@@ -10,18 +10,14 @@ describe('getSupportedRoles', () => {
       want: ReturnType<typeof getSupportedRoles>;
     },
   ][] = [
-    [
-      'a',
-      {
-        given: [{ tagName: 'a' }],
-        want: ['button', 'checkbox', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
-      },
-    ],
-    ['a (no href)', { given: [{ tagName: 'a', attributes: {} }], want: ALL_ROLES }],
+    ['a (no href)', { given: [{ tagName: 'a' }], want: ALL_ROLES }],
+    ['a[href=""]', { given: [{ tagName: 'a', attributes: { href: '' } }], want: ['button', 'checkbox', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'switch', 'tab', 'treeitem'] }], // biome-ignore format: long list
+    ['a[href=#url]', { given: [{ tagName: 'a', attributes: { href: '#url' } }], want: ['button', 'checkbox', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'switch', 'tab', 'treeitem'] }], // biome-ignore format: long list
     ['address', { given: [{ tagName: 'address' }], want: ALL_ROLES }],
     ['abbr', { given: [{ tagName: 'abbr' }], want: ALL_ROLES }],
-    ['area', { given: [{ tagName: 'area' }], want: ['link'] }],
-    ['area (no href)', { given: [{ tagName: 'area', attributes: {} }], want: ['button', 'generic', 'link'] }],
+    ['area (no href)', { given: [{ tagName: 'area' }], want: ['button', 'generic', 'link'] }],
+    ['area[href=""]', { given: [{ tagName: 'area', attributes: { href: '' } }], want: ['link'] }],
+    ['area[href=#url]', { given: [{ tagName: 'area', attributes: { href: '#url' } }], want: ['link'] }],
     [
       'article',
       {
@@ -48,7 +44,7 @@ describe('getSupportedRoles', () => {
       'button',
       {
         given: [{ tagName: 'button' }],
-        want:  ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
+        want: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
       },
     ],
     ['caption', { given: [{ tagName: 'caption' }], want: ['caption'] }],
@@ -128,7 +124,7 @@ describe('getSupportedRoles', () => {
       'input[type=button]',
       {
         given: [{ tagName: 'input', attributes: { type: 'button' } }],
-        want:['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
+        want: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
       },
     ],
     [
@@ -198,7 +194,7 @@ describe('getSupportedRoles', () => {
       'input[type=button] (list)',
       {
         given: [{ tagName: 'input', attributes: { type: 'button', list: 'buttons' } }],
-        want:['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
+        want: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
       },
     ],
     [
@@ -313,6 +309,7 @@ describe('getSupportedRoles', () => {
     ['legend', { given: [{ tagName: 'legend' }], want: [] }],
     ['li', { given: [{ tagName: 'li' }], want: ['listitem'] }],
     ['li (no ancestors)', { given: [{ tagName: 'li' }, { ancestors: [] }], want: ALL_ROLES }],
+    ['li (list parent)', { given: [{ tagName: 'li' }, { ancestors: [{ tagName: 'ul' }] }], want: ['listitem'] }],
     ['link', { given: [{ tagName: 'link' }], want: [] }],
     ['kbd', { given: [{ tagName: 'kbd' }], want: ALL_ROLES }],
     ['main', { given: [{ tagName: 'main' }], want: ['main'] }],
@@ -386,8 +383,8 @@ describe('getSupportedRoles', () => {
     ['table', { given: [{ tagName: 'table' }], want: ALL_ROLES }],
     ['tbody', { given: [{ tagName: 'tbody' }], want: ALL_ROLES }],
     ['td', { given: [{ tagName: 'td' }], want: ['cell'] }],
-    ['td (table)', { given: [{ tagName: 'td' }, { ancestors: [{ tagName: 'table' }] }], want: ['cell'] }],
     ['td (no ancestors)', { given: [{ tagName: 'td' }, { ancestors: [] }], want: ALL_ROLES }],
+    ['td (table)', { given: [{ tagName: 'td' }, { ancestors: [{ tagName: 'table' }] }], want: ['cell'] }],
     [
       'td (grid)',
       {
@@ -412,7 +409,8 @@ describe('getSupportedRoles', () => {
     ['title', { given: [{ tagName: 'title' }], want: [] }],
     ['tr', { given: [{ tagName: 'tr' }], want: ['row'] }],
     ['tr (no ancestors)', { given: [{ tagName: 'tr' }, { ancestors: [] }], want: ALL_ROLES }],
-    ['track', { given: [{ tagName: 'track' }, { ancestors: [] }], want: [] }],
+    ['tr (table)', { given: [{ tagName: 'tr' }, { ancestors: [{ tagName: 'table' }] }], want: ['row'] }],
+    ['track', { given: [{ tagName: 'track' }], want: [] }],
     ['u', { given: [{ tagName: 'u' }], want: ALL_ROLES }],
     [
       'ul',

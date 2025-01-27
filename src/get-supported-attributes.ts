@@ -2,7 +2,7 @@ import { type GetRoleOptions, getRole } from './get-role.js';
 import { attributes, globalAttributes } from './lib/aria-attributes.js';
 import { roles } from './lib/aria-roles.js';
 import { tags } from './lib/html.js';
-import { calculateAccessibleName, injectAttrs, removeProhibited, virtualizeElement } from './lib/util.js';
+import { attr, calculateAccessibleName, concatDedupeAndSort, getTagName, removeProhibited } from './lib/util.js';
 import type { ARIAAttribute, VirtualElement } from './types.js';
 
 const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
@@ -10,11 +10,8 @@ const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
 /**
  * Given an ARIA role returns a list of supported/inherited aria-* attributes.
  */
-export function getSupportedAttributes(
-  element: VirtualElement | HTMLElement,
-  options?: GetRoleOptions,
-): ARIAAttribute[] {
-  const { tagName, attributes = {} } = virtualizeElement(element);
+export function getSupportedAttributes(element: Element | VirtualElement, options?: GetRoleOptions): ARIAAttribute[] {
+  const tagName = getTagName(element);
   const tag = tags[tagName];
   if (!tag) {
     return [];
@@ -27,7 +24,7 @@ export function getSupportedAttributes(
   }
 
   const role = getRole(element, options);
-  const roleData = role && roles[role];
+  const roleData = role && roles[role?.name];
 
   // special cases
   switch (tagName) {
@@ -38,12 +35,13 @@ export function getSupportedAttributes(
       return roles.application.supported;
     }
     case 'img': {
-      const name = calculateAccessibleName({ tagName, attributes });
+      const name = calculateAccessibleName(element, roles.img);
       // if no accessible name, only aria-hidden allowed
-      return (name && roleData?.supported) || ['aria-hidden'];
+      return name && roleData?.supported?.length ? roleData.supported : ['aria-hidden'];
     }
     case 'input': {
-      switch (attributes.type) {
+      const type = attr(element, 'type');
+      switch (type) {
         case 'checkbox':
         case 'radio': {
           if (roleData) {
@@ -52,39 +50,45 @@ export function getSupportedAttributes(
           break;
         }
         case 'color': {
-          return injectAttrs(GLOBAL_ATTRIBUTES, ['aria-disabled']);
+          return concatDedupeAndSort(GLOBAL_ATTRIBUTES, ['aria-disabled']);
         }
         case 'file': {
-          return injectAttrs(GLOBAL_ATTRIBUTES, ['aria-disabled', 'aria-invalid', 'aria-required']);
+          return concatDedupeAndSort(GLOBAL_ATTRIBUTES, ['aria-disabled', 'aria-invalid', 'aria-required']);
         }
         case 'hidden': {
           return [];
         }
         default: {
-          return roleData?.supported || roles.textbox.supported;
+          return roleData?.supported?.length ? roleData.supported : roles.textbox.supported;
         }
       }
       break;
     }
     case 'summary': {
-      return injectAttrs(roleData?.supported ?? GLOBAL_ATTRIBUTES, ['aria-disabled', 'aria-haspopup']);
+      const supported = roleData?.supported.length ? roleData.supported : GLOBAL_ATTRIBUTES;
+      return concatDedupeAndSort(supported, ['aria-disabled', 'aria-haspopup']);
     }
   }
 
-  const attrList = [...(roleData?.supported ?? GLOBAL_ATTRIBUTES)];
+  const attrList: ARIAAttribute[] = [];
+  if (roleData?.supported.length) {
+    attrList.push(...roleData.supported);
+  } else {
+    attrList.push(...GLOBAL_ATTRIBUTES);
+  }
 
   // This is confusing, but if the element has manually specified a role, then
   // namingProhibited is ignored, and the role’s supported attributes are taken
   // as-is (even if a name would have been prohibited before)
   // @see https://www.w3.org/TR/html-aria/#dfn-naming-prohibited
-  const hasManualValidRole = attributes.role && !!roleData;
+  const hasManualValidRole = attr(element, 'role') && !!roleData;
   if (hasManualValidRole) {
     return attrList;
   }
 
   return removeProhibited(attrList, {
-    nameProhibited: tag.namingProhibited,
-    prohibited: roleData?.prohibited,
+    nameProhibited: roleData?.nameFrom === 'prohibited' || tag.namingProhibited,
+    prohibited: roleData?.prohibited?.length ? roleData.prohibited : undefined,
   });
 }
 
@@ -93,7 +97,7 @@ export function getSupportedAttributes(
  */
 export function isSupportedAttribute(
   attribute: ARIAAttribute,
-  element: HTMLElement | VirtualElement,
+  element: Element | VirtualElement,
   options?: GetRoleOptions,
 ): boolean {
   return getSupportedAttributes(element, options).includes(attribute as ARIAAttribute);
@@ -116,7 +120,7 @@ export function isValidAttributeValue(attribute: ARIAAttribute, value: unknown):
     throw new Error(`${attribute} isn’t a valid ARIA attribute`);
   }
 
-  const valueStr = String(value).toLocaleLowerCase(); // ignore case
+  const valueStr = String(value);
   if (attributeData.type === 'boolean') {
     return (
       valueStr === 'true' || valueStr === 'false' || valueStr === '' // note: ="" is equivalent to "true"

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { type VirtualElement, getRole, tags } from '../src/index.js';
-import { checkTestAndTagName } from './helpers.js';
+import { NO_CORRESPONDING_ROLE, type VirtualElement, getRole, tags } from '../../src/index.js';
+import { checkTestAndTagName } from '../helpers.js';
 
 describe('getRole', () => {
   /**
@@ -18,17 +18,15 @@ describe('getRole', () => {
     string,
     {
       given: Parameters<typeof getRole>;
-      want: ReturnType<typeof getRole>;
+      want: string | undefined;
     },
   ][] = [
-    ['a', { given: [{ tagName: 'a' }], want: 'link' }],
+    ['a', { given: [{ tagName: 'a' }], want: 'generic' }],
     ['a (href)', { given: [{ tagName: 'a', attributes: { href: '/about' } }], want: 'link' }],
-    ['a (no href)', { given: [{ tagName: 'a', attributes: {} }], want: 'generic' }],
     ['abbr', { given: [{ tagName: 'abbr' }], want: undefined }],
     ['address', { given: [{ tagName: 'address' }], want: 'group' }],
-    ['area', { given: [{ tagName: 'area' }], want: 'link' }],
+    ['area', { given: [{ tagName: 'area' }], want: 'generic' }],
     ['area (href)', { given: [{ tagName: 'area', attributes: { href: '/about' } }], want: 'link' }],
-    ['area (no href)', { given: [{ tagName: 'area', attributes: {} }], want: 'generic' }],
     ['article', { given: [{ tagName: 'article' }], want: 'article' }],
     ['aside', { given: [{ tagName: 'aside' }], want: 'complementary' }],
     [
@@ -253,6 +251,7 @@ describe('getRole', () => {
     ['legend', { given: [{ tagName: 'legend' }], want: undefined }],
     ['li', { given: [{ tagName: 'li' }], want: 'listitem' }],
     ['li (no ancestors)', { given: [{ tagName: 'li' }, { ancestors: [] }], want: 'generic' }],
+    ['li (list parent)', { given: [{ tagName: 'li' }, { ancestors: [{ tagName: 'ul' }] }], want: 'listitem' }],
     ['link', { given: [{ tagName: 'link' }], want: undefined }],
     ['kbd', { given: [{ tagName: 'kbd' }], want: undefined }],
     ['main', { given: [{ tagName: 'main' }], want: 'main' }],
@@ -314,7 +313,7 @@ describe('getRole', () => {
     ['table', { given: [{ tagName: 'table' }], want: 'table' }],
     ['tbody', { given: [{ tagName: 'tbody' }], want: 'rowgroup' }],
     ['td', { given: [{ tagName: 'td' }], want: 'cell' }],
-    ['td (no ancestors)', { given: [{ tagName: 'td' }, { ancestors: [] }], want: undefined }],
+    ['td (no ancestors)', { given: [{ tagName: 'td' }, { ancestors: [] }], want: NO_CORRESPONDING_ROLE }],
     ['td (table)', { given: [{ tagName: 'td' }, { ancestors: [{ tagName: 'table' }] }], want: 'cell' }],
     [
       'td (grid)',
@@ -330,17 +329,25 @@ describe('getRole', () => {
         want: 'gridcell',
       },
     ],
-    ['template', { given: [{ tagName: 'template' }], want: undefined }],
+    ['template', { given: [{ tagName: 'template' }], want: NO_CORRESPONDING_ROLE }],
     ['textarea', { given: [{ tagName: 'textarea' }], want: 'textbox' }],
     ['thead', { given: [{ tagName: 'thead' }], want: 'rowgroup' }],
     ['tfoot', { given: [{ tagName: 'tfoot' }], want: 'rowgroup' }],
-    ['th', { given: [{ tagName: 'th' }], want: 'columnheader' }],
-    ['th (no ancestors)', { given: [{ tagName: 'th' }, { ancestors: [] }], want: undefined }],
+    ['th', { given: [{ tagName: 'th' }], want: 'cell' }],
+    ['th (no ancestors)', { given: [{ tagName: 'th' }, { ancestors: [] }], want: NO_CORRESPONDING_ROLE }],
     ['th[scope=col]', { given: [{ tagName: 'th', attributes: { scope: 'col' } }], want: 'columnheader' }],
     ['th[scope=colgroup]', { given: [{ tagName: 'th', attributes: { scope: 'colgroup' } }], want: 'columnheader' }],
     ['th[scope=row]', { given: [{ tagName: 'th', attributes: { scope: 'row' } }], want: 'rowheader' }],
     ['th[scope=rowgroup]', { given: [{ tagName: 'th', attributes: { scope: 'rowgroup' } }], want: 'rowheader' }],
     ['th (table)', { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'table' }] }], want: 'cell' }],
+    [
+      'th (thead)',
+      { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'thead' }, { tagName: 'table' }] }], want: 'columnheader' },
+    ],
+    [
+      'th (row)',
+      { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'tr' }, { tagName: 'table' }] }], want: 'cell' },
+    ],
     [
       'th (grid)',
       {
@@ -366,50 +373,20 @@ describe('getRole', () => {
     ['wbr', { given: [{ tagName: 'wbr' }], want: undefined }],
   ];
 
-  describe('from object', () => {
-    const testedTags = new Set<string>();
+  const testedTags = new Set<string>();
 
-    test.each(testCases)('%s', (name, { given, want }) => {
-      testedTags.add(given[0].tagName);
-      checkTestAndTagName(name, given[0].tagName);
-      expect(getRole(...given)).toBe(want);
-    });
-
-    test('all tags are tested', () => {
-      const allTags = Object.keys(tags);
-      for (const tag of allTags) {
-        if (!testedTags.has(tag)) {
-          console.warn(`Tag "${tag}" is not tested`);
-        }
-      }
-    });
+  test.each(testCases)('%s', (name, { given, want }) => {
+    testedTags.add(given[0].tagName);
+    checkTestAndTagName(name, given[0].tagName);
+    expect(getRole(...given)?.name).toBe(want);
   });
 
-  describe('from DOM element', () => {
-    function elFromVirtual(el: VirtualElement) {
-      const element = document.createElement(el.tagName);
-      if (el.attributes) {
-        for (const [name, value] of Object.entries(el.attributes)) {
-          element.setAttribute(name, String(value));
-        }
+  test('all tags are tested', () => {
+    const allTags = Object.keys(tags);
+    for (const tag of allTags) {
+      if (!testedTags.has(tag)) {
+        console.warn(`Tag "${tag}" is not tested`);
       }
-      return element;
     }
-
-    // Note: because of the way the DOM tests work, we can’t specify
-    // an empty attributes array, so 2 tests written in object
-    // syntax operate differently. Only skip those 2.
-    const domTestCases = testCases.filter(([name]) => !['a', 'area'].includes(name));
-
-    test.each(domTestCases)('%s', (_, { given, want }) => {
-      // convert main element to DOM element
-      const mainEl = elFromVirtual(given[0] as VirtualElement);
-      const options = { ...given[1] };
-      // also, to test ancestors, convert those, too
-      if (options.ancestors) {
-        options.ancestors = options.ancestors.map((el) => elFromVirtual(el as VirtualElement));
-      }
-      expect(getRole(mainEl, options)).toBe(want);
-    });
   });
 });

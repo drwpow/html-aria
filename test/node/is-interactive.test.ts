@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { isInteractive, tags } from '../src/index.js';
-import { checkTestAndTagName } from './helpers';
+import { isInteractive, tags } from '../../src/index.js';
+import { checkTestAndTagName } from './../helpers';
 
 // add <div tabindex=0>
 // add <div role="button" tabindex=0>
@@ -8,9 +8,9 @@ import { checkTestAndTagName } from './helpers';
 describe('isInteractive', () => {
   const tests: [string, { given: Parameters<typeof isInteractive>; want: ReturnType<typeof isInteractive> }][] = [
     ['a', { given: [{ tagName: 'a' }], want: false }],
-    ['a', { given: [{ tagName: 'a', attributes: { href: '#' } }], want: true }],
-    ['area', { given: [{ tagName: 'area' }], want: false }],
-    ['area', { given: [{ tagName: 'area', attributes: { href: '#' } }], want: true }],
+    ['a[ref=#]', { given: [{ tagName: 'a', attributes: { href: '#' } }], want: true }],
+    ['area (no href)', { given: [{ tagName: 'area' }], want: false }],
+    ['area[href=#]', { given: [{ tagName: 'area', attributes: { href: '#' } }], want: true }],
     ['abbr', { given: [{ tagName: 'abbr' }], want: false }],
     ['address', { given: [{ tagName: 'address' }], want: false }],
     ['article', { given: [{ tagName: 'article' }], want: false }],
@@ -231,12 +231,10 @@ describe('isInteractive', () => {
     expect(isInteractive(...given)).toBe(want);
   });
 
-  test('all tags tested', () => {
+  test('all tags are tested', () => {
     const allTags = Object.keys(tags);
     for (const tag of allTags) {
-      if (!testedTags.has(tag)) {
-        console.warn(`Tag "${tag}" is not tested`);
-      }
+      expect(testedTags.has(tag)).toBe(true);
     }
   });
 });
