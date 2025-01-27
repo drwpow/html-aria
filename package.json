@@ -53,6 +53,7 @@
     "@changesets/cli": "^2.27.12",
     "@types/aria-query": "^5.0.4",
     "aria-query": "^5.3.2",
+    "dom-accessibility-api": "^0.7.0",
     "jsdom": "^25.0.1",
     "typescript": "^5.7.3",
     "unbuild": "^3.3.1",
