@@ -376,9 +376,7 @@ getRole({ tagName: "li" }, { ancestors: [] }); // "generic"
 
 These are all the elements that have assumed context (i.e. different behavior in Node.js): `<col>`, `<colgroup>`, `<caption>`, `<li>`, `<rowgroup>`, `<tbody>`, `<td>`, `<tfoot>`, `<th>`, `<thead>`, `<tr>`.
 
-“Conditional” context elements may either have certain parents or not, all of which are valid. `<aside>` used in the body is a landmark `complementary` role; inside a `<section>` it’s `generic` (unless it has an accessible name, then it’s `complementary` again). `<header>` is a `banner` landmark itself, or inside another landmark is `generic`. Since there’s no “wrong” usage here,
-
-In Node.js they behave as expected, so they don’t deviate from DOM behavior or the spec.
+“Conditional” context elements may either have certain parents or not, all of which are valid. `<aside>` used in the body is a landmark `complementary` role; inside a `<section>` it’s `generic` (unless it has an accessible name, then it’s `complementary` again). `<header>` is a `banner` landmark itself, or inside another landmark is `generic`. Since there’s no “wrong” usage here, In Node.js they behave as expected, so they don’t deviate from DOM behavior or the spec.
 
 ```ts
 import { getRole } from "html-aria";
