@@ -13,16 +13,31 @@ import type { VirtualAncestorList, VirtualElement } from './types.js';
 
 export interface GetRoleOptions {
   /**
-   * Declare relevant ancestors, ordered from most direct parent to furthest
-   * ancestor. This affects the results, e.g.
+   * Not needed in DOM environments.
+   * For Node.js, when we can’t traverse the DOM, provide the hierarchy upward, going from closest to furthest.
+   * E.g. the following HTML:
    *
-   * - <td> with ancestors ['table'] will be role 'cell'
-   * - <td> with ancestors ['grid'] or ['treegrid'] will be 'gridcell'
-   * - <td> with NO ancestors ([]) will be no role (`undefined`)
+   * ```html
+   * <table>
+   *   <tbody>
+   *     <tr>
+   *       <td></td>
+   *     </tr>
+   *   </tbody>
+   * </table>
+   * ```
+   * Could be represented as:
    *
-   * This list does NOT have to be complete; e.g. `'row'`  can be skipped as it
-   * doesn’t affect behavior. But irrelevant parents may be supplied for ease of
-   * use, and only the first significant ancestor will apply.
+   * ```ts
+   * getRole(
+   *   { tagName: 'td' },
+   *   { ancestors: [{ tagName: 'tr' }, { tagName: 'tbody' }, { tagName: 'table' }] },
+   * );
+   * ```
+   *
+   * Note: This list does _not_ have to be complete; simply listing out the significant elements that
+   * affect a11y.
+   * @see https://github.com/drwpow/html-aria/tree/dom-support#nodejs-vs-dom-behavior
    */
   ancestors?: VirtualAncestorList;
   /** Ignore role attribute in calculation to get the intrinsic role. Needed in some fallback scenarios. */
@@ -32,7 +47,7 @@ export interface GetRoleOptions {
 /**
  * Get the corresponding ARIA role for a given HTML element.
  * `undefined` means “no corresponding role”.
- * Note this does NOT traverse the DOM, because we assume it’s not fully available, e.g. in Node.js, React Components, lint rules, etc.
+ * This traverses the DOM when available.
  * @see https://www.w3.org/TR/html-aria/
  */
 export function getRole(element: Element | VirtualElement, options?: GetRoleOptions): RoleData | undefined {
