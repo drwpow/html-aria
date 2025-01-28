@@ -4,10 +4,11 @@ Utilities for creating accessible HTML based on the [latest ARIA 1.3 specs](http
 
 This is designed to be a better replacement for aria-query when working with HTML. The reasons are:
 
-- aria-query neglects the critical specs [HTML Accessibility API Mappings](https://www.w3.org/TR/html-aam-1.0/) and [HTML to ARIA](https://www.w3.org/TR/html-aria). With just the ARIA spec alone, it’s insufficient for working with HTML.
+- html-aria is designed to reduce mistakes, while aria-query’s APIs are easy to “hold it wrong.” The information may not be _incorrect_, but often are locked behind several successful operations you must know to connect to get the right result.
+- html-aria and aria-query both follow the [ARIA 1.3 spec](https://w3c.github.io/aria/), but that’s only one part. There are also the [HTML Accessibility API Mappings](https://www.w3.org/TR/html-aam-1.0/) and [HTML to ARIA](https://www.w3.org/TR/html-aria) specs that are critical to working with HTML. While aria-query follows these other documents when it can, its design makes it difficult to apply the advice from all specs, often producing incomplete or incorrect results.
 - html-aria supports ARIA 1.3 while aria-query is still on ARIA 1.2
 
-html-aria is also designed to be easier-to-use to prevent mistakes, smaller, is ESM tree-shakeable, and more performant (~100× faster than aria-query).
+html-aria is also ESM-compatible and [more performant](./test/node/html-aria.bench.ts).
 
 ## Usage
 
