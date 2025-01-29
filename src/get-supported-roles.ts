@@ -1,11 +1,11 @@
 import { ALL_ROLES, roles } from './lib/aria-roles.js';
 import { tags } from './lib/html.js';
-import { calculateAccessibleName, firstMatchingToken, isEmptyAncestorList, virtualizeElement } from './lib/util.js';
+import { attr, calculateAccessibleName, getTagName, hasListParent, hasTableParent } from './lib/util.js';
 import { getFooterRole } from './tags/footer.js';
 import { getInputSupportedRoles } from './tags/input.js';
 import { getSelectSupportedRoles } from './tags/select.js';
 import { getTDRole } from './tags/td.js';
-import type { ARIARole, AncestorList, VirtualElement } from './types.js';
+import type { ARIARole, VirtualAncestorList, VirtualElement } from './types.js';
 
 export interface SupportedRoleOptions {
   /**
@@ -17,15 +17,15 @@ export interface SupportedRoleOptions {
    * - <td> with ancestors ['grid'] or ['treegrid'] MAY ONLY be a ['gridcell'] (all other roles are not supported)
    * - <td> with NO ancestors ([]) will allow any role
    */
-  ancestors?: AncestorList;
+  ancestors?: VirtualAncestorList;
 }
 
 /**
  * Given an HTML element, returns a list of supported ARIA roles for that element.
  * An empty array means no roles are supported (which is true for some elements!)
  */
-export function getSupportedRoles(element: HTMLElement | VirtualElement, options?: SupportedRoleOptions): ARIARole[] {
-  const { tagName, attributes } = virtualizeElement(element);
+export function getSupportedRoles(element: Element | VirtualElement, options?: SupportedRoleOptions): ARIARole[] {
+  const tagName = getTagName(element);
   const tag = tags[tagName];
   if (!tag) {
     return [];
@@ -34,23 +34,27 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
   // special cases: some HTML elements require unique logic to determine supported roles based on attributes, etc.
   switch (tagName) {
     case 'a': {
-      return attributes && !('href' in attributes)
-        ? ALL_ROLES
-        : ['button', 'checkbox', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'switch', 'tab', 'treeitem']; // biome-ignore format: long list
+      const href = attr(element, 'href');
+      return typeof href === 'string' ? tag.supportedRoles : ALL_ROLES;
     }
     case 'area': {
-      return attributes && !('href' in attributes) ? ['button', 'generic', 'link'] : tag.supportedRoles;
+      const href = attr(element, 'href');
+      return typeof href === 'string' ? tag.supportedRoles : ['button', 'generic', 'link'];
     }
     case 'footer':
     case 'header': {
-      const role = getFooterRole(options);
-      return role === 'generic' ? ['generic', 'group', 'none', 'presentation'] : tag.supportedRoles;
+      const role = getFooterRole(element, options);
+      return role?.name === 'generic' ? ['generic', 'group', 'none', 'presentation'] : tag.supportedRoles;
     }
     case 'div': {
-      return options?.ancestors?.[0]?.tagName === 'dl' ? ['none', 'presentation'] : tag.supportedRoles;
+      const DL_PARENT_ROLES: ARIARole[] = ['none', 'presentation'];
+      if (typeof Element !== 'undefined' && element instanceof Element) {
+        return element.parentElement?.closest('dl:not([role])') ? DL_PARENT_ROLES : tag.supportedRoles;
+      }
+      return options?.ancestors?.[0]?.tagName === 'dl' ? DL_PARENT_ROLES : tag.supportedRoles;
     }
     case 'img': {
-      const name = calculateAccessibleName({ tagName, attributes });
+      const name = calculateAccessibleName(element, roles.img);
       if (name) {
         /** @see https://www.w3.org/TR/html-aria/#el-img */
         return ['button', 'checkbox', 'image', 'img', 'link', 'math', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'meter', 'option', 'progressbar', 'radio', 'scrollbar', 'separator', 'slider', 'switch', 'tab', 'treeitem']; // biome-ignore format: long list
@@ -58,20 +62,23 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
       return tag.supportedRoles;
     }
     case 'li': {
-      return isEmptyAncestorList(options?.ancestors) ? ALL_ROLES : ['listitem'];
+      return hasListParent(element, options?.ancestors) ? ['listitem'] : ALL_ROLES;
     }
     case 'input': {
-      return getInputSupportedRoles({ attributes });
+      return getInputSupportedRoles(element);
     }
     case 'select': {
-      return getSelectSupportedRoles({ attributes });
+      return getSelectSupportedRoles(element);
     }
     case 'summary': {
+      if (typeof Element !== 'undefined' && element instanceof Element) {
+        return element.parentElement?.closest('details:not([role])') ? [] : tag.supportedRoles;
+      }
       return options?.ancestors?.some((a) => a.tagName === 'details') ? [] : tag.supportedRoles;
     }
     case 'td': {
-      const role = getTDRole(options);
-      switch (role) {
+      const role = getTDRole(element, options);
+      switch (role?.name) {
         case 'cell': {
           return ['cell'];
         }
@@ -84,11 +91,10 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
       }
     }
     case 'th': {
-      // Deviation from the spec: only treat as “no corresponding role” if user has explicated this
-      return isEmptyAncestorList(options?.ancestors) ? ALL_ROLES : tag.supportedRoles;
+      return hasTableParent(element, options?.ancestors) ? tag.supportedRoles : ALL_ROLES;
     }
     case 'tr': {
-      return isEmptyAncestorList(options?.ancestors) ? ALL_ROLES : tag.supportedRoles;
+      return hasTableParent(element, options?.ancestors) ? tag.supportedRoles : ALL_ROLES;
     }
   }
 
@@ -101,7 +107,7 @@ export function getSupportedRoles(element: HTMLElement | VirtualElement, options
 /** Helper function for getSupportedRoles that returns a boolean instead */
 export function isSupportedRole(
   role: string,
-  element: HTMLElement | VirtualElement,
+  element: Element | VirtualElement,
   options?: SupportedRoleOptions,
 ): boolean {
   return getSupportedRoles(element, options).includes(role as ARIARole);

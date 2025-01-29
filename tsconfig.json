@@ -6,11 +6,14 @@
     "module": "NodeNext",
     "moduleResolution": "nodenext",
     "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "outDir": "dist",
     "sourceMap": true,
     "strict": true,
     "target": "ESNext",
-    "noUncheckedIndexedAccess": true
+    "types": ["@vitest/browser/providers/playwright"]
   },
   "include": ["src"],
   "exclude": ["dist", "node_modules"]

@@ -1,22 +1,15 @@
+import { type RoleData, roles } from '../lib/aria-roles.js';
 import { tags } from '../lib/html.js';
-import { firstMatchingAncestor } from '../lib/util.js';
-import type { AncestorList } from '../types.js';
+import { hasSectioningContentParent } from '../lib/util.js';
+import type { VirtualAncestorList, VirtualElement } from '../types.js';
 
-function hasSectioningContentParent(ancestors: AncestorList) {
-  return !!firstMatchingAncestor(
-    [
-      { tagName: 'article', attributes: { role: 'article' } },
-      { tagName: 'aside', attributes: { role: 'complementary' } },
-      { tagName: 'nav', attributes: { role: 'navigation' } },
-      { tagName: 'section', attributes: { role: 'region' } },
-    ],
-    ancestors,
-  );
-}
-
-export function getAsideRole({ ancestors }: { ancestors?: AncestorList } = {}) {
-  if (!ancestors) {
-    return tags.aside.defaultRole;
-  }
-  return hasSectioningContentParent(ancestors) ? 'generic' : tags.aside.defaultRole;
+/**
+ * @see https://www.w3.org/TR/html-aam-1.0/#el-aside-ancestorbodymain
+ * @see https://www.w3.org/TR/html-aam-1.0/#el-aside
+ */
+export function getAsideRole(
+  element: Element | VirtualElement,
+  options?: { ancestors?: VirtualAncestorList },
+): RoleData | undefined {
+  return hasSectioningContentParent(element, options?.ancestors) ? roles.generic : roles[tags.aside.defaultRole!];
 }

@@ -1,24 +1,18 @@
-import { NO_CORRESPONDING_ROLE, tags } from '../lib/html.js';
-import { hasGridParent, isEmptyAncestorList } from '../lib/util.js';
-import type { AncestorList } from '../types.js';
+import { type RoleData, roles } from '../lib/aria-roles.js';
+import { NO_CORRESPONDING_ROLE } from '../lib/html.js';
+import { hasGridParent, hasTableParent } from '../lib/util.js';
+import type { VirtualAncestorList, VirtualElement } from '../types.js';
 
 /** Special behavior for <td> element */
-export function getTDRole({ ancestors }: { ancestors?: AncestorList } = {}) {
-  if (!ancestors) {
-    return tags.td.defaultRole;
+export function getTDRole(
+  element: Element | VirtualElement,
+  options?: { ancestors?: VirtualAncestorList },
+): RoleData | undefined {
+  if (hasGridParent(element, options?.ancestors)) {
+    return roles.gridcell;
   }
-
-  // Special behavior: require an explicitly empty ancestor array to return
-  // “no corresponding role” like the spec describes (if we did this by
-  // default, it would likely cause bad results because most users would
-  // likely skip this optional setup).
-  if (isEmptyAncestorList(ancestors)) {
-    return NO_CORRESPONDING_ROLE;
+  if (hasTableParent(element, options?.ancestors)) {
+    return roles.cell;
   }
-
-  if (hasGridParent(ancestors)) {
-    return 'gridcell';
-  }
-
-  return tags.td.defaultRole;
+  return NO_CORRESPONDING_ROLE;
 }

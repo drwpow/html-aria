@@ -1,4 +1,13 @@
-import type { ARIAAttribute, AncestorList, NameProhibitedAttributes, TagName, VirtualElement } from '../types.js';
+import type {
+  ARIAAttribute,
+  ARIARole,
+  LandmarkRole,
+  NameProhibitedAttributes,
+  TagName,
+  VirtualAncestorList,
+  VirtualElement,
+} from '../types.js';
+import { type RoleData, landmarkRoles } from './aria-roles.js';
 
 /** Parse a list of roles, e.g. role="graphics-symbol img" */
 export function parseTokenList(tokenList: string): string[] {
@@ -18,84 +27,59 @@ export function firstMatchingToken<T>(tokenList: string, validValues: T[]): T | 
   return parseTokenList(tokenList).find((value) => validValues.includes(value as T)) as T | undefined;
 }
 
-/** Are we able to traverse the DOM? */
-export function isHTMLElement(element: HTMLElement | VirtualElement): boolean {
-  return typeof HTMLElement !== 'undefined' && element instanceof HTMLElement;
+export function getTagName(element: Element | VirtualElement): TagName {
+  if (typeof Element !== 'undefined' && element instanceof Element) {
+    return element.tagName.toLowerCase() as TagName;
+  }
+  return element.tagName as TagName;
 }
 
-/** Normalize HTML Elements */
-export function virtualizeElement(element: HTMLElement | VirtualElement): VirtualElement {
-  // handle HTMLElement or VirtualElement
-  let tagName = '' as TagName;
-  let attributes: VirtualElement['attributes'];
-
-  if (isHTMLElement(element)) {
-    tagName = element.tagName.toLowerCase() as TagName;
-    attributes = {};
-    for (let i = 0; i < (element as HTMLElement).attributes.length; i++) {
-      // biome-ignore lint/style/noNonNullAssertion: This is guaranteed
-      const { name } = (element as HTMLElement).attributes[i]!;
-      attributes[name] = (element as HTMLElement).getAttribute(name);
-    }
-    return { tagName, attributes };
-  }
-
-  if (!element || typeof element !== 'object' || Array.isArray(element) || typeof element.tagName !== 'string') {
-    throw new Error(`Expected { tagName, [attributes] } object, received ${JSON.stringify(element)}`);
-  }
-
-  return { ...element } as VirtualElement;
+/**
+ * Get attribute from any type of element. Optimized for performance.
+ */
+export function attr(element: Element | VirtualElement, attribute: string) {
+  // Note: this is type-safe; don’t add more runtime checks to satify TypeScript
+  return typeof (element as Element).getAttribute === 'function'
+    ? (element as Element).getAttribute(attribute)
+    : (element as VirtualElement).attributes?.[attribute];
 }
 
 /**
  * Determine accessible names for SOME tags (not all)
  * @see https://www.w3.org/TR/wai-aria-1.3/#namecalculation
  */
-export function calculateAccessibleName(element: VirtualElement): string | undefined {
-  const { tagName, attributes } = element;
+export function calculateAccessibleName(element: Element | VirtualElement, role: RoleData): string | undefined {
+  if (role.nameFrom === 'prohibited') {
+    return;
+  }
+  if (role.nameFrom === 'contents') {
+    return 'innerText' in (element as HTMLElement) ? (element as HTMLElement).innerText : undefined;
+  }
 
+  // for author + authorAndContents, handle special cases first
+  const tagName = getTagName(element);
   switch (tagName) {
-    case 'aside': {
-      /**
-       * @see https://www.w3.org/TR/html-aam-1.0/#section-and-grouping-element-accessible-name-computation
-       */
-      return (attributes?.['aria-label'] || attributes?.['aria-labelledby']) as string;
-    }
     case 'img': {
+      const alt = attr(element, 'alt');
       /**
        * According to spec, aria-label is technically allowed for <img> (even if alt is preferred)
        * @see https://www.w3.org/TR/html-aam-1.0/#img-element-accessible-name-computation
        */
-      return (attributes?.alt || attributes?.['aria-label'] || attributes?.['aria-labelledby']) as string;
-    }
-    case 'section': {
-      /**
-       * @see https://www.w3.org/TR/html-aam-1.0/#section-and-grouping-element-accessible-name-computation
-       */
-      return (attributes?.['aria-label'] || attributes?.['aria-labelledby']) as string;
+      if (alt) {
+        return alt as string;
+      }
+      break;
     }
   }
-}
 
-/** Is an ancestor list provided and is it empty? */
-export function isEmptyAncestorList(ancestors?: AncestorList): ancestors is [] {
-  return Array.isArray(ancestors) && ancestors.length === 0;
-}
-
-/** Given ancestors, find the first matching ancestor. */
-export function firstMatchingAncestor(
-  validAncestors: VirtualElement[],
-  ancestors?: AncestorList,
-): VirtualElement | undefined {
-  const match = (ancestors ?? []).find((a) => {
-    const { tagName, attributes } = virtualizeElement(a);
-    return validAncestors.some(
-      (v) => (v.attributes?.role && v.attributes.role === attributes?.role) || v.tagName === tagName,
-    );
-  });
-  if (match) {
-    return virtualizeElement(match);
-  }
+  return (
+    (attr(element, 'aria-label') as string | undefined) ||
+    (attr(element, 'aria-labelledby') as string | undefined) ||
+    (role.nameFrom === 'authorAndContents' &&
+      'innerText' in (element as HTMLElement) &&
+      (element as HTMLElement).innerText) ||
+    undefined
+  );
 }
 
 export const NAME_PROHIBITED_ATTRIBUTES = new Set<string>([
@@ -106,36 +90,103 @@ export const NAME_PROHIBITED_ATTRIBUTES = new Set<string>([
   'aria-roledescription',
 ] satisfies NameProhibitedAttributes[]);
 
+const LANDMARK_ROLES = Object.keys(landmarkRoles) as LandmarkRole[];
+const LANDMARK_ELEMENTS: TagName[] = ['article', 'aside', 'main', 'nav', 'section'];
+const LANDMARK_CSS_SELECTOR = LANDMARK_ROLES.map((role) => `[role=${role}]`)
+  .concat(...LANDMARK_ELEMENTS.map((el) => `${el}:not([role])`))
+  .join(',');
+
 /** Logic shared by <header> and <footer> when determining role */
-export function hasLandmarkParent(ancestors: AncestorList) {
-  return !!firstMatchingAncestor(
-    [
-      { tagName: 'article', attributes: { role: 'article' } },
-      { tagName: 'aside', attributes: { role: 'complementary' } },
-      { tagName: 'main', attributes: { role: 'main' } },
-      { tagName: 'nav', attributes: { role: 'navigation' } },
-      { tagName: 'section', attributes: { role: 'region' } },
-    ],
-    ancestors,
+export function hasLandmarkParent(element: Element | VirtualElement, ancestors?: VirtualAncestorList): boolean {
+  if (typeof Element !== 'undefined' && element instanceof Element) {
+    return !!element.parentElement?.closest(LANDMARK_CSS_SELECTOR);
+  }
+  return !!ancestors?.some(
+    (el) => LANDMARK_ELEMENTS.includes(el.tagName) || LANDMARK_ROLES.includes(attr(el, 'role') as LandmarkRole),
   );
 }
 
-/** Logic shared by <td> and <th> when determining role */
-export function hasGridParent(ancestors: AncestorList) {
-  const gridParent = firstMatchingAncestor(
-    [
-      { tagName: 'table', attributes: { role: 'grid' } },
-      { tagName: 'table', attributes: { role: 'treegrid' } },
-    ],
-    ancestors,
-  );
+const LIST_TYPE_ELEMENTS: TagName[] = ['ul', 'ol', 'menu'];
+const LIST_TYPE_CSS_SELECTOR = LIST_TYPE_ELEMENTS.join(',');
 
-  return gridParent?.attributes?.role === 'grid' || gridParent?.attributes?.role === 'treegrid';
+export function hasListParent(element: Element | VirtualElement, ancestors?: VirtualAncestorList): boolean {
+  if (typeof Element !== 'undefined' && element instanceof Element) {
+    return !!element.parentElement?.closest(LIST_TYPE_CSS_SELECTOR);
+  }
+  // special behavior: outside the DOM, if we’re testing a list-like element, assume it’s within a list
+  if (ancestors?.length !== 0 && element.tagName === 'li') {
+    return true;
+  }
+  return !!ancestors?.some((ancestor) => LIST_TYPE_ELEMENTS.includes(ancestor.tagName));
+}
+
+const GRID_ROLES: ARIARole[] = ['grid', 'treegrid'];
+const GRID_CSS_SELECTOR = GRID_ROLES.map((role) => `[role=${role}]`).join(',');
+
+/** Logic shared by <td> and <th> when determining role */
+export function hasGridParent(element: Element | VirtualElement, ancestors?: VirtualAncestorList): boolean {
+  if (typeof Element !== 'undefined' && element instanceof Element) {
+    return !!element.parentElement?.closest(GRID_CSS_SELECTOR);
+  }
+  return !!ancestors?.some((el) => GRID_ROLES.includes(attr(el, 'role')! as (typeof GRID_ROLES)[number]));
 }
 
 export interface RemoveProhibitedOptions<P extends ARIAAttribute[]> {
   nameProhibited?: boolean;
   prohibited?: P;
+}
+
+const ROWGROUP_ROLES: ARIARole[] = ['rowgroup'];
+const ROWGROUP_ELEMENTS: TagName[] = ['tfoot', 'thead'];
+const ROWGROUP_CSS_SELECTOR = ROWGROUP_ROLES.map((role) => `[role=${role}]`)
+  .concat(...ROWGROUP_ELEMENTS.map((el) => `${el}:not([role])`))
+  .join(',');
+
+export function hasRowgroupParent(element: Element | VirtualElement, ancestors?: VirtualAncestorList): boolean {
+  if (typeof Element !== 'undefined' && element instanceof Element) {
+    return !!element.parentElement?.closest(ROWGROUP_CSS_SELECTOR);
+  }
+  return !!ancestors?.some(
+    (el) => ROWGROUP_ELEMENTS.includes(el.tagName) || (ROWGROUP_ROLES as string[]).includes(attr(el, 'role') as string),
+  );
+}
+
+export function hasTableParent(element: Element | VirtualElement, ancestors?: VirtualAncestorList): boolean {
+  if (typeof Element !== 'undefined' && element instanceof Element) {
+    return !!element.parentElement?.closest('table,[role=table]');
+  }
+  // special behavior: outside the DOM, if we’re testing a table-like element, assume it’s within a table
+  if (
+    ancestors?.length !== 0 &&
+    ['tbody', 'thead', 'tfoot', 'tr', 'td', 'th', 'col', 'colgroup', 'rowgroup'].includes(element.tagName)
+  ) {
+    return true;
+  }
+  return !!ancestors?.some((el) => el.tagName === 'table' || attr(el, 'role') === 'table');
+}
+
+const SECTIONING_CONTENT_ROLES: ARIARole[] = ['article', 'complementary', 'navigation', 'region'];
+const SECTIONING_CONTENT_ELEMENTS: TagName[] = ['article', 'aside', 'nav', 'section'];
+const SECTIONING_CONTENT_CSS_SELECTOR = SECTIONING_CONTENT_ROLES.map((role) => `[role=${role}]`)
+  .concat(...SECTIONING_CONTENT_ELEMENTS.map((el) => `${el}:not([role])`))
+  .join(',');
+
+/**
+ * Has sectioning content parent
+ * @see https://html.spec.whatwg.org/multipage/dom.html#sectioning-content
+ */
+export function hasSectioningContentParent(
+  element: Element | VirtualElement,
+  ancestors?: VirtualAncestorList,
+): boolean {
+  if (typeof Element !== 'undefined' && element instanceof Element) {
+    return !!element.parentElement?.closest(SECTIONING_CONTENT_CSS_SELECTOR);
+  }
+  return !!ancestors?.some(
+    (el) =>
+      SECTIONING_CONTENT_ELEMENTS.includes(el.tagName) ||
+      (SECTIONING_CONTENT_ROLES as string[]).includes(attr(el, 'role') as string),
+  );
 }
 
 /** Remove prohibited aria-* attributes from a list */
@@ -153,16 +204,19 @@ export function removeProhibited<T extends ARIAAttribute[], P extends ARIAAttrib
   }) as Exclude<T, keyof P>;
 }
 
-/** Inject attributes into an array */
-export function injectAttrs(list: ARIAAttribute[], attrs: ARIAAttribute[]): ARIAAttribute[] {
-  const newList = [...new Set([...list, ...attrs])];
+/** Inject new items into an array */
+export function concatDedupeAndSort<T extends string>(list: T[], newItems: T[]): T[] {
+  const newList = [...new Set([...list, ...newItems])];
   newList.sort((a, b) => a.localeCompare(b));
   return newList;
 }
 
 /** Is this element disabled? */
-export function isDisabled(attributes: Record<string, string | boolean | number | undefined | null>): boolean {
-  return (
-    String(attributes.disabled).toLowerCase() === 'true' || String(attributes['aria-disabled']).toLowerCase() === 'true'
-  );
+export function isDisabled(element: Element | VirtualElement): boolean {
+  const disabled = String(attr(element, 'disabled'));
+  if (disabled === '' || disabled === 'true') {
+    return true;
+  }
+  const ariaDisabled = String(attr(element, 'aria-disabled'));
+  return ariaDisabled === '' || ariaDisabled === 'true';
 }

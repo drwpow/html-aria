@@ -4,22 +4,29 @@ Utilities for creating accessible HTML based on the [latest ARIA 1.3 specs](http
 
 This is designed to be a better replacement for aria-query when working with HTML. The reasons are:
 
-- aria-query neglects the critical [HTML to ARIA spec](https://www.w3.org/TR/html-aria). With just the ARIA spec alone, it’s insufficient for working with HTML.
+- html-aria is designed to reduce mistakes, while aria-query’s APIs are easy to “hold it wrong.” The information may not be _incorrect_, but often are locked behind several successful operations you must know to connect to get the right result.
+- html-aria and aria-query both follow the [ARIA 1.3 spec](https://w3c.github.io/aria/), but that’s only one part. There are also the [HTML Accessibility API Mappings](https://www.w3.org/TR/html-aam-1.0/) and [HTML to ARIA](https://www.w3.org/TR/html-aria) specs that are critical to working with HTML. While aria-query follows these other documents when it can, its design makes it difficult to apply the advice from all specs, often producing incomplete or incorrect results.
 - html-aria supports ARIA 1.3 while aria-query is still on ARIA 1.2
 
-html-aria is also designed to be easier-to-use to prevent mistakes, smaller, is ESM tree-shakeable, and more performant (~100× faster than aria-query).
+html-aria is also ESM-compatible and [more performant](./test/node/html-aria.bench.ts).
 
-## Setup
+## Usage
+
+### Setup
 
 ```sh
 npm i html-aria
 ```
 
-## Examples
+### Environments
+
+This library works both in Node.js and the browser. But works best **when the DOM is accessible**, either the actual DOM or a virtualized one like JSDOM. The reason is the spec requires DOM traversal—identifying an element’s context in parents and children, as well as attributes of the element. In a DOM environment, html-aria will do all the work for you; in Node.js you must provide complete information about attributes, and sometimes ancestors.
+
+### Examples
 
 Though this library is NOT a lint plugin, it can do most of the work for you. You only need to traverse the AST of the language you’re using (e.g. HTML vs React vs Svelte), and html-aria can validate the nodes.
 
-### ESLint + React plugin
+#### Node.js (ESLint + React plugin)
 
 ```ts
 import { ESLintUtils, TSESTree } from "@typescript-eslint/utils";
@@ -110,7 +117,11 @@ Determine which HTML maps to which default ARIA role.
 ```ts
 import { getRole } from "html-aria";
 
-getRole(document.createElement("article")); // "article"
+// DOM
+const el = document.querySelector('article')
+getRole(el); // "article"
+
+// Node.js (no DOM)
 getRole({ tagName: "input", attributes: { type: "checkbox" } }); // "checkbox"
 getRole({ tagName: "div", attributes: { role: "button" } }); // "button"
 ```
@@ -130,7 +141,11 @@ The spec dictates that **certain elements may NOT receive certain roles.** For e
 ```ts
 import { getSupportedRoles } from "html-aria";
 
-getSupportedRoles(document.createElement("img")); // ["none", "presentation", "img"]
+// DOM
+const el = document.querySelector('img')
+getSupportedRoles(el); // ["none", "presentation", "img"]
+
+// Node.js (no DOM)
 getSupportedRoles({ tagName: "img", attributes: { alt: "Image caption" } }); //  ["button", "checkbox", "link", (15 more)]
 ```
 
@@ -340,11 +355,17 @@ SVG is tricky. Though the [spec says](https://www.w3.org/TR/html-aria/#el-svg) `
 
 Since we have 1 spec and 1 browser agreeing, this library defaults to `graphics-document`. Though the best answer is _SVGs should ALWAYS get an explicit `role`_.
 
-#### Ancestor-based roles
+### Node.js vs DOM behavior
 
-In regards to [ARIA roles in HTML](#aria-roles-from-html), the spec gives non-semantic roles to `<td>`, `<th>`, and `<li>` UNLESS they are used inside specific containers (`table`, `grid`, or `gridcell` for `<td>`/`<th>`; `list` or `menu` for `<li>`). This library assumes they’re being used in their proper containers without requiring the `ancestors` array. This is done to avoid the [footgun](https://en.wiktionary.org/wiki/footgun) of requiring missable configuration to produce accurate results, which is bad software design.
+#### Node.js ignores necessary ancestor-based roles
 
-Instead, the non-semantic roles must be “opted in” by passing an explicitly-empty ancestors array:
+There are 2 categories of context-dependent element usage: **necessary** and **conditional**.
+
+“Necessary“ context elements require certain parents to use correctly, like table-based elements (`<tr>`, `<td>`, `<th>`, etc.) requiring table parents (`<table>`, `<table role="grid">`, etc.) and list-based elements `<li>` requiring list parents (`<ol>`, `<ul>`, `<menu>`, etc.). Without their parents, they have no purpose and their behavior is unpredictable, with some browsers even stripping elements out of the DOM. These elements will 99% of the time be used in their intended contexts.
+
+The DOM environment follows the ARIA spec. But in a Node.js context, it’s likely we are statically analyzing a component where the parents aren’t immediatly reachable—they may be in another file. If we assume the elements are used correctly even when we can’t see the ancestors, we can show more accurate errors and warnings, rather than requiring the consumer to do work that is technically and computationally difficult.
+
+So for the reasons above, assuming the elements are used out of context is more likely to result in less predictable behavior that could lead to mistakes. To treat elements as if they _are_ used out of their context in Node.js, pass an empty `ancestors` array as an explicit way to declare it.
 
 ```ts
 import { getRole } from "html-aria";
@@ -352,6 +373,19 @@ import { getRole } from "html-aria";
 getRole({ tagName: "td" }, { ancestors: [] }); // undefined
 getRole({ tagName: "th" }, { ancestors: [] }); // undefined
 getRole({ tagName: "li" }, { ancestors: [] }); // "generic"
+```
+
+These are all the elements that have assumed context (i.e. different behavior in Node.js): `<col>`, `<colgroup>`, `<caption>`, `<li>`, `<rowgroup>`, `<tbody>`, `<td>`, `<tfoot>`, `<th>`, `<thead>`, `<tr>`.
+
+“Conditional” context elements may either have certain parents or not, all of which are valid. `<aside>` used in the body is a landmark `complementary` role; inside a `<section>` it’s `generic` (unless it has an accessible name, then it’s `complementary` again). `<header>` is a `banner` landmark itself, or inside another landmark is `generic`. Since there’s no “wrong” usage here, In Node.js they behave as expected, so they don’t deviate from DOM behavior or the spec.
+
+```ts
+import { getRole } from "html-aria";
+
+getRole({ tagName: "header" }); // "banner"
+getRole({ tagName: "header" }, { ancestors: [{ tagName: "main" }]); // "generic"
+getRole({ tagName: "aside" }); // "complementary"
+getRole({ tagName: "aside" }, { ancestors: [{ tagName: "section" }] } }); // "generic"
 ```
 
 ### FAQ

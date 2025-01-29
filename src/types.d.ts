@@ -146,8 +146,7 @@ export type TagName =
   // SVG extensions (partial)
   | 'g';
 
-export type Ancestor = HTMLElement | VirtualElement;
-export type AncestorList = Ancestor[];
+export type VirtualAncestorList = VirtualElement[];
 
 /**
  * 6.4 Translatable Attributes
@@ -340,7 +339,8 @@ export type AbstractRole =
   | 'sectionhead'
   | 'select'
   | 'structure'
-  | 'widget';
+  | 'widget'
+  | 'window';
 
 /**
  * 5.3.2 Widget Roles
@@ -422,6 +422,8 @@ export type DocumentStructureRole =
   | 'row'
   | 'rowgroup'
   | 'rowheader'
+  | 'sectionheader'
+  | 'sectionfooter'
   | 'separator' // (when NOT focusable)
   | 'strong'
   | 'subscript'

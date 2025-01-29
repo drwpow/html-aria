@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { roles, tags } from '../src/index.js';
+import { roles, tags } from '../../src/index.js';
+import { copyAndSortList } from '../helpers.js';
 
 // simple tests that check for simple errors and inconsistencies in the data.
 // even though the data is largely automatically generated from the spec, it’s
@@ -20,12 +21,17 @@ describe('html data', () => {
 describe('role data', () => {
   for (const [role, roleData] of Object.entries(roles)) {
     describe(role, () => {
+      test('name', () => {
+        expect(roleData.name).toBe(role);
+      });
       if (roleData.required.length) {
         test('required', () => {
           expect(
             roleData.required.every((a) => roleData.supported.includes(a)),
             'supported aria-* attributes missing some required aria-* attributes',
           ).toBe(true);
+          const sorted = copyAndSortList(roleData.required);
+          expect(roleData.required, 'sorted').toEqual(sorted);
         });
       }
       test('prohibited', () => {
@@ -33,10 +39,21 @@ describe('role data', () => {
           roleData.prohibited.every((a) => !roleData.supported.includes(a)),
           'prohibited aria-* attributes in supported aria-* attributes',
         ).toBe(true);
+        const sorted = copyAndSortList(roleData.prohibited);
+        expect(roleData.prohibited, 'sorted').toEqual(sorted);
       });
       test('supported', () => {
         const deduped = new Set(roleData.supported);
         expect(deduped.size, 'duplicate attributes').toBe(roleData.supported.length);
+        const sorted = copyAndSortList(roleData.supported);
+        expect(roleData.supported, 'sorted').toEqual(sorted);
+      });
+
+      // this is a compiler optimization for monomorphism
+      test('Key order', () => {
+        const original = Object.keys(roleData);
+        const sorted = copyAndSortList(original);
+        expect(original).toEqual(sorted);
       });
     });
   }

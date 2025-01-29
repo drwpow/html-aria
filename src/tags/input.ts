@@ -1,4 +1,6 @@
+import { type RoleData, roles } from '../lib/aria-roles.js';
 import { NO_CORRESPONDING_ROLE, tags } from '../lib/html.js';
+import { attr } from '../lib/util.js';
 import type { ARIARole, VirtualElement } from '../types.js';
 
 export type InputType =
@@ -25,49 +27,45 @@ export type InputType =
   | 'url'
   | 'week';
 
-export const INPUT_ROLE_MAP: Record<InputType, ARIARole | undefined> = {
-  button: 'button',
-  checkbox: 'checkbox',
+export const INPUT_ROLE_MAP: Record<InputType, RoleData | undefined> = {
+  button: roles.button,
+  checkbox: roles.checkbox,
   color: NO_CORRESPONDING_ROLE,
   date: NO_CORRESPONDING_ROLE,
   'datetime-local': NO_CORRESPONDING_ROLE,
-  email: 'textbox',
+  email: roles.textbox,
   file: NO_CORRESPONDING_ROLE,
   hidden: NO_CORRESPONDING_ROLE,
-  image: 'button',
+  image: roles.button,
   month: NO_CORRESPONDING_ROLE,
-  number: 'spinbutton',
+  number: roles.spinbutton,
   password: NO_CORRESPONDING_ROLE,
-  radio: 'radio',
-  range: 'slider',
-  reset: 'button',
-  search: 'searchbox',
-  submit: 'button',
-  tel: 'textbox',
-  text: tags.input.defaultRole,
+  radio: roles.radio,
+  range: roles.slider,
+  reset: roles.button,
+  search: roles.searchbox,
+  submit: roles.button,
+  tel: roles.textbox,
+  text: roles.textbox,
   time: NO_CORRESPONDING_ROLE,
-  url: 'textbox',
+  url: roles.textbox,
   week: NO_CORRESPONDING_ROLE,
 };
 
 const COMBOBOX_ENABLED_TYPES: InputType[] = ['email', 'url', 'search', 'tel', 'text'];
 
-export interface GetInputRoleOptions {
-  attributes?: VirtualElement['attributes'];
-}
-
-export function getInputRole({ attributes }: GetInputRoleOptions = {}) {
+export function getInputRole(element: Element | VirtualElement): RoleData | undefined {
   // For ARIA purposes, missing or invalid types are treated as "text"
-  let type = attributes?.type as InputType;
+  let type = attr(element, 'type') as InputType | undefined;
   if (!type || !(type in INPUT_ROLE_MAP)) {
     type = 'text';
   }
 
   // handle input comboboxes
   // @see https://www.w3.org/TR/html-aria/#el-input-text-list
-  const hasList = !!attributes?.list;
-  if (hasList && COMBOBOX_ENABLED_TYPES.includes(type)) {
-    return 'combobox';
+  const list = attr(element, 'list');
+  if (list && COMBOBOX_ENABLED_TYPES.includes(type)) {
+    return roles.combobox;
   }
 
   return (type as InputType) in INPUT_ROLE_MAP ? INPUT_ROLE_MAP[type as InputType] : INPUT_ROLE_MAP.text;
@@ -98,22 +96,22 @@ export const INPUT_SUPPORTED_ROLES_MAP: Record<InputType, ARIARole[]> = {
   week: [],
 };
 
-export function getInputSupportedRoles({ attributes }: GetInputRoleOptions = {}): ARIARole[] {
+export function getInputSupportedRoles(element: Element | VirtualElement): ARIARole[] {
   // For ARIA purposes, missing or invalid types are treated as "text"
-  let type = attributes?.type as InputType;
+  let type = attr(element, 'type') as InputType;
   if (!type || !(type in INPUT_SUPPORTED_ROLES_MAP)) {
     type = 'text';
   }
 
   // handle input comboboxes
-  const hasList = !!attributes?.list;
-  if (hasList && COMBOBOX_ENABLED_TYPES.includes(type)) {
+  const list = attr(element, 'list');
+  if (list && COMBOBOX_ENABLED_TYPES.includes(type)) {
     return ['combobox'];
   }
 
   // special behavior: checkboxes
   // @see https://www.w3.org/TR/html-aria/#el-input-checkbox
-  if (type === 'checkbox' && 'aria-pressed' in (attributes ?? {})) {
+  if (type === 'checkbox' && attr(element, 'aria-pressed')) {
     return ['button', ...INPUT_SUPPORTED_ROLES_MAP.checkbox];
   }
 

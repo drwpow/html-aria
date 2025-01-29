@@ -25,7 +25,7 @@ for (const roleContainer of roleContainers) {
 
   for (const rowHeading of rowHeadings) {
     const rowTitle = rowHeading.textContent.toLocaleLowerCase().trim().replace(/\:$/, '');
-    const rowBody = rowHeading.closest('tr').querySelector('td:last-child');
+    const rowBody = rowHeading.parentElement?.closest('tr').querySelector('td:last-child');
 
     // nameRequired
     if (rowTitle.includes('accessible name required')) {

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { getRequiredAttributes, isRequiredAttribute, roles } from '../src';
-import { checkTestAndTagName } from './helpers';
+import { getRequiredAttributes, isRequiredAttribute, roles } from '../../src/index.js';
+import { checkTestAndTagName } from '../helpers.js';
 
 const tests: [
   string,
@@ -74,6 +74,8 @@ const tests: [
   ['rowgroup', { given: ['rowgroup'], want: [] }],
   ['rowheader', { given: ['rowheader'], want: [] }],
   ['scrollbar', { given: ['scrollbar'], want: ['aria-controls', 'aria-valuenow'] }],
+  ['sectionheader', { given: ['sectionheader'], want: [] }],
+  ['sectionfooter', { given: ['sectionfooter'], want: [] }],
   ['search', { given: ['search'], want: [] }],
   ['searchbox', { given: ['searchbox'], want: [] }],
   // TODO: handle focusable?

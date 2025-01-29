@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { getElements, roles } from '../src/index.js';
-import { checkTestAndTagName } from './helpers.js';
+import { getElements, roles } from '../../src/index.js';
+import { checkTestAndTagName } from '../helpers.js';
 
 describe('getElements', () => {
   const tests: [string, { given: Parameters<typeof getElements>[0]; want: ReturnType<typeof getElements> }][] = [
@@ -10,7 +10,7 @@ describe('getElements', () => {
     ['article', { given: 'article', want: [{ tagName: 'article' }] }],
     ['banner', { given: 'banner', want: [{ tagName: 'header' }] }],
     ['blockquote', { given: 'blockquote', want: [{ tagName: 'blockquote' }] }],
-    ['button', { given: 'button', want: [{ tagName: 'button', attributes: { type: 'button' } }] }],
+    ['button', { given: 'button', want: [{ tagName: 'button' }] }],
     ['caption', { given: 'caption', want: [{ tagName: 'caption' }] }],
     ['cell', { given: 'cell', want: [{ tagName: 'td' }] }],
     ['checkbox', { given: 'checkbox', want: [{ tagName: 'input', attributes: { type: 'checkbox' } }] }],
@@ -101,6 +101,8 @@ describe('getElements', () => {
     ['row', { given: 'row', want: [{ tagName: 'tr' }] }],
     ['rowgroup', { given: 'rowgroup', want: [{ tagName: 'tbody' }, { tagName: 'tfoot' }, { tagName: 'thead' }] }],
     ['rowheader', { given: 'rowheader', want: [{ tagName: 'th', attributes: { scope: 'row' } }] }],
+    ['sectionfooter', { given: 'sectionfooter', want: undefined }],
+    ['sectionheader', { given: 'sectionheader', want: undefined }],
     ['scrollbar', { given: 'scrollbar', want: undefined }],
     ['search', { given: 'search', want: [{ tagName: 'search' }] }],
     ['searchbox', { given: 'searchbox', want: [{ tagName: 'input', attributes: { type: 'search' } }] }],

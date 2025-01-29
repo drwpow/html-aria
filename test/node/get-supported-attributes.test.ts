@@ -10,8 +10,8 @@ import {
   removeProhibited,
   roles,
   tags,
-} from '../src/index.js';
-import { checkTestAndTagName } from './helpers.js';
+} from '../../src/index.js';
+import { checkTestAndTagName } from '../helpers.js';
 
 // These tests are the most difficult to write—it’s very easy to make them
 // circular. To avoid that, it’s worth describing where the data came from.
@@ -72,8 +72,16 @@ const tests: [
   string,
   { given: Parameters<typeof getSupportedAttributes>; want: ReturnType<typeof getSupportedAttributes> },
 ][] = [
-  ['a', { given: [{ tagName: 'a' }], want: [...GLOBAL_ATTRIBUTES, ...roles.link.supported] }],
-  ['area', { given: [{ tagName: 'area' }], want: [...GLOBAL_ATTRIBUTES, ...roles.link.supported] }],
+  ['a', { given: [{ tagName: 'a' }], want: GENERIC_NO_NAMING }],
+  [
+    'a (href)',
+    { given: [{ tagName: 'a', attributes: { href: '#' } }], want: [...GLOBAL_ATTRIBUTES, ...roles.link.supported] },
+  ],
+  ['area', { given: [{ tagName: 'area' }], want: GENERIC_NO_NAMING }],
+  [
+    'area (href)',
+    { given: [{ tagName: 'area', attributes: { href: '#' } }], want: [...GLOBAL_ATTRIBUTES, ...roles.link.supported] },
+  ],
   ['abbr', { given: [{ tagName: 'abbr' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['address', { given: [{ tagName: 'address' }], want: [...GLOBAL_ATTRIBUTES, ...roles.group.supported] }],
   ['article', { given: [{ tagName: 'article' }], want: [...GLOBAL_ATTRIBUTES, ...roles.article.supported] }],
@@ -128,9 +136,7 @@ const tests: [
     'dfn',
     {
       given: [{ tagName: 'dfn' }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.term.supported], {
-        prohibited: ['aria-braillelabel', 'aria-label', 'aria-labelledby'],
-      }),
+      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.term.supported], { nameProhibited: true }),
     },
   ],
   ['dialog', { given: [{ tagName: 'dialog' }], want: [...GLOBAL_ATTRIBUTES, ...roles.dialog.supported] }],
@@ -474,7 +480,14 @@ const tests: [
   ['template', { given: [{ tagName: 'template' }], want: NO_ATTRIBUTES }],
   ['textarea', { given: [{ tagName: 'textarea' }], want: TEXTBOX_ATTRIBUTES }],
   ['tfoot', { given: [{ tagName: 'tfoot' }], want: [...GLOBAL_ATTRIBUTES, ...roles.rowgroup.supported] }],
-  ['th', { given: [{ tagName: 'th' }], want: [...GLOBAL_ATTRIBUTES, ...roles.columnheader.supported] }],
+  ['th', { given: [{ tagName: 'th' }], want: [...GLOBAL_ATTRIBUTES, ...roles.cell.supported] }],
+  [
+    'th (thead)',
+    {
+      given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'thead' }] }],
+      want: [...GLOBAL_ATTRIBUTES, ...roles.columnheader.supported],
+    },
+  ],
   [
     'th',
     {
@@ -519,13 +532,11 @@ describe('getSupportedAttributes', () => {
 describe('isSupportedAttribute', () => {
   const allAttributes = Object.keys(attributes) as ARIAAttribute[];
   allAttributes.sort((a, b) => a.localeCompare(b));
-  for (const [name, { given, want }] of tests) {
-    test(name, () => {
-      for (const attr of allAttributes) {
-        expect(isSupportedAttribute(attr, ...given)).toBe(want.includes(attr));
-      }
-    });
-  }
+  test.each(tests)('%s', (_, { given, want }) => {
+    for (const attr of allAttributes) {
+      expect(isSupportedAttribute(attr, ...given)).toBe(want.includes(attr));
+    }
+  });
 });
 
 const valueTests: [

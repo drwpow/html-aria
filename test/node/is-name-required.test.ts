@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { isNameRequired, roles } from '../src/index.js';
-import { checkTestAndTagName } from './helpers.js';
+import { isNameRequired, roles } from '../../src/index.js';
+import { checkTestAndTagName } from '../helpers.js';
 
 describe('isNameRequired', () => {
   const tests: [string, { given: Parameters<typeof isNameRequired>[0]; want: ReturnType<typeof isNameRequired> }][] = [
