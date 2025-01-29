@@ -1,5 +1,37 @@
 # html-aria
 
+## 0.2.0
+
+### Minor Changes
+
+- [#38](https://github.com/drwpow/html-aria/pull/38) [`047714d`](https://github.com/drwpow/html-aria/commit/047714d6f1ca2b792927bf5a3a39c7425be8641a) Thanks [@drwpow](https://github.com/drwpow)! - ⚠️ Breaking API changes:
+
+  - `getRole()` now returns full role data, rather than a string. To achieve the same result, access the `name` property:
+    ```diff
+    - getRole({ tagName: 'button' })
+    + getRole({ tagName: 'button' })?.name
+    ```
+
+- [#38](https://github.com/drwpow/html-aria/pull/38) [`047714d`](https://github.com/drwpow/html-aria/commit/047714d6f1ca2b792927bf5a3a39c7425be8641a) Thanks [@drwpow](https://github.com/drwpow)! - ⚠️ Breaking change: Node API now requires all attributes.
+
+  **Attributes**
+
+  In the previous version, `<a>` and `<area>` would assume `href` was set, unless you passed in an explicit `attributes: {}` object. However, in expanding the DOM API this inconsistency in behavior led to problems. Now both versions behave the same way in regards to attributes: an attribute is assumed **NOT** to exist unless passed in.
+
+  **Ancestors**
+
+  This behavior is largely-unchanged, however, some small improvements have been made.
+
+  _Note: the DOM version will automatically traverse the DOM for you, and automatically reads all attributes. This change only affects the Node API where the DOM is unavailable._
+
+### Patch Changes
+
+- [#38](https://github.com/drwpow/html-aria/pull/38) [`047714d`](https://github.com/drwpow/html-aria/commit/047714d6f1ca2b792927bf5a3a39c7425be8641a) Thanks [@drwpow](https://github.com/drwpow)! - fix: Performance improvements for DOM API
+
+- [#38](https://github.com/drwpow/html-aria/pull/38) [`047714d`](https://github.com/drwpow/html-aria/commit/047714d6f1ca2b792927bf5a3a39c7425be8641a) Thanks [@drwpow](https://github.com/drwpow)! - feat: Add presentationalChildren property to RoleData
+
+- [#38](https://github.com/drwpow/html-aria/pull/38) [`047714d`](https://github.com/drwpow/html-aria/commit/047714d6f1ca2b792927bf5a3a39c7425be8641a) Thanks [@drwpow](https://github.com/drwpow)! - Fix: all methods are now runnable in a DOM or DOM-like environment
+
 ## 0.1.9
 
 ### Patch Changes
