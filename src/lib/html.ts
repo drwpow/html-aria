@@ -754,9 +754,106 @@ export const tags: Record<TagName, TagInfo> = {
     supportedAttributesOverride: [],
   },
 
-  // SVG tags (partial)
+  // SVG
+  // @see https://www.w3.org/TR/svg-aam-1.0/#mapping_role_table
+  animate: {
+    defaultRole: 'none',
+    namingProhibited: true,
+    supportedRoles: [],
+    supportedAttributesOverride: [],
+  },
+  animateMotion: {
+    defaultRole: 'none',
+    namingProhibited: true,
+    supportedRoles: [],
+    supportedAttributesOverride: [],
+  },
+  animateTransform: {
+    defaultRole: 'none',
+    namingProhibited: true,
+    supportedRoles: [],
+    supportedAttributesOverride: [],
+  },
+  circle: {
+    defaultRole: 'graphics-symbol',
+    namingProhibited: false,
+    supportedRoles: ALL_ROLES,
+    supportedAttributesOverride: undefined,
+  },
+  clipPath: {
+    defaultRole: 'none',
+    namingProhibited: true,
+    supportedRoles: [],
+    supportedAttributesOverride: [],
+  },
+  cursor: {
+    defaultRole: 'none',
+    namingProhibited: true,
+    supportedRoles: [],
+    supportedAttributesOverride: [],
+  },
+  defs: {
+    defaultRole: 'none',
+    namingProhibited: true,
+    supportedRoles: [],
+    supportedAttributesOverride: [],
+  },
+  desc: {
+    defaultRole: 'none',
+    namingProhibited: true,
+    supportedRoles: [],
+    supportedAttributesOverride: [],
+  },
+  discard: {
+    defaultRole: 'none',
+    namingProhibited: true,
+    supportedRoles: [],
+    supportedAttributesOverride: [],
+  },
+  ellipse: {
+    defaultRole: 'graphics-symbol',
+    namingProhibited: false,
+    supportedRoles: ALL_ROLES,
+    supportedAttributesOverride: undefined,
+  },
   g: {
     defaultRole: NO_CORRESPONDING_ROLE,
+    namingProhibited: false,
+    supportedRoles: ['group', 'graphics-object'],
+    supportedAttributesOverride: undefined,
+  },
+  switch: {
+    defaultRole: 'none',
+    namingProhibited: false,
+    supportedRoles: [],
+    supportedAttributesOverride: [],
+  },
+  symbol: {
+    defaultRole: 'graphics-object',
+    namingProhibited: false,
+    supportedRoles: ALL_ROLES,
+    supportedAttributesOverride: undefined,
+  },
+  text: {
+    defaultRole: 'group',
+    namingProhibited: false,
+    supportedRoles: ALL_ROLES,
+    supportedAttributesOverride: undefined,
+  },
+  textPath: {
+    defaultRole: 'group',
+    namingProhibited: false,
+    supportedRoles: ALL_ROLES,
+    supportedAttributesOverride: undefined,
+  },
+  tspan: {
+    defaultRole: 'group',
+    namingProhibited: false,
+    supportedRoles: ALL_ROLES,
+    supportedAttributesOverride: undefined,
+  },
+  use: {
+    defaultRole: 'graphics-object',
     namingProhibited: false,
     supportedRoles: ['group', 'graphics-object'],
     supportedAttributesOverride: undefined,

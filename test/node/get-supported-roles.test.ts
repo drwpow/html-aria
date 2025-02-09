@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { ALL_ROLES, NO_ROLES, getSupportedRoles, isSupportedRole, tags } from '../../src/index.js';
+import { ALL_ROLES, NO_ROLES, type TagName, getSupportedRoles, isSupportedRole, tags } from '../../src/index.js';
 import { checkTestAndTagName } from '../helpers.js';
 
 describe('getSupportedRoles', () => {
@@ -422,6 +422,27 @@ describe('getSupportedRoles', () => {
     ['var', { given: [{ tagName: 'var' }], want: ALL_ROLES }],
     ['video', { given: [{ tagName: 'video' }], want: ['application'] }],
     ['wbr', { given: [{ tagName: 'wbr' }], want: ['none', 'presentation'] }],
+
+    // Custom elements
+    ['custom-element', { given: [{ tagName: 'custom-element' as TagName }], want: ALL_ROLES }],
+    [
+      'custom-element (no ancestors)',
+      { given: [{ tagName: 'custom-element' as TagName }, { ancestors: [] }], want: ALL_ROLES },
+    ],
+
+    // SVG
+    ['svg: circle', { given: [{ tagName: 'circle' }], want: ['graphics-object'] }],
+    ['svg: ellipse', { given: [{ tagName: 'ellipse' }], want: ['graphics-object'] }],
+    ['svg: image', { given: [{ tagName: 'image' }], want: ['graphics-object'] }],
+    ['svg: line', { given: [{ tagName: 'line' }], want: ['graphics-object'] }],
+    ['svg: path', { given: [{ tagName: 'path' }], want: ['graphics-object'] }],
+    ['svg: polygon', { given: [{ tagName: 'polygon' }], want: ['graphics-object'] }],
+    ['svg: polyline', { given: [{ tagName: 'polyline' }], want: ['graphics-object'] }],
+    ['svg: rect', { given: [{ tagName: 'rect' }], want: ['graphics-object'] }],
+    ['svg: text', { given: [{ tagName: 'text' }], want: ['graphics-object'] }],
+    ['svg: textPath', { given: [{ tagName: 'textPath' }], want: ['graphics-object'] }],
+    ['svg: tspan', { given: [{ tagName: 'tspan' }], want: ['graphics-object'] }],
+    ['svg: use', { given: [{ tagName: 'use' }], want: ['graphics-object'] }],
   ];
 
   const testedTags = new Set<string>();

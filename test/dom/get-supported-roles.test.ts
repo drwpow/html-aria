@@ -395,6 +395,27 @@ describe('getSupportedRoles', () => {
     ['var', { given: ['<var></var>', 'var'], want: ALL_ROLES }],
     ['video', { given: ['<video></video>', 'video'], want: ['application'] }],
     ['wbr', { given: ['<wbr></wbr>', 'wbr'], want: ['none', 'presentation'] }],
+
+    // Custom elements
+    ['custom element', { given: ['<custom-element></custom-element>', 'custom-element'], want: [] }],
+    [
+      'custom element (role)',
+      { given: ['<custom-element role="button"></custom-element>', 'custom-element'], want: ['button'] },
+    ],
+
+    // SVG
+    ['svg: circle', { given: ['<svg><circle></circle></svg>', 'circle'], want: ['graphics-object'] }],
+    ['svg: ellipse', { given: ['<svg><ellipse></ellipse></svg>', 'ellipse'], want: ['graphics-object'] }],
+    ['svg: image', { given: ['<svg><image></image></svg>', 'image'], want: ['graphics-object'] }],
+    ['svg: line', { given: ['<svg><line></line></svg>', 'line'], want: ['graphics-object'] }],
+    ['svg: path', { given: ['<svg><path></path></svg>', 'path'], want: ['graphics-object'] }],
+    ['svg: polygon', { given: ['<svg><polygon></polygon></svg>', 'polygon'], want: ['graphics-object'] }],
+    ['svg: polyline', { given: ['<svg><polyline></polyline></svg>', 'polyline'], want: ['graphics-object'] }],
+    ['svg: rect', { given: ['<svg><rect></rect></svg>', 'rect'], want: ['graphics-object'] }],
+    ['svg: text', { given: ['<svg><text></text></svg>', 'text'], want: ['graphics-object'] }],
+    ['svg: textPath', { given: ['<svg><textPath></textPath></svg>', 'textPath'], want: ['graphics-object'] }],
+    ['svg: tspan', { given: ['<svg><tspan></tspan></svg>', 'tspan'], want: ['graphics-object'] }],
+    ['svg: use', { given: ['<svg><use></use></svg>', 'use'], want: ['graphics-object'] }],
   ];
 
   const testedTags = new Set<string>();
