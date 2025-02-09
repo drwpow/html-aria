@@ -84,10 +84,8 @@ export function calculateAccessibleName(element: Element | VirtualElement, role:
 
 export const NAME_PROHIBITED_ATTRIBUTES = new Set<string>([
   'aria-braillelabel',
-  'aria-brailleroledescription',
   'aria-label',
   'aria-labelledby',
-  'aria-roledescription',
 ] satisfies NameProhibitedAttributes[]);
 
 const LANDMARK_ROLES = Object.keys(landmarkRoles) as LandmarkRole[];
@@ -106,18 +104,23 @@ export function hasLandmarkParent(element: Element | VirtualElement, ancestors?:
   );
 }
 
-const LIST_TYPE_ELEMENTS: TagName[] = ['ul', 'ol', 'menu'];
-const LIST_TYPE_CSS_SELECTOR = LIST_TYPE_ELEMENTS.join(',');
+const LIST_ELEMENTS: TagName[] = ['ul', 'ol', 'menu'];
+const LIST_ROLES: ARIARole[] = ['list'];
+const LIST_CSS_SELECTOR = LIST_ROLES.map((role) => `[role=${role}]`)
+  .concat(...LIST_ELEMENTS.map((el) => `${el}:not([role])`))
+  .join(',');
 
 export function hasListParent(element: Element | VirtualElement, ancestors?: VirtualAncestorList): boolean {
   if (typeof Element !== 'undefined' && element instanceof Element) {
-    return !!element.parentElement?.closest(LIST_TYPE_CSS_SELECTOR);
+    return !!element.parentElement?.closest(LIST_CSS_SELECTOR);
   }
   // special behavior: outside the DOM, if we’re testing a list-like element, assume it’s within a list
   if (ancestors?.length !== 0 && element.tagName === 'li') {
     return true;
   }
-  return !!ancestors?.some((ancestor) => LIST_TYPE_ELEMENTS.includes(ancestor.tagName));
+  return !!ancestors?.some(
+    (el) => LIST_ELEMENTS.includes(el.tagName) || (LIST_ROLES as string[]).includes(attr(el, 'role') as string),
+  );
 }
 
 const GRID_ROLES: ARIARole[] = ['grid', 'treegrid'];

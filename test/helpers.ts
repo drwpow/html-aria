@@ -1,5 +1,10 @@
 /** Ensure no copypasta error */
 export function checkTestAndTagName(testName: string, tagName: string) {
+  // ignore custom elements
+  if (tagName.includes('-')) {
+    return;
+  }
+
   if (!testName.includes(tagName)) {
     throw new Error(`Test "${testName}" is testing tag "${tagName}". Has there been a mistake?`);
   }
@@ -26,6 +31,7 @@ export function setUpDOM(html: string, querySelector: string) {
   }
 
   const container = document.createElement('div');
+
   container.innerHTML = html;
   return { root: container, element: (container.querySelector(querySelector) || container.children[0]) as Element };
 }

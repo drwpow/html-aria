@@ -19,7 +19,7 @@ describe('removeProhibited', () => {
         ],
         { nameProhibited: true },
       ),
-    ).toEqual(['aria-atomic']);
+    ).toEqual(['aria-atomic', 'aria-brailleroledescription', 'aria-roledescription']);
   });
 
   test('prohibited', () => {
@@ -51,6 +51,6 @@ describe('removeProhibited', () => {
         ],
         { nameProhibited: true, prohibited: ['aria-checked'] },
       ),
-    ).toEqual(['aria-atomic']);
+    ).toEqual(['aria-atomic', 'aria-brailleroledescription', 'aria-roledescription']);
   });
 });

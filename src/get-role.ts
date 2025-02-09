@@ -65,8 +65,10 @@ export function getRole(element: Element | VirtualElement, options?: GetRoleOpti
   }
 
   const tag = tags[tagName];
+
+  // If custom element (unknown HTML element), assume generic
   if (!tag) {
-    return undefined;
+    return roles.generic;
   }
 
   switch (tagName) {

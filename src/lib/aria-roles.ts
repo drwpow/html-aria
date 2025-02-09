@@ -112,7 +112,9 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     nameFrom: 'author',
     nameRequired: true,
     prohibited: [],
-    required: ['aria-expanded'],
+    // Note: aria-controls isn’t required by ARIA 1.3, but AAM requires aria-controls for most implementations of comboboxes
+    // @see https://www.w3.org/TR/html-aam-1.0/#el-input-textetc-autocomplete
+    required: ['aria-controls', 'aria-expanded'],
     requiredParentRoles: [],
     subclasses: [],
     superclasses: [],
@@ -677,7 +679,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     allowedChildRoles: [],
     childrenPresentational: false,
     defaultAttributeValues: {},
-    elements: [{ tagName: 'caption' }],
+    elements: [{ tagName: 'caption' }, { tagName: 'figcaption' }],
     name: 'caption',
     nameFrom: 'prohibited',
     nameRequired: false,
@@ -1299,7 +1301,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     allowedChildRoles: [],
     childrenPresentational: false,
     defaultAttributeValues: {},
-    elements: [{ tagName: 'dfn' }],
+    elements: [{ tagName: 'dfn' }, { tagName: 'dt' }],
     name: 'term',
     nameFrom: 'prohibited',
     nameRequired: false,

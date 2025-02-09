@@ -118,7 +118,7 @@ Determine which HTML maps to which default ARIA role.
 import { getRole } from "html-aria";
 
 // DOM
-const el = document.querySelector('article')
+const el = document.querySelector("article");
 getRole(el); // "article"
 
 // Node.js (no DOM)
@@ -142,7 +142,7 @@ The spec dictates that **certain elements may NOT receive certain roles.** For e
 import { getSupportedRoles } from "html-aria";
 
 // DOM
-const el = document.querySelector('img')
+const el = document.querySelector("img");
 getSupportedRoles(el); // ["none", "presentation", "img"]
 
 // Node.js (no DOM)
@@ -341,13 +341,19 @@ Further, a common mistake many simple accessibility libraries make is mapping ar
 
 _Note: `—` = [no corresponding role](#whats-the-difference-between-no-corresponding-role-and-the-none-role). Also worth pointing out that in other cases, [global aria-\* attributes](https://www.w3.org/TR/wai-aria-1.3/#global_states) are allowed, so this is unique to the element and NOT the ARIA role._
 
-### Technical deviations from the spec
+### Discrepancies between specs
 
-#### Mark
+Though the [HTML in ARIA](https://www.w3.org/TR/html-aria) spec was the foundation for this library, at points it conflicts with [AAM](https://www.w3.org/TR/html-aam-1.0). We also have browsers sometimes showing inconsistent roles, too. For these discrepancies, we compare what the specs recommend, along with the library’s current decision in an attempt to follow the most helpful path.
 
-The `<mark>` tag gets the `mark` role. Seems logical, right? Well, not according to the spec. It’s [not listed in the HTML in ARIA spec](https://www.w3.org/TR/html-aria/#el-mark), and it’s worth noting that `<mark>` is a [_related concept_](https://www.w3.org/TR/wai-aria-1.3/#mark), not a base concept as elements usually are.
+| Element        | [HTML in ARIA](https://www.w3.org/TR/html-aria) | [AAM](https://www.w3.org/TR/html-aam-1.0) | Browsers\*                       | html-aria             |
+| :------------- | :---------------------------------------------- | :---------------------------------------- | :------------------------------- | --------------------- |
+| `<dd>`         | No corresponding role                           | definition                                | definition                       | definition            |
+| `<dl>`         | No corresponding role                           | list                                      | (inconsistent)                   | No corresponding role |
+| `<dt>`         | No corresponding role                           | term                                      | term                             | term                  |
+| `<figcaption>` | No corresponding role                           | caption                                   | caption (`Figcaption` in Chrome) | caption               |
+| `<mark>`       | No corresponding role                           | mark                                      | mark                             | mark                  |
 
-But despite the ARIA specs being pretty clear that `<mark>` and `mark` aren’t directly equivalent, all modern browsers today seem to think they are, and `<mark>` always gets a `mark` role. For that reason, html-aria has sided with practical browser implementation rather than the ARIA spec.
+_\* Chrome 132, Safari 18, Firefox 135. _
 
 #### SVG
 

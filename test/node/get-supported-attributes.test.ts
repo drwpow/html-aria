@@ -61,39 +61,31 @@ import { checkTestAndTagName } from '../helpers.js';
 
 // commonly-used lists
 const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
-const BUTTON_ATTRIBUTES = [...GLOBAL_ATTRIBUTES, ...roles.button.supported];
-const GENERIC_NO_NAMING = removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.generic.supported], {
-  nameProhibited: true,
-});
-const TEXTBOX_ATTRIBUTES = [...GLOBAL_ATTRIBUTES, ...roles.textbox.supported];
-const COMBOBOX_ATTRIBUTES = [...GLOBAL_ATTRIBUTES, ...roles.combobox.supported];
+const BUTTON_ATTRIBUTES = roles.button.supported;
+const GENERIC_NO_NAMING = removeProhibited(roles.generic.supported, { nameProhibited: true });
+const TEXTBOX_ATTRIBUTES = roles.textbox.supported;
+const COMBOBOX_ATTRIBUTES = roles.combobox.supported;
 
 const tests: [
   string,
   { given: Parameters<typeof getSupportedAttributes>; want: ReturnType<typeof getSupportedAttributes> },
 ][] = [
   ['a', { given: [{ tagName: 'a' }], want: GENERIC_NO_NAMING }],
-  [
-    'a (href)',
-    { given: [{ tagName: 'a', attributes: { href: '#' } }], want: [...GLOBAL_ATTRIBUTES, ...roles.link.supported] },
-  ],
+  ['a (href)', { given: [{ tagName: 'a', attributes: { href: '#' } }], want: roles.link.supported }],
   ['area', { given: [{ tagName: 'area' }], want: GENERIC_NO_NAMING }],
-  [
-    'area (href)',
-    { given: [{ tagName: 'area', attributes: { href: '#' } }], want: [...GLOBAL_ATTRIBUTES, ...roles.link.supported] },
-  ],
+  ['area (href)', { given: [{ tagName: 'area', attributes: { href: '#' } }], want: roles.link.supported }],
   ['abbr', { given: [{ tagName: 'abbr' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
-  ['address', { given: [{ tagName: 'address' }], want: [...GLOBAL_ATTRIBUTES, ...roles.group.supported] }],
-  ['article', { given: [{ tagName: 'article' }], want: [...GLOBAL_ATTRIBUTES, ...roles.article.supported] }],
-  ['aside', { given: [{ tagName: 'aside' }], want: [...GLOBAL_ATTRIBUTES, ...roles.complementary.supported] }],
-  ['audio', { given: [{ tagName: 'audio' }], want: [...GLOBAL_ATTRIBUTES, ...roles.application.supported] }],
-  ['b', { given: [{ tagName: 'b' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
+  ['address', { given: [{ tagName: 'address' }], want: roles.group.supported }],
+  ['article', { given: [{ tagName: 'article' }], want: roles.article.supported }],
+  ['aside', { given: [{ tagName: 'aside' }], want: roles.complementary.supported }],
+  ['audio', { given: [{ tagName: 'audio' }], want: roles.application.supported }],
+  ['b', { given: [{ tagName: 'b' }], want: GENERIC_NO_NAMING }],
   ['b[role=generic]', { given: [{ tagName: 'b', attributes: { role: 'generic' } }], want: GENERIC_NO_NAMING }],
   ['b[role=button]', { given: [{ tagName: 'b', attributes: { role: 'button' } }], want: BUTTON_ATTRIBUTES }],
   ['base', { given: [{ tagName: 'base' }], want: NO_ATTRIBUTES }],
   ['bdi', { given: [{ tagName: 'bdi' }], want: GENERIC_NO_NAMING }],
   ['bdo', { given: [{ tagName: 'bdo' }], want: GENERIC_NO_NAMING }],
-  ['blockquote', { given: [{ tagName: 'blockquote' }], want: [...GLOBAL_ATTRIBUTES, ...roles.blockquote.supported] }],
+  ['blockquote', { given: [{ tagName: 'blockquote' }], want: roles.blockquote.supported }],
   [
     'body',
     {
@@ -103,12 +95,12 @@ const tests: [
   ],
   ['br', { given: [{ tagName: 'br' }], want: ['aria-hidden'] }],
   ['button', { given: [{ tagName: 'button' }], want: BUTTON_ATTRIBUTES }],
-  ['canvas', { given: [{ tagName: 'canvas' }], want: [...GLOBAL_ATTRIBUTES] }],
+  ['canvas', { given: [{ tagName: 'canvas' }], want: GLOBAL_ATTRIBUTES }],
   [
     'caption',
     {
       given: [{ tagName: 'caption' }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.caption.supported], { nameProhibited: true }),
+      want: removeProhibited([...roles.caption.supported], { nameProhibited: true }),
     },
   ],
   ['cite', { given: [{ tagName: 'cite' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
@@ -116,72 +108,57 @@ const tests: [
     'code',
     {
       given: [{ tagName: 'code' }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.code.supported], { nameProhibited: true }),
+      want: removeProhibited([...roles.code.supported], { nameProhibited: true }),
     },
   ],
   ['col', { given: [{ tagName: 'col' }], want: NO_ATTRIBUTES }],
   ['colgroup', { given: [{ tagName: 'colgroup' }], want: NO_ATTRIBUTES }],
   ['data', { given: [{ tagName: 'data' }], want: GENERIC_NO_NAMING }],
   ['datalist', { given: [{ tagName: 'datalist' }], want: NO_ATTRIBUTES }],
-  ['dd', { given: [{ tagName: 'dd' }], want: [...GLOBAL_ATTRIBUTES, ...roles.definition.supported] }],
+  ['dd', { given: [{ tagName: 'dd' }], want: roles.definition.supported }],
   [
     'del',
-    {
-      given: [{ tagName: 'del' }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.deletion.supported], { nameProhibited: true }),
-    },
+    { given: [{ tagName: 'del' }], want: removeProhibited([...roles.deletion.supported], { nameProhibited: true }) },
   ],
-  ['details', { given: [{ tagName: 'details' }], want: [...GLOBAL_ATTRIBUTES, ...roles.group.supported] }],
-  [
-    'dfn',
-    {
-      given: [{ tagName: 'dfn' }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.term.supported], { nameProhibited: true }),
-    },
-  ],
-  ['dialog', { given: [{ tagName: 'dialog' }], want: [...GLOBAL_ATTRIBUTES, ...roles.dialog.supported] }],
+  ['details', { given: [{ tagName: 'details' }], want: roles.group.supported }],
+  ['dfn', { given: [{ tagName: 'dfn' }], want: removeProhibited([...roles.term.supported], { nameProhibited: true }) }],
+  ['dialog', { given: [{ tagName: 'dialog' }], want: roles.dialog.supported }],
   ['div', { given: [{ tagName: 'div' }], want: GENERIC_NO_NAMING }],
   ['div[role=button]', { given: [{ tagName: 'div', attributes: { role: 'button' } }], want: BUTTON_ATTRIBUTES }],
   ['dl', { given: [{ tagName: 'dl' }], want: GLOBAL_ATTRIBUTES }],
-  ['dt', { given: [{ tagName: 'dt' }], want: GLOBAL_ATTRIBUTES }],
-  ['em', { given: [{ tagName: 'em' }], want: GENERIC_NO_NAMING }],
+  ['dt', { given: [{ tagName: 'dt' }], want: roles.term.supported }],
+  ['em', { given: [{ tagName: 'em' }], want: removeProhibited(roles.emphasis.supported, { nameProhibited: true }) }],
   ['embed', { given: [{ tagName: 'embed' }], want: GLOBAL_ATTRIBUTES }],
-  ['fieldset', { given: [{ tagName: 'fieldset' }], want: [...GLOBAL_ATTRIBUTES, ...roles.group.supported] }],
+  ['fieldset', { given: [{ tagName: 'fieldset' }], want: roles.group.supported }],
   [
     'figcaption',
-    { given: [{ tagName: 'figcaption' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) },
+    { given: [{ tagName: 'figcaption' }], want: removeProhibited(roles.caption.supported, { nameProhibited: true }) },
   ],
-  ['figure', { given: [{ tagName: 'figure' }], want: [...GLOBAL_ATTRIBUTES, ...roles.figure.supported] }],
-  ['form', { given: [{ tagName: 'form' }], want: [...GLOBAL_ATTRIBUTES, ...roles.form.supported] }],
-  ['footer', { given: [{ tagName: 'footer' }], want: [...GLOBAL_ATTRIBUTES, ...roles.contentinfo.supported] }],
-  ['g', { given: [{ tagName: 'g' }], want: [...GLOBAL_ATTRIBUTES] }],
-  ['h1', { given: [{ tagName: 'h1' }], want: [...GLOBAL_ATTRIBUTES, ...roles.heading.supported] }],
-  ['h2', { given: [{ tagName: 'h2' }], want: [...GLOBAL_ATTRIBUTES, ...roles.heading.supported] }],
-  ['h3', { given: [{ tagName: 'h3' }], want: [...GLOBAL_ATTRIBUTES, ...roles.heading.supported] }],
-  ['h4', { given: [{ tagName: 'h4' }], want: [...GLOBAL_ATTRIBUTES, ...roles.heading.supported] }],
-  ['h5', { given: [{ tagName: 'h5' }], want: [...GLOBAL_ATTRIBUTES, ...roles.heading.supported] }],
-  ['h6', { given: [{ tagName: 'h6' }], want: [...GLOBAL_ATTRIBUTES, ...roles.heading.supported] }],
+  ['figure', { given: [{ tagName: 'figure' }], want: roles.figure.supported }],
+  ['form', { given: [{ tagName: 'form' }], want: roles.form.supported }],
+  ['footer', { given: [{ tagName: 'footer' }], want: roles.contentinfo.supported }],
+  ['g', { given: [{ tagName: 'g' }], want: GLOBAL_ATTRIBUTES }],
+  ['h1', { given: [{ tagName: 'h1' }], want: roles.heading.supported }],
+  ['h2', { given: [{ tagName: 'h2' }], want: roles.heading.supported }],
+  ['h3', { given: [{ tagName: 'h3' }], want: roles.heading.supported }],
+  ['h4', { given: [{ tagName: 'h4' }], want: roles.heading.supported }],
+  ['h5', { given: [{ tagName: 'h5' }], want: roles.heading.supported }],
+  ['h6', { given: [{ tagName: 'h6' }], want: roles.heading.supported }],
   ['head', { given: [{ tagName: 'head' }], want: NO_ATTRIBUTES }],
-  ['header', { given: [{ tagName: 'header' }], want: [...GLOBAL_ATTRIBUTES, ...roles.banner.supported] }],
-  ['hgroup', { given: [{ tagName: 'hgroup' }], want: [...GLOBAL_ATTRIBUTES, ...roles.group.supported] }],
-  ['hr', { given: [{ tagName: 'hr' }], want: [...GLOBAL_ATTRIBUTES, ...roles.separator.supported] }],
+  ['header', { given: [{ tagName: 'header' }], want: roles.banner.supported }],
+  ['hgroup', { given: [{ tagName: 'hgroup' }], want: roles.group.supported }],
+  ['hr', { given: [{ tagName: 'hr' }], want: roles.separator.supported }],
   ['html', { given: [{ tagName: 'html' }], want: NO_ATTRIBUTES }],
-  ['i', { given: [{ tagName: 'i' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
+  ['i', { given: [{ tagName: 'i' }], want: GENERIC_NO_NAMING }],
   ['iframe', { given: [{ tagName: 'iframe' }], want: GLOBAL_ATTRIBUTES }],
-  [
-    'img (name)',
-    {
-      given: [{ tagName: 'img', attributes: { alt: 'Alt text' } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.img.supported],
-    },
-  ],
+  ['img (name)', { given: [{ tagName: 'img', attributes: { alt: 'Alt text' } }], want: roles.img.supported }],
   ['img (no name)', { given: [{ tagName: 'img' }], want: ['aria-hidden'] }],
   ['input[type=button]', { given: [{ tagName: 'input', attributes: { type: 'button' } }], want: BUTTON_ATTRIBUTES }],
   [
     'input[type=checkbox]',
     {
       given: [{ tagName: 'input', attributes: { type: 'checkbox' } }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.checkbox.supported], { prohibited: ['aria-checked'] }),
+      want: removeProhibited([...roles.checkbox.supported], { prohibited: ['aria-checked'] }),
     },
   ],
   [
@@ -206,10 +183,7 @@ const tests: [
   ['input[type=month]', { given: [{ tagName: 'input', attributes: { type: 'month' } }], want: TEXTBOX_ATTRIBUTES }],
   [
     'input[type=number]',
-    {
-      given: [{ tagName: 'input', attributes: { type: 'number' } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.spinbutton.supported],
-    },
+    { given: [{ tagName: 'input', attributes: { type: 'number' } }], want: roles.spinbutton.supported },
   ],
   [
     'input[type=password]',
@@ -219,23 +193,14 @@ const tests: [
     'input[type=radio]',
     {
       given: [{ tagName: 'input', attributes: { type: 'radio' } }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.radio.supported], { prohibited: ['aria-checked'] }),
+      want: removeProhibited([...roles.radio.supported], { prohibited: ['aria-checked'] }),
     },
   ],
-  [
-    'input[type=range]',
-    {
-      given: [{ tagName: 'input', attributes: { type: 'range' } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.slider.supported],
-    },
-  ],
+  ['input[type=range]', { given: [{ tagName: 'input', attributes: { type: 'range' } }], want: roles.slider.supported }],
   ['input[type=reset]', { given: [{ tagName: 'input', attributes: { type: 'reset' } }], want: BUTTON_ATTRIBUTES }],
   [
     'input[type=search]',
-    {
-      given: [{ tagName: 'input', attributes: { type: 'search' } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.searchbox.supported],
-    },
+    { given: [{ tagName: 'input', attributes: { type: 'search' } }], want: roles.searchbox.supported },
   ],
   ['input[type=shrek]', { given: [{ tagName: 'input', attributes: { type: 'shrek' } }], want: TEXTBOX_ATTRIBUTES }],
   ['input[type=submit]', { given: [{ tagName: 'input', attributes: { type: 'submit' } }], want: BUTTON_ATTRIBUTES }],
@@ -249,117 +214,114 @@ const tests: [
   // should produce a combobox. Other lists are ignored. But we want to test
   // all of them to guarantee this behavior is correct.
   // @see https://www.w3.org/TR/html-aria/#el-input-text-list
-  ['input (list)', { given: [{ tagName: 'input', attributes: { list: 'things' } }], want: COMBOBOX_ATTRIBUTES }],
+  ['input (list)', { given: [{ tagName: 'input', attributes: { list: 'suggestions' } }], want: COMBOBOX_ATTRIBUTES }],
   [
     'input[type=button] (list)',
     {
-      given: [{ tagName: 'input', attributes: { type: 'button' } }],
+      given: [{ tagName: 'input', attributes: { type: 'button', list: 'suggestions' } }],
       want: BUTTON_ATTRIBUTES,
     },
   ],
   [
     'input[type=color] (list)',
     {
-      given: [{ tagName: 'input', attributes: { type: 'color', list: 'colors' } }],
+      given: [{ tagName: 'input', attributes: { type: 'color', list: 'suggestions' } }],
       want: [...GLOBAL_ATTRIBUTES, 'aria-disabled'],
     },
   ],
   [
     'input[type=date] (list)',
-    { given: [{ tagName: 'input', attributes: { type: 'date', list: 'dates' } }], want: TEXTBOX_ATTRIBUTES },
+    { given: [{ tagName: 'input', attributes: { type: 'date', list: 'suggestions' } }], want: TEXTBOX_ATTRIBUTES },
   ],
   [
     'input[type=datetime-local] (list)',
     {
-      given: [{ tagName: 'input', attributes: { type: 'datetime-local', list: 'datetimes' } }],
+      given: [{ tagName: 'input', attributes: { type: 'datetime-local', list: 'suggestions' } }],
       want: TEXTBOX_ATTRIBUTES,
     },
   ],
   [
     'input[type=email] (list)',
-    { given: [{ tagName: 'input', attributes: { type: 'email', list: 'emails' } }], want: COMBOBOX_ATTRIBUTES },
+    { given: [{ tagName: 'input', attributes: { type: 'email', list: 'suggestions' } }], want: COMBOBOX_ATTRIBUTES },
   ],
   [
     'input[type=file] (list)',
     {
-      given: [{ tagName: 'input', attributes: { type: 'file', list: 'files' } }],
+      given: [{ tagName: 'input', attributes: { type: 'file', list: 'suggestions' } }],
       want: [...GLOBAL_ATTRIBUTES, 'aria-disabled', 'aria-invalid', 'aria-required'],
     },
   ],
   [
     'input[type=hidden] (list)',
-    { given: [{ tagName: 'input', attributes: { type: 'hidden', list: 'secrets' } }], want: NO_ATTRIBUTES },
+    { given: [{ tagName: 'input', attributes: { type: 'hidden', list: 'suggestions' } }], want: NO_ATTRIBUTES },
   ],
   [
     'input[type=month] (list)',
-    { given: [{ tagName: 'input', attributes: { type: 'month', list: 'months' } }], want: TEXTBOX_ATTRIBUTES },
+    { given: [{ tagName: 'input', attributes: { type: 'month', list: 'suggestions' } }], want: TEXTBOX_ATTRIBUTES },
   ],
   [
     'input[type=number] (list)',
     {
-      given: [{ tagName: 'input', attributes: { type: 'number', list: 'numbers' } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.spinbutton.supported],
+      given: [{ tagName: 'input', attributes: { type: 'number', list: 'suggestions' } }],
+      want: roles.spinbutton.supported,
     },
   ],
   [
     'input[type=password] (list)',
-    { given: [{ tagName: 'input', attributes: { type: 'password', list: 'passwords' } }], want: TEXTBOX_ATTRIBUTES },
+    { given: [{ tagName: 'input', attributes: { type: 'password', list: 'suggestions' } }], want: TEXTBOX_ATTRIBUTES },
   ],
   [
     'input[type=radio] (list)',
     {
-      given: [{ tagName: 'input', attributes: { type: 'radio', list: 'radios' } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.radio.supported].filter((a) => a !== 'aria-checked'),
+      given: [{ tagName: 'input', attributes: { type: 'radio', list: 'suggestions' } }],
+      want: roles.radio.supported.filter((a) => a !== 'aria-checked'),
     },
   ],
   [
     'input[type=range] (list)',
-    {
-      given: [{ tagName: 'input', attributes: { type: 'range', list: 'ranges' } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.slider.supported],
-    },
+    { given: [{ tagName: 'input', attributes: { type: 'range', list: 'suggestions' } }], want: roles.slider.supported },
   ],
   [
     'input[type=reset] (list)',
     {
-      given: [{ tagName: 'input', attributes: { type: 'reset', list: 'buttons' } }],
+      given: [{ tagName: 'input', attributes: { type: 'reset', list: 'suggestions' } }],
       want: BUTTON_ATTRIBUTES,
     },
   ],
   [
     'input[type=search] (list)',
-    { given: [{ tagName: 'input', attributes: { type: 'search', list: 'searches' } }], want: COMBOBOX_ATTRIBUTES },
+    { given: [{ tagName: 'input', attributes: { type: 'search', list: 'suggestions' } }], want: COMBOBOX_ATTRIBUTES },
   ],
   [
     'input[type=submit] (list)',
     {
-      given: [{ tagName: 'input', attributes: { type: 'submit', list: 'buttons' } }],
+      given: [{ tagName: 'input', attributes: { type: 'submit', list: 'suggestions' } }],
       want: BUTTON_ATTRIBUTES,
     },
   ],
   [
     'input[type=tel] (list)',
-    { given: [{ tagName: 'input', attributes: { type: 'tel', list: 'phone numbers' } }], want: COMBOBOX_ATTRIBUTES },
+    { given: [{ tagName: 'input', attributes: { type: 'tel', list: 'suggestions' } }], want: COMBOBOX_ATTRIBUTES },
   ],
   [
     'input[type=text] (list)',
-    { given: [{ tagName: 'input', attributes: { type: 'text', list: 'texts' } }], want: COMBOBOX_ATTRIBUTES },
+    { given: [{ tagName: 'input', attributes: { type: 'text', list: 'suggestions' } }], want: COMBOBOX_ATTRIBUTES },
   ],
   [
     'input[type=shrek] (list)',
-    { given: [{ tagName: 'input', attributes: { type: 'shrek', list: 'ogres' } }], want: COMBOBOX_ATTRIBUTES },
+    { given: [{ tagName: 'input', attributes: { type: 'shrek', list: 'suggestions' } }], want: COMBOBOX_ATTRIBUTES },
   ],
   [
     'input[type=time] (list)',
-    { given: [{ tagName: 'input', attributes: { type: 'time', list: 'times' } }], want: TEXTBOX_ATTRIBUTES },
+    { given: [{ tagName: 'input', attributes: { type: 'time', list: 'suggestions' } }], want: TEXTBOX_ATTRIBUTES },
   ],
   [
     'input[type=url] (list)',
-    { given: [{ tagName: 'input', attributes: { type: 'url', list: 'urls' } }], want: COMBOBOX_ATTRIBUTES },
+    { given: [{ tagName: 'input', attributes: { type: 'url', list: 'suggestions' } }], want: COMBOBOX_ATTRIBUTES },
   ],
   [
     'input[type=week] (list)',
-    { given: [{ tagName: 'input', attributes: { type: 'week', list: 'weeks' } }], want: TEXTBOX_ATTRIBUTES },
+    { given: [{ tagName: 'input', attributes: { type: 'week', list: 'suggestions' } }], want: TEXTBOX_ATTRIBUTES },
   ],
   [
     'ins',
@@ -371,38 +333,35 @@ const tests: [
   ['kbd', { given: [{ tagName: 'kbd' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['label', { given: [{ tagName: 'label' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['legend', { given: [{ tagName: 'legend' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
-  ['li', { given: [{ tagName: 'li' }], want: [...GLOBAL_ATTRIBUTES, ...roles.listitem.supported] }],
+  ['li', { given: [{ tagName: 'li' }], want: roles.listitem.supported }],
   ['link', { given: [{ tagName: 'link' }], want: NO_ATTRIBUTES }],
-  ['main', { given: [{ tagName: 'main' }], want: [...GLOBAL_ATTRIBUTES, ...roles.main.supported] }],
+  ['main', { given: [{ tagName: 'main' }], want: roles.main.supported }],
   ['map', { given: [{ tagName: 'map' }], want: NO_ATTRIBUTES }],
   [
     'mark',
     {
       given: [{ tagName: 'mark' }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.mark.supported], { nameProhibited: true }),
+      want: removeProhibited([...roles.mark.supported], { nameProhibited: true }),
     },
   ],
-  ['math', { given: [{ tagName: 'math' }], want: [...GLOBAL_ATTRIBUTES, ...roles.math.supported] }],
-  ['menu', { given: [{ tagName: 'menu' }], want: [...GLOBAL_ATTRIBUTES, ...roles.list.supported] }],
+  ['math', { given: [{ tagName: 'math' }], want: roles.math.supported }],
+  ['menu', { given: [{ tagName: 'menu' }], want: roles.list.supported }],
   ['meta', { given: [{ tagName: 'meta' }], want: NO_ATTRIBUTES }],
-  ['meter', { given: [{ tagName: 'meter' }], want: [...GLOBAL_ATTRIBUTES, ...roles.meter.supported] }],
-  ['nav', { given: [{ tagName: 'nav' }], want: [...GLOBAL_ATTRIBUTES, ...roles.navigation.supported] }],
+  ['meter', { given: [{ tagName: 'meter' }], want: roles.meter.supported }],
+  ['nav', { given: [{ tagName: 'nav' }], want: roles.navigation.supported }],
   ['noscript', { given: [{ tagName: 'noscript' }], want: NO_ATTRIBUTES }],
   ['object', { given: [{ tagName: 'object' }], want: GLOBAL_ATTRIBUTES }],
-  ['ol', { given: [{ tagName: 'ol' }], want: [...GLOBAL_ATTRIBUTES, ...roles.list.supported] }],
-  ['optgroup', { given: [{ tagName: 'optgroup' }], want: [...GLOBAL_ATTRIBUTES, ...roles.group.supported] }],
-  ['option', { given: [{ tagName: 'option' }], want: [...GLOBAL_ATTRIBUTES, ...roles.option.supported] }],
-  ['output', { given: [{ tagName: 'output' }], want: [...GLOBAL_ATTRIBUTES, ...roles.status.supported] }],
+  ['ol', { given: [{ tagName: 'ol' }], want: roles.list.supported }],
+  ['optgroup', { given: [{ tagName: 'optgroup' }], want: roles.group.supported }],
+  ['option', { given: [{ tagName: 'option' }], want: roles.option.supported }],
+  ['output', { given: [{ tagName: 'output' }], want: roles.status.supported }],
   [
     'p',
-    {
-      given: [{ tagName: 'p' }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.paragraph.supported], { nameProhibited: true }),
-    },
+    { given: [{ tagName: 'p' }], want: removeProhibited([...roles.paragraph.supported], { nameProhibited: true }) },
   ],
   ['picture', { given: [{ tagName: 'picture' }], want: ['aria-hidden'] }],
   ['pre', { given: [{ tagName: 'pre' }], want: GENERIC_NO_NAMING }],
-  ['progress', { given: [{ tagName: 'progress' }], want: [...GLOBAL_ATTRIBUTES, ...roles.progressbar.supported] }],
+  ['progress', { given: [{ tagName: 'progress' }], want: roles.progressbar.supported }],
   ['q', { given: [{ tagName: 'q' }], want: GENERIC_NO_NAMING }],
   ['rp', { given: [{ tagName: 'rp' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['rt', { given: [{ tagName: 'rt' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
@@ -411,7 +370,7 @@ const tests: [
     's',
     {
       given: [{ tagName: 's' }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.deletion.supported], { nameProhibited: true }),
+      want: removeProhibited([...roles.deletion.supported], { nameProhibited: true }),
     },
   ],
   ['samp', { given: [{ tagName: 'samp' }], want: GENERIC_NO_NAMING }],
@@ -428,19 +387,10 @@ const tests: [
   ['select', { given: [{ tagName: 'select' }], want: COMBOBOX_ATTRIBUTES }],
   ['select[size=0]', { given: [{ tagName: 'select', attributes: { size: 0 } }], want: COMBOBOX_ATTRIBUTES }],
   ['select[size=1]', { given: [{ tagName: 'select', attributes: { size: 1 } }], want: COMBOBOX_ATTRIBUTES }],
-  [
-    'select[size=2]',
-    {
-      given: [{ tagName: 'select', attributes: { size: 2 } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.listbox.supported],
-    },
-  ],
+  ['select[size=2]', { given: [{ tagName: 'select', attributes: { size: 2 } }], want: roles.listbox.supported }],
   [
     'select[multiple]',
-    {
-      given: [{ tagName: 'select', attributes: { multiple: true } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.listbox.supported],
-    },
+    { given: [{ tagName: 'select', attributes: { multiple: true } }], want: roles.listbox.supported },
   ],
   [
     'select[role=generic]',
@@ -452,64 +402,43 @@ const tests: [
   ['span', { given: [{ tagName: 'span' }], want: GENERIC_NO_NAMING }],
   [
     'strong',
-    {
-      given: [{ tagName: 'strong' }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.strong.supported], { nameProhibited: true }),
-    },
+    { given: [{ tagName: 'strong' }], want: removeProhibited(roles.strong.supported, { nameProhibited: true }) },
   ],
   ['style', { given: [{ tagName: 'style' }], want: NO_ATTRIBUTES }],
-  [
-    'sub',
-    {
-      given: [{ tagName: 'sub' }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.subscript.supported], { nameProhibited: true }),
-    },
-  ],
+  ['sub', { given: [{ tagName: 'sub' }], want: removeProhibited(roles.subscript.supported, { nameProhibited: true }) }],
   ['summary', { given: [{ tagName: 'summary' }], want: GLOBAL_ATTRIBUTES.concat(['aria-disabled', 'aria-haspopup']) }],
   [
     'sup',
-    {
-      given: [{ tagName: 'sup' }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.superscript.supported], { nameProhibited: true }),
-    },
+    { given: [{ tagName: 'sup' }], want: removeProhibited(roles.superscript.supported, { nameProhibited: true }) },
   ],
-  ['svg', { given: [{ tagName: 'svg' }], want: [...GLOBAL_ATTRIBUTES, ...roles['graphics-document'].supported] }],
-  ['table', { given: [{ tagName: 'table' }], want: [...GLOBAL_ATTRIBUTES, ...roles.table.supported] }],
-  ['tbody', { given: [{ tagName: 'tbody' }], want: [...GLOBAL_ATTRIBUTES, ...roles.rowgroup.supported] }],
-  ['td', { given: [{ tagName: 'td' }], want: [...GLOBAL_ATTRIBUTES, ...roles.cell.supported] }],
+  ['svg', { given: [{ tagName: 'svg' }], want: roles['graphics-document'].supported }],
+  ['table', { given: [{ tagName: 'table' }], want: roles.table.supported }],
+  ['tbody', { given: [{ tagName: 'tbody' }], want: roles.rowgroup.supported }],
+  ['td', { given: [{ tagName: 'td' }], want: roles.cell.supported }],
   ['template', { given: [{ tagName: 'template' }], want: NO_ATTRIBUTES }],
   ['textarea', { given: [{ tagName: 'textarea' }], want: TEXTBOX_ATTRIBUTES }],
-  ['tfoot', { given: [{ tagName: 'tfoot' }], want: [...GLOBAL_ATTRIBUTES, ...roles.rowgroup.supported] }],
-  ['th', { given: [{ tagName: 'th' }], want: [...GLOBAL_ATTRIBUTES, ...roles.cell.supported] }],
+  ['tfoot', { given: [{ tagName: 'tfoot' }], want: roles.rowgroup.supported }],
+  ['th', { given: [{ tagName: 'th' }], want: roles.cell.supported }],
   [
     'th (thead)',
-    {
-      given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'thead' }] }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.columnheader.supported],
-    },
+    { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'thead' }] }], want: roles.columnheader.supported },
   ],
-  [
-    'th',
-    {
-      given: [{ tagName: 'th', attributes: { scope: 'row' } }],
-      want: [...GLOBAL_ATTRIBUTES, ...roles.rowheader.supported],
-    },
-  ],
-  ['thead', { given: [{ tagName: 'thead' }], want: [...GLOBAL_ATTRIBUTES, ...roles.rowgroup.supported] }],
+  ['th', { given: [{ tagName: 'th', attributes: { scope: 'row' } }], want: roles.rowheader.supported }],
+  ['thead', { given: [{ tagName: 'thead' }], want: roles.rowgroup.supported }],
   [
     'time',
     {
       given: [{ tagName: 'time' }],
-      want: removeProhibited([...GLOBAL_ATTRIBUTES, ...roles.time.supported], { nameProhibited: true }),
+      want: removeProhibited([...roles.time.supported], { nameProhibited: true }),
     },
   ],
   ['title', { given: [{ tagName: 'title' }], want: NO_ATTRIBUTES }],
-  ['tr', { given: [{ tagName: 'tr' }], want: [...GLOBAL_ATTRIBUTES, ...roles.row.supported] }],
+  ['tr', { given: [{ tagName: 'tr' }], want: roles.row.supported }],
   ['track', { given: [{ tagName: 'track' }], want: NO_ATTRIBUTES }],
   ['u', { given: [{ tagName: 'u' }], want: GENERIC_NO_NAMING }],
-  ['ul', { given: [{ tagName: 'ul' }], want: [...GLOBAL_ATTRIBUTES, ...roles.list.supported] }],
+  ['ul', { given: [{ tagName: 'ul' }], want: roles.list.supported }],
   ['var', { given: [{ tagName: 'var' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
-  ['video', { given: [{ tagName: 'video' }], want: [...GLOBAL_ATTRIBUTES, ...roles.application.supported] }],
+  ['video', { given: [{ tagName: 'video' }], want: roles.application.supported }],
   ['wbr', { given: [{ tagName: 'wbr' }], want: ['aria-hidden'] }],
 ];
 

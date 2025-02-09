@@ -52,23 +52,23 @@ export const INPUT_ROLE_MAP: Record<InputType, RoleData | undefined> = {
   week: NO_CORRESPONDING_ROLE,
 };
 
-const COMBOBOX_ENABLED_TYPES: InputType[] = ['email', 'url', 'search', 'tel', 'text'];
-
 export function getInputRole(element: Element | VirtualElement): RoleData | undefined {
   // For ARIA purposes, missing or invalid types are treated as "text"
-  let type = attr(element, 'type') as InputType | undefined;
+  let type = attr(element, 'type') as InputType;
   if (!type || !(type in INPUT_ROLE_MAP)) {
     type = 'text';
   }
 
-  // handle input comboboxes
+  const role = type in INPUT_ROLE_MAP ? INPUT_ROLE_MAP[type as InputType] : INPUT_ROLE_MAP.text;
+
+  // handle combobox behavior for textbox-type inputs
   // @see https://www.w3.org/TR/html-aria/#el-input-text-list
   const list = attr(element, 'list');
-  if (list && COMBOBOX_ENABLED_TYPES.includes(type)) {
+  if (list && (role?.name === 'textbox' || role?.name === 'searchbox')) {
     return roles.combobox;
   }
 
-  return (type as InputType) in INPUT_ROLE_MAP ? INPUT_ROLE_MAP[type as InputType] : INPUT_ROLE_MAP.text;
+  return role;
 }
 
 export const INPUT_SUPPORTED_ROLES_MAP: Record<InputType, ARIARole[]> = {
@@ -103,19 +103,19 @@ export function getInputSupportedRoles(element: Element | VirtualElement): ARIAR
     type = 'text';
   }
 
-  // handle input comboboxes
-  const list = attr(element, 'list');
-  if (list && COMBOBOX_ENABLED_TYPES.includes(type)) {
-    return ['combobox'];
-  }
-
   // special behavior: checkboxes
   // @see https://www.w3.org/TR/html-aria/#el-input-checkbox
   if (type === 'checkbox' && attr(element, 'aria-pressed')) {
     return ['button', ...INPUT_SUPPORTED_ROLES_MAP.checkbox];
   }
 
-  return (type as InputType) in INPUT_ROLE_MAP
-    ? INPUT_SUPPORTED_ROLES_MAP[type as InputType]
-    : INPUT_SUPPORTED_ROLES_MAP.text;
+  const supportedRoles = INPUT_SUPPORTED_ROLES_MAP[type as InputType] ?? INPUT_SUPPORTED_ROLES_MAP.text;
+
+  // handle combobox behavior for textbox-type inputs
+  const list = attr(element, 'list');
+  if (list && supportedRoles.some((name) => name === 'textbox' || name === 'searchbox')) {
+    return ['combobox'];
+  }
+
+  return supportedRoles;
 }

@@ -53,9 +53,9 @@ describe('getSupportedRoles', () => {
     ['code', { given: [{ tagName: 'code' }], want: ALL_ROLES }],
     ['col', { given: [{ tagName: 'col' }], want: NO_ROLES }],
     ['colgroup', { given: [{ tagName: 'colgroup' }], want: NO_ROLES }],
-    ['dd', { given: [{ tagName: 'dd' }], want: NO_ROLES }],
     ['data', { given: [{ tagName: 'data' }], want: ALL_ROLES }],
     ['datalist', { given: [{ tagName: 'datalist' }], want: ['listbox'] }],
+    ['dd', { given: [{ tagName: 'dd' }], want: ['definition'] }],
     ['del', { given: [{ tagName: 'del' }], want: ALL_ROLES }],
     ['details', { given: [{ tagName: 'details' }], want: ['group'] }],
     ['dfn', { given: [{ tagName: 'dfn' }], want: ALL_ROLES }],
@@ -63,7 +63,7 @@ describe('getSupportedRoles', () => {
     ['div', { given: [{ tagName: 'div' }], want: ALL_ROLES }],
     ['div (dl)', { given: [{ tagName: 'div' }, { ancestors: [{ tagName: 'dl' }] }], want: ['none', 'presentation'] }],
     ['dl', { given: [{ tagName: 'dl' }], want: ['group', 'list', 'none', 'presentation'] }],
-    ['dt', { given: [{ tagName: 'dt' }], want: ['listitem'] }],
+    ['dt', { given: [{ tagName: 'dt' }], want: ['listitem', 'term'] }],
     ['em', { given: [{ tagName: 'em' }], want: ALL_ROLES }],
     [
       'embed',
@@ -72,7 +72,7 @@ describe('getSupportedRoles', () => {
     ['form', { given: [{ tagName: 'form' }], want: ['form', 'none', 'presentation', 'search'] }],
     ['fieldset', { given: [{ tagName: 'fieldset' }], want: ['group', 'none', 'presentation', 'radiogroup'] }],
     ['figure', { given: [{ tagName: 'figure' }], want: ALL_ROLES }],
-    ['figcaption', { given: [{ tagName: 'figcaption' }], want: ['group', 'none', 'presentation'] }],
+    ['figcaption', { given: [{ tagName: 'figcaption' }], want: ['caption', 'group', 'none', 'presentation'] }],
     [
       'footer (landmark)',
       {
@@ -189,120 +189,120 @@ describe('getSupportedRoles', () => {
     ['input[type=time]', { given: [{ tagName: 'input', attributes: { type: 'time' } }], want: [] }],
     ['input[type=url]', { given: [{ tagName: 'input', attributes: { type: 'url' } }], want: ['textbox'] }],
     ['input[type=week]', { given: [{ tagName: 'input', attributes: { type: 'week' } }], want: [] }],
-    ['input (list)', { given: [{ tagName: 'input', attributes: { list: 'things' } }], want: ['combobox'] }],
+    ['input (list)', { given: [{ tagName: 'input', attributes: { list: 'suggestions' } }], want: ['combobox'] }],
     [
       'input[type=button] (list)',
       {
-        given: [{ tagName: 'input', attributes: { type: 'button', list: 'buttons' } }],
+        given: [{ tagName: 'input', attributes: { type: 'button', list: 'suggestions' } }],
         want: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
       },
     ],
     [
       'input[type=checkbox] (list)',
       {
-        given: [{ tagName: 'input', attributes: { type: 'checkbox', list: 'checkboxes' } }],
+        given: [{ tagName: 'input', attributes: { type: 'checkbox', list: 'suggestions' } }],
         want: ['checkbox', 'menuitemcheckbox', 'option', 'switch'],
       },
     ],
     [
       'input[type=checkbox] (list, pressed)',
       {
-        given: [{ tagName: 'input', attributes: { type: 'checkbox', list: 'checkboxes', 'aria-pressed': true } }],
+        given: [{ tagName: 'input', attributes: { type: 'checkbox', list: 'suggestions', 'aria-pressed': true } }],
         want: ['button', 'checkbox', 'menuitemcheckbox', 'option', 'switch'],
       },
     ],
     [
       'input[type=color] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'color', list: 'colors' } }], want: [] },
+      { given: [{ tagName: 'input', attributes: { type: 'color', list: 'suggestions' } }], want: [] },
     ],
     [
       'input[type=date] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'date', list: 'dates' } }], want: [] },
+      { given: [{ tagName: 'input', attributes: { type: 'date', list: 'suggestions' } }], want: [] },
     ],
     [
       'input[type=datetime-local] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'datetime-local', list: 'datetimes' } }], want: [] },
+      { given: [{ tagName: 'input', attributes: { type: 'datetime-local', list: 'suggestions' } }], want: [] },
     ],
     [
       'input[type=email] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'email', list: 'emails' } }], want: ['combobox'] },
+      { given: [{ tagName: 'input', attributes: { type: 'email', list: 'suggestions' } }], want: ['combobox'] },
     ],
     [
       'input[type=file] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'file', list: 'files' } }], want: [] },
+      { given: [{ tagName: 'input', attributes: { type: 'file', list: 'suggestions' } }], want: [] },
     ],
     [
       'input[type=hidden] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'hidden', list: 'secrets' } }], want: [] },
+      { given: [{ tagName: 'input', attributes: { type: 'hidden', list: 'suggestions' } }], want: [] },
     ],
     [
       'input[type=month] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'month', list: 'months' } }], want: [] },
+      { given: [{ tagName: 'input', attributes: { type: 'month', list: 'suggestions' } }], want: [] },
     ],
     [
       'input[type=number] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'number', list: 'numbers' } }], want: ['spinbutton'] },
+      { given: [{ tagName: 'input', attributes: { type: 'number', list: 'suggestions' } }], want: ['spinbutton'] },
     ],
     [
       'input[type=range] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'range', list: 'sliders' } }], want: ['slider'] },
+      { given: [{ tagName: 'input', attributes: { type: 'range', list: 'suggestions' } }], want: ['slider'] },
     ],
     [
       'input[type=password] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'password', list: 'passwords' } }], want: [] },
+      { given: [{ tagName: 'input', attributes: { type: 'password', list: 'suggestions' } }], want: [] },
     ],
     [
-      'input[type=radio]',
+      'input[type=radio] (list)',
       {
-        given: [{ tagName: 'input', attributes: { type: 'radio', list: 'radios' } }],
+        given: [{ tagName: 'input', attributes: { type: 'radio', list: 'suggestions' } }],
         want: ['menuitemradio', 'radio'],
       },
     ],
     [
       'input[type=range] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'range', list: 'sliders' } }], want: ['slider'] },
+      { given: [{ tagName: 'input', attributes: { type: 'range', list: 'suggestions' } }], want: ['slider'] },
     ],
     [
-      'input[type=reset]',
+      'input[type=reset] (list)',
       {
-        given: [{ tagName: 'input', attributes: { type: 'reset', list: 'buttons' } }],
+        given: [{ tagName: 'input', attributes: { type: 'reset', list: 'suggestions' } }],
         want: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
       },
     ],
     [
       'input[type=search] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'search', list: 'searches' } }], want: ['combobox'] },
+      { given: [{ tagName: 'input', attributes: { type: 'search', list: 'suggestions' } }], want: ['combobox'] },
     ],
     [
-      'input[type=submit]',
+      'input[type=submit] (list)',
       {
-        given: [{ tagName: 'input', attributes: { type: 'submit', list: 'buttons' } }],
+        given: [{ tagName: 'input', attributes: { type: 'submit', list: 'suggestions' } }],
         want: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
       },
     ],
     [
       'input[type=tel] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'tel', list: 'phone numbers' } }], want: ['combobox'] },
+      { given: [{ tagName: 'input', attributes: { type: 'tel', list: 'suggestions' } }], want: ['combobox'] },
     ],
     [
       'input[type=text] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'text', list: 'texts' } }], want: ['combobox'] },
+      { given: [{ tagName: 'input', attributes: { type: 'text', list: 'suggestions' } }], want: ['combobox'] },
     ],
     [
       'input[type=shrek] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'shrek', list: 'ogres' } }], want: ['combobox'] },
+      { given: [{ tagName: 'input', attributes: { type: 'shrek', list: 'suggestions' } }], want: ['combobox'] },
     ],
     [
       'input[type=time] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'time', list: 'times' } }], want: [] },
+      { given: [{ tagName: 'input', attributes: { type: 'time', list: 'suggestions' } }], want: [] },
     ],
     [
       'input[type=url] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'url', list: 'urls' } }], want: ['combobox'] },
+      { given: [{ tagName: 'input', attributes: { type: 'url', list: 'suggestions' } }], want: ['combobox'] },
     ],
     [
       'input[type=week] (list)',
-      { given: [{ tagName: 'input', attributes: { type: 'week', list: 'weeks' } }], want: [] },
+      { given: [{ tagName: 'input', attributes: { type: 'week', list: 'suggestions' } }], want: [] },
     ],
     ['ins', { given: [{ tagName: 'ins' }], want: ALL_ROLES }],
     ['label', { given: [{ tagName: 'label' }], want: [] }],
