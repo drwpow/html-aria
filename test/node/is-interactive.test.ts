@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { isInteractive, tags } from '../../src/index.js';
-import { checkTestAndTagName } from './../helpers';
+import { type TagName, isInteractive, tags } from '../../src/index.js';
+import { checkAllTagsTested, checkTestAndTagName } from './../helpers';
 
 // add <div tabindex=0>
 // add <div role="button" tabindex=0>
@@ -52,7 +52,6 @@ describe('isInteractive', () => {
     ['figure', { given: [{ tagName: 'figure' }], want: false }],
     ['form', { given: [{ tagName: 'form' }], want: false }],
     ['footer', { given: [{ tagName: 'footer' }], want: false }],
-    ['g', { given: [{ tagName: 'g' }], want: false }],
     ['h1', { given: [{ tagName: 'h1' }], want: false }],
     ['h2', { given: [{ tagName: 'h2' }], want: false }],
     ['h3', { given: [{ tagName: 'h3' }], want: false }],
@@ -221,6 +220,101 @@ describe('isInteractive', () => {
     ['var', { given: [{ tagName: 'var' }], want: false }],
     ['video', { given: [{ tagName: 'video' }], want: false }],
     ['wbr', { given: [{ tagName: 'wbr' }], want: false }],
+
+    // Custom elements
+    ['custom-element', { given: [{ tagName: 'custom-element' as TagName }], want: false }],
+    [
+      'custom-element[role=button]',
+      { given: [{ tagName: 'custom-element' as TagName, attributes: { role: 'button' } }], want: false },
+    ],
+    [
+      'custom-element[tabindex=0]',
+      { given: [{ tagName: 'custom-element' as TagName, attributes: { tabindex: 0 } }], want: false },
+    ],
+    [
+      'custom-element[role=button,tabindex=0]',
+      { given: [{ tagName: 'custom-element' as TagName, attributes: { role: 'button', tabindex: 0 } }], want: true },
+    ],
+
+    // SVG
+    ['svg', { given: [{ tagName: 'svg' }], want: false }],
+    ['svg[role=button]', { given: [{ tagName: 'svg', attributes: { role: 'button' } }], want: false }],
+    ['svg[tabindex=0]', { given: [{ tagName: 'svg', attributes: { tabindex: 0 } }], want: false }],
+    [
+      'svg[role=button,tabindex=0]',
+      { given: [{ tagName: 'svg', attributes: { role: 'button', tabindex: 0 } }], want: true },
+    ],
+    ['animate', { given: [{ tagName: 'animate' }], want: false }],
+    ['animate[role=button]', { given: [{ tagName: 'animate', attributes: { role: 'button' } }], want: false }],
+    ['animate[tabindex=0]', { given: [{ tagName: 'animate', attributes: { tabindex: 0 } }], want: false }],
+    // <animate> should NEVER be interactive
+    [
+      'animate[role=button,tabindex=0]',
+      { given: [{ tagName: 'animate', attributes: { role: 'button', tabindex: 0 } }], want: false },
+    ],
+    ['animateMotion', { given: [{ tagName: 'animateMotion' }], want: false }],
+    ['animateTransform', { given: [{ tagName: 'animateTransform' }], want: false }],
+    ['circle', { given: [{ tagName: 'circle' }], want: false }],
+    ['circle[role=button]', { given: [{ tagName: 'circle', attributes: { role: 'button' } }], want: false }],
+    ['circle[tabindex=0]', { given: [{ tagName: 'circle', attributes: { tabindex: 0 } }], want: false }],
+    [
+      'circle[role=button,tabindex=0]',
+      { given: [{ tagName: 'circle', attributes: { role: 'button', tabindex: 0 } }], want: true },
+    ],
+    ['clipPath', { given: [{ tagName: 'clipPath' }], want: false }],
+    ['defs', { given: [{ tagName: 'defs' }], want: false }],
+    ['desc', { given: [{ tagName: 'desc' }], want: false }],
+    ['ellipse', { given: [{ tagName: 'ellipse' }], want: false }],
+    ['feBlend', { given: [{ tagName: 'feBlend' }], want: false }],
+    ['feColorMatrix', { given: [{ tagName: 'feColorMatrix' }], want: false }],
+    ['feComponentTransfer', { given: [{ tagName: 'feComponentTransfer' }], want: false }],
+    ['feComposite', { given: [{ tagName: 'feComposite' }], want: false }],
+    ['feConvolveMatrix', { given: [{ tagName: 'feConvolveMatrix' }], want: false }],
+    ['feDiffuseLighting', { given: [{ tagName: 'feDiffuseLighting' }], want: false }],
+    ['feDisplacementMap', { given: [{ tagName: 'feDisplacementMap' }], want: false }],
+    ['feDistantLight', { given: [{ tagName: 'feDistantLight' }], want: false }],
+    ['feDropShadow', { given: [{ tagName: 'feDropShadow' }], want: false }],
+    ['feFlood', { given: [{ tagName: 'feFlood' }], want: false }],
+    ['feFuncA', { given: [{ tagName: 'feFuncA' }], want: false }],
+    ['feFuncB', { given: [{ tagName: 'feFuncB' }], want: false }],
+    ['feFuncG', { given: [{ tagName: 'feFuncG' }], want: false }],
+    ['feFuncR', { given: [{ tagName: 'feFuncR' }], want: false }],
+    ['feGaussianBlur', { given: [{ tagName: 'feGaussianBlur' }], want: false }],
+    ['feImage', { given: [{ tagName: 'feImage' }], want: false }],
+    ['feMerge', { given: [{ tagName: 'feMerge' }], want: false }],
+    ['feMergeNode', { given: [{ tagName: 'feMergeNode' }], want: false }],
+    ['feMorphology', { given: [{ tagName: 'feMorphology' }], want: false }],
+    ['feOffset', { given: [{ tagName: 'feOffset' }], want: false }],
+    ['fePointLight', { given: [{ tagName: 'fePointLight' }], want: false }],
+    ['feSpecularLighting', { given: [{ tagName: 'feSpecularLighting' }], want: false }],
+    ['feSpotLight', { given: [{ tagName: 'feSpotLight' }], want: false }],
+    ['feTile', { given: [{ tagName: 'feTile' }], want: false }],
+    ['feTurbulence', { given: [{ tagName: 'feTurbulence' }], want: false }],
+    ['filter', { given: [{ tagName: 'filter' }], want: false }],
+    ['foreignObject', { given: [{ tagName: 'foreignObject' }], want: false }],
+    ['g', { given: [{ tagName: 'g' }], want: false }],
+    ['image', { given: [{ tagName: 'image' }], want: false }],
+    ['line', { given: [{ tagName: 'line' }], want: false }],
+    ['linearGradient', { given: [{ tagName: 'linearGradient' }], want: false }],
+    ['marker', { given: [{ tagName: 'marker' }], want: false }],
+    ['mask', { given: [{ tagName: 'mask' }], want: false }],
+    ['metadata', { given: [{ tagName: 'metadata' }], want: false }],
+    ['mpath', { given: [{ tagName: 'mpath' }], want: false }],
+    ['path', { given: [{ tagName: 'path' }], want: false }],
+    ['pattern', { given: [{ tagName: 'pattern' }], want: false }],
+    ['polygon', { given: [{ tagName: 'polygon' }], want: false }],
+    ['polyline', { given: [{ tagName: 'polyline' }], want: false }],
+    ['radialGradient', { given: [{ tagName: 'radialGradient' }], want: false }],
+    ['rect', { given: [{ tagName: 'rect' }], want: false }],
+    ['set', { given: [{ tagName: 'set' }], want: false }],
+    ['stop', { given: [{ tagName: 'stop' }], want: false }],
+    ['switch', { given: [{ tagName: 'switch' }], want: false }],
+    ['symbol', { given: [{ tagName: 'symbol' }], want: false }],
+    ['text', { given: [{ tagName: 'text' }], want: false }],
+    ['textPath', { given: [{ tagName: 'textPath' }], want: false }],
+    ['tspan', { given: [{ tagName: 'tspan' }], want: false }],
+    ['use', { given: [{ tagName: 'use' }], want: false }],
+    ['view', { given: [{ tagName: 'view' }], want: false }],
   ];
 
   const testedTags = new Set<string>();
@@ -232,9 +326,6 @@ describe('isInteractive', () => {
   });
 
   test('all tags are tested', () => {
-    const allTags = Object.keys(tags);
-    for (const tag of allTags) {
-      expect(testedTags.has(tag)).toBe(true);
-    }
+    checkAllTagsTested(testedTags);
   });
 });

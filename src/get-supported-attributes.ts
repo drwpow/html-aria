@@ -2,7 +2,14 @@ import { type GetRoleOptions, getRole } from './get-role.js';
 import { attributes, globalAttributes } from './lib/aria-attributes.js';
 import { roles } from './lib/aria-roles.js';
 import { tags } from './lib/html.js';
-import { attr, calculateAccessibleName, concatDedupeAndSort, getTagName, removeProhibited } from './lib/util.js';
+import {
+  attr,
+  calculateAccessibleName,
+  concatDedupeAndSort,
+  getTagName,
+  parseTokenList,
+  removeProhibited,
+} from './lib/util.js';
 import type { ARIAAttribute, VirtualElement } from './types.js';
 
 const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
@@ -11,20 +18,19 @@ const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
  * Given an ARIA role returns a list of supported/inherited aria-* attributes.
  */
 export function getSupportedAttributes(element: Element | VirtualElement, options?: GetRoleOptions): ARIAAttribute[] {
+  const role = getRole(element, options);
+  const roleData = roles[role?.name!];
   const tagName = getTagName(element);
-  const tag = tags[tagName];
-  if (!tag) {
-    return [];
+  const tagData = tags[tagName];
+  if (!tagData) {
+    return roleData?.supported ?? GLOBAL_ATTRIBUTES;
   }
 
   // Note: DON’T check for length! Often an empty array is used
   // to mean “no aria-* attributes supported
-  if (tag.supportedAttributesOverride) {
-    return tag.supportedAttributesOverride;
+  if (tagData.supportedAttributesOverride) {
+    return tagData.supportedAttributesOverride;
   }
-
-  const role = getRole(element, options);
-  const roleData = role && roles[role?.name];
 
   // special cases
   switch (tagName) {
@@ -87,7 +93,7 @@ export function getSupportedAttributes(element: Element | VirtualElement, option
   }
 
   return removeProhibited(attrList, {
-    nameProhibited: roleData?.nameFrom === 'prohibited' || tag.namingProhibited,
+    nameProhibited: roleData?.nameFrom === 'prohibited' || tagData.namingProhibited,
     prohibited: roleData?.prohibited?.length ? roleData.prohibited : undefined,
   });
 }
@@ -120,14 +126,37 @@ export function isValidAttributeValue(attribute: ARIAAttribute, value: unknown):
     throw new Error(`${attribute} isn’t a valid ARIA attribute`);
   }
 
-  const valueStr = String(value);
-  if (attributeData.type === 'boolean') {
-    return (
-      valueStr === 'true' || valueStr === 'false' || valueStr === '' // note: ="" is equivalent to "true"
-    );
-  }
-  if (attributeData.type === 'enum') {
-    return attributeData.values.includes(valueStr);
+  switch (attributeData.type) {
+    case 'true/false': {
+      // Note: "" = true
+      return ['true', 'false', ''].includes(String(value));
+    }
+    case 'true/false/undefined': {
+      // Note: "" = true
+      return ['true', 'false', 'undefined', ''].includes(String(value));
+    }
+    case 'tristate': {
+      return ['true', 'false', 'mixed'].includes(String(value));
+    }
+    case 'idRef':
+    case 'idRefList': {
+      return typeof value === 'string' && value.length > 0;
+    }
+    case 'integer': {
+      const numVal = Number.parseFloat(String(value));
+      return Number.isInteger(numVal);
+    }
+    case 'number': {
+      const numVal = Number.parseFloat(String(value));
+      return Number.isFinite(numVal);
+    }
+    case 'token': {
+      return attributeData.values.includes(String(value));
+    }
+    case 'tokenList': {
+      const values = parseTokenList(String(value));
+      return values.length > 0 && values.every((v) => attributeData.values.includes(v));
+    }
   }
 
   return true; // if we can’t prove that it’s invalid, assume valid

@@ -952,7 +952,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
   /** A container for a collection of elements that form an image. See synonym image. */
   img: {
     allowedChildRoles: [],
-    childrenPresentational: false,
+    childrenPresentational: true,
     defaultAttributeValues: {},
     elements: [{ tagName: 'img' }],
     name: 'img',
@@ -1129,7 +1129,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     defaultAttributeValues: {},
     elements: [],
     name: 'presentation',
-    nameFrom: 'author',
+    nameFrom: 'prohibited',
     nameRequired: false,
     prohibited: ['aria-braillelabel', 'aria-label', 'aria-labelledby'],
     required: [],

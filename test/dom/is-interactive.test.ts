@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { getTagName, isInteractive, tags } from '../../src/index.js';
-import { checkTestAndTagName, setUpDOM } from './../helpers';
+import { checkAllTagsTested, checkTestAndTagName, setUpDOM } from './../helpers';
 
 // add <div tabindex=0>
 // add <div role="button" tabindex=0>
@@ -59,7 +59,6 @@ describe('isInteractive', () => {
     ['figure', { given: ['<figure></figure>', 'figure'], want: false }],
     ['form', { given: ['<form></form>', 'form'], want: false }],
     ['footer', { given: ['<footer></footer>', 'footer'], want: false }],
-    ['g', { given: ['<g></g>', 'g'], want: false }],
     ['h1', { given: ['<h1></h1>', 'h1'], want: false }],
     ['h2', { given: ['<h2></h2>', 'h2'], want: false }],
     ['h3', { given: ['<h3></h3>', 'h3'], want: false }],
@@ -154,7 +153,6 @@ describe('isInteractive', () => {
     ['sub', { given: ['<sub></sub>', 'sub'], want: false }],
     ['summary', { given: ['<summary></summary>', 'summary'], want: false }],
     ['sup', { given: ['<sup></sup>', 'sub'], want: false }],
-    ['svg', { given: ['<svg></svg>', 'svg'], want: false }],
     ['table', { given: ['<table></table>', 'table'], want: false }],
     ['tbody', { given: ['<table><tbody></tbody></table>', 'tbody'], want: false }],
     ['td', { given: ['<table><td></td></table>', 'td'], want: false }],
@@ -195,6 +193,117 @@ describe('isInteractive', () => {
     ['var', { given: ['<var></var>', 'var'], want: false }],
     ['video', { given: ['<video></video>', 'video'], want: false }],
     ['wbr', { given: ['<wbr></wbr>', 'wbr'], want: false }],
+
+    // Custom elements
+    ['custom element', { given: ['<custom-element></custom-element>', 'custom-element'], want: false }],
+    [
+      'custom element[role=button]',
+      { given: ['<custom-element role="button"></custom-element>', 'custom-element'], want: false },
+    ],
+    [
+      'custom element[tabindex=0]',
+      { given: ['<custom-element tabindex="0"></custom-element>', 'custom-element'], want: false },
+    ],
+    [
+      'custom element[role=button,tabindex]=0',
+      { given: ['<custom-element role="button" tabindex="0"></custom-element>', 'custom-element'], want: true },
+    ],
+
+    // SVG
+    ['svg', { given: ['<svg></svg>', 'svg'], want: false }],
+    ['svg[role=button]', { given: ['<svg role="button"></svg>', 'svg'], want: false }],
+    ['svg[tabindex]', { given: ['<svg tabindex="0"></svg>', 'svg'], want: false }],
+    ['svg[role=button,tabindex]', { given: ['<svg role="button" tabindex="0"></svg>', 'svg'], want: true }],
+    ['animate', { given: ['<svg><animate></animate></svg>', 'animate'], want: false }],
+    ['animateMotion', { given: ['<svg><animateMotion></animateMotion></svg>', 'animateMotion'], want: false }],
+    [
+      'animateTransform',
+      { given: ['<svg><animateTransform></animateTransform></svg>', 'animateTransform'], want: false },
+    ],
+    ['circle', { given: ['<svg><circle /></svg>', 'circle'], want: false }],
+    ['circle[tabindex]', { given: ['<svg><circle tabindex="0" /></svg>', 'circle'], want: false }],
+    [
+      'circle[role=button,tabindex]',
+      { given: ['<svg><circle role="button" tabindex="0" /></svg>', 'circle'], want: true },
+    ],
+    ['clipPath', { given: ['<svg><clipPath></clipPath></svg>', 'clipPath'], want: false }],
+    ['defs', { given: ['<svg><defs></defs></svg>', 'defs'], want: false }],
+    ['desc', { given: ['<svg><desc></desc></svg>', 'desc'], want: false }],
+    ['ellipse', { given: ['<svg><ellipse /></svg>', 'ellipse'], want: false }],
+    ['feBlend', { given: ['<svg><filter><feBlend /></filter></svg>', 'feBlend'], want: false }],
+    ['feColorMatrix', { given: ['<svg><filter><feColorMatrix /></filter></svg>', 'feColorMatrix'], want: false }],
+    [
+      'feComponentTransfer',
+      { given: ['<svg><filter><feComponentTransfer /></filter></svg>', 'feComponentTransfer'], want: false },
+    ],
+    ['feComposite', { given: ['<svg><filter><feComposite /></filter></svg>', 'feComposite'], want: false }],
+    [
+      'feConvolveMatrix',
+      { given: ['<svg><filter><feConvolveMatrix /></filter></svg>', 'feConvolveMatrix'], want: false },
+    ],
+    [
+      'feDiffuseLighting',
+      { given: ['<svg><filter><feDiffuseLighting /></filter></svg>', 'feDiffuseLighting'], want: false },
+    ],
+    [
+      'feDisplacementMap',
+      { given: ['<svg><filter><feDisplacementMap /></filter></svg>', 'feDisplacementMap'], want: false },
+    ],
+    ['feDistantLight', { given: ['<svg><filter><feDistantLight /></filter></svg>', 'feDistantLight'], want: false }],
+    ['feDropShadow', { given: ['<svg><filter><feDropShadow /></filter></svg>', 'feDropShadow'], want: false }],
+    ['feFlood', { given: ['<svg><filter><feFlood /></filter></svg>', 'feFlood'], want: false }],
+    ['feFuncA', { given: ['<svg><filter><feFuncA /></filter></svg>', 'feFuncA'], want: false }],
+    ['feFuncB', { given: ['<svg><filter><feFuncB /></filter></svg>', 'feFuncB'], want: false }],
+    ['feFuncG', { given: ['<svg><filter><feFuncG /></filter></svg>', 'feFuncG'], want: false }],
+    ['feFuncR', { given: ['<svg><filter><feFuncR /></filter></svg>', 'feFuncR'], want: false }],
+    ['feGaussianBlur', { given: ['<svg><filter><feGaussianBlur /></filter></svg>', 'feGaussianBlur'], want: false }],
+    ['feImage', { given: ['<svg><filter><feImage /></filter></svg>', 'feImage'], want: false }],
+    ['feMerge', { given: ['<svg><filter><feMerge /></filter></svg>', 'feMerge'], want: false }],
+    ['feMergeNode', { given: ['<svg><filter><feMergeNode /></filter></svg>', 'feMergeNode'], want: false }],
+    ['feMorphology', { given: ['<svg><filter><feMorphology /></filter></svg>', 'feMorphology'], want: false }],
+    ['feOffset', { given: ['<svg><filter><feOffset /></filter></svg>', 'feOffset'], want: false }],
+    [
+      'fePointLight',
+      {
+        given: [
+          '<svg><filter><feSpecularLighting><fePointLight /></feSpecularLighting></filter></svg>',
+          'fePointLight',
+        ],
+        want: false,
+      },
+    ],
+    [
+      'feSpecularLighting',
+      { given: ['<svg><filter><feSpecularLighting /></filter></svg>', 'feSpecularLighting'], want: false },
+    ],
+    ['feSpotLight', { given: ['<svg><filter><feSpotLight /></filter></svg>', 'feSpotLight'], want: false }],
+    ['feTile', { given: ['<svg><filter><feTile /></filter></svg>', 'feTile'], want: false }],
+    ['feTurbulence', { given: ['<svg><filter><feTurbulence /></filter></svg>', 'feTurbulence'], want: false }],
+    ['filter', { given: ['<svg><filter></filter></svg>', 'filter'], want: false }],
+    ['foreignObject', { given: ['<svg><foreignObject></foreignObject></svg>', 'foreignObject'], want: false }],
+    ['g', { given: ['<svg><g></g></svg>', 'g'], want: false }],
+    ['image', { given: ['<svg><image></image></svg>', 'image'], want: false }],
+    ['line', { given: ['<svg><line></line></svg>', 'line'], want: false }],
+    ['linearGradient', { given: ['<svg><linearGradient></linearGradient></svg>', 'linearGradient'], want: false }],
+    ['marker', { given: ['<svg><marker></marker></svg>', 'marker'], want: false }],
+    ['mask', { given: ['<svg><mask></mask></svg>', 'mask'], want: false }],
+    ['metadata', { given: ['<svg><metadata></metadata></svg>', 'metadata'], want: false }],
+    ['mpath', { given: ['<svg><mpath /></svg>', 'mpath'], want: false }],
+    ['path', { given: ['<svg><path></path></svg>', 'path'], want: false }],
+    ['pattern', { given: ['<svg><pattern></pattern></svg>', 'pattern'], want: false }],
+    ['polygon', { given: ['<svg><polygon /></svg>', 'polygon'], want: false }],
+    ['polyline', { given: ['<svg><polyline /></svg>', 'polyline'], want: false }],
+    ['radialGradient', { given: ['<svg><radialGradient></radialGradient></svg>', 'radialGradient'], want: false }],
+    ['rect', { given: ['<svg><rect /></svg>', 'rect'], want: false }],
+    ['set', { given: ['<svg><set></set></svg>', 'set'], want: false }],
+    ['stop', { given: ['<svg><linearGradient><stop></stop></linearGradient></svg>', 'stop'], want: false }],
+    ['switch', { given: ['<svg><switch></switch></svg>', 'switch'], want: false }],
+    ['symbol', { given: ['<svg><symbol></symbol></svg>', 'symbol'], want: false }],
+    ['text', { given: ['<svg><text></text></svg>', 'text'], want: false }],
+    ['textPath', { given: ['<svg><textPath></textPath></svg>', 'textPath'], want: false }],
+    ['tspan', { given: ['<svg><tspan></tspan></svg>', 'tspan'], want: false }],
+    ['use', { given: ['<svg><use /></svg>', 'use'], want: false }],
+    ['view', { given: ['<svg><view></view></svg>', 'view'], want: false }],
   ];
 
   const testedTags = new Set<string>();
@@ -208,10 +317,6 @@ describe('isInteractive', () => {
 
   // Vitest bug: this breaks?
   // test('all tags are tested', () => {
-  //   // verify all tags tested
-  //   const allTags = Object.keys(tags);
-  //   for (const tag of allTags) {
-  //     expect(testedTags.has(tag), tag).toBe(true);
-  //   }
+  //   checkAllTagsTested(testedTags);
   // });
 });

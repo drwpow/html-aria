@@ -7,6 +7,7 @@ import { getHeaderRole } from './tags/header.js';
 import { getInputRole } from './tags/input.js';
 import { getLIRole } from './tags/li.js';
 import { getSelectRole } from './tags/select.js';
+import { getSvgElementRole } from './tags/svg.js';
 import { getTDRole } from './tags/td.js';
 import { getTHRole } from './tags/th.js';
 import type { VirtualAncestorList, VirtualElement } from './types.js';
@@ -52,6 +53,7 @@ export interface GetRoleOptions {
  */
 export function getRole(element: Element | VirtualElement, options?: GetRoleOptions): RoleData | undefined {
   const tagName = getTagName(element);
+  const tagData = tags[tagName];
   const role = attr(element, 'role') as string | undefined;
 
   // explicit role: use if valid
@@ -64,22 +66,22 @@ export function getRole(element: Element | VirtualElement, options?: GetRoleOpti
     return roles[firstRole!];
   }
 
-  const tag = tags[tagName];
-
   // If custom element (unknown HTML element), assume generic
-  if (!tag) {
+  if (!tagData) {
     return roles.generic;
   }
+
+  const defaultRole = roles[tagData.defaultRole!];
 
   switch (tagName) {
     case 'a':
     case 'area': {
       const href = attr(element, 'href');
-      return typeof href === 'string' ? roles[tag.defaultRole!] : roles.generic;
+      return typeof href === 'string' ? defaultRole : roles.generic;
     }
     case 'aside': {
       const name = calculateAccessibleName(element, roles.complementary);
-      return name ? roles[tag.defaultRole!] : getAsideRole(element, options);
+      return name ? defaultRole : getAsideRole(element, options);
     }
     case 'header': {
       return getHeaderRole(element, options);
@@ -99,7 +101,7 @@ export function getRole(element: Element | VirtualElement, options?: GetRoleOpti
     }
     case 'section': {
       const name = calculateAccessibleName(element, roles.region);
-      return name ? roles[tag.defaultRole!] : roles.generic;
+      return name ? defaultRole : roles.generic;
     }
     case 'select': {
       return getSelectRole(element);
@@ -113,7 +115,24 @@ export function getRole(element: Element | VirtualElement, options?: GetRoleOpti
     case 'tr': {
       return roles.row;
     }
+
+    // @see https://www.w3.org/TR/svg-aam-1.0/#include_elements
+    case 'circle':
+    case 'ellipse':
+    case 'foreignObject':
+    case 'g':
+    case 'image':
+    case 'line':
+    case 'path':
+    case 'polygon':
+    case 'polyline':
+    case 'rect':
+    case 'textPath':
+    case 'tspan':
+    case 'use': {
+      return getSvgElementRole(element);
+    }
   }
 
-  return roles[tag.defaultRole!];
+  return defaultRole;
 }

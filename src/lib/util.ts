@@ -28,10 +28,15 @@ export function firstMatchingToken<T>(tokenList: string, validValues: T[]): T | 
 }
 
 export function getTagName(element: Element | VirtualElement): TagName {
-  if (typeof Element !== 'undefined' && element instanceof Element) {
-    return element.tagName.toLowerCase() as TagName;
+  // JSDOM bug: feDropShadow gets converted to fedropshadow. Since this library is often used in JSDOM contexts, we should handle this at runtime, cheaply
+  if (element.tagName === 'fedropshadow') {
+    return 'feDropShadow';
   }
-  return element.tagName as TagName;
+
+  // note: HTML is case-insensitive, but SVG is not. Browsers will normalize case-insensitive
+  // names to UPPERCASE (e.g. `BUTTON`), and leave SVG in its original camelCase format.
+  const caseInsensitive = /^[A-Z]/.test(element.tagName);
+  return (caseInsensitive ? element.tagName.toLowerCase() : element.tagName) as TagName;
 }
 
 /**

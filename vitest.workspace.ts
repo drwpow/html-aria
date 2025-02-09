@@ -22,15 +22,15 @@ export default defineWorkspace([
       environment: 'happy-dom',
     },
   },
-  // {
-  //   test: {
-  //     name: 'browser',
-  //     include: ['./test/dom/**/*.test.ts'],
-  //     browser: {
-  //       provider: 'playwright',
-  //       enabled: true,
-  //       instances: [{ browser: 'chromium' }],
-  //     },
-  //   },
-  // },
+  {
+    test: {
+      name: 'browser',
+      include: ['./test/dom/**/*.test.ts'],
+      browser: {
+        provider: 'playwright',
+        enabled: true,
+        instances: [{ browser: 'chromium' }],
+      },
+    },
+  },
 ]);

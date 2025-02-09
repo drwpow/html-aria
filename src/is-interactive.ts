@@ -1,10 +1,18 @@
 import { type GetRoleOptions, getRole } from './get-role.js';
+import { tags } from './lib/html.js';
 import { attr, getTagName, isDisabled } from './lib/util.js';
 import { getTDRole } from './tags/td.js';
 import type { VirtualElement } from './types.js';
 
 /** Given HTML, can this element be interacted with? */
 export function isInteractive(element: Element | VirtualElement, options?: GetRoleOptions): boolean {
+  const tagName = getTagName(element);
+
+  // if tag doesn’t support any roles, this can’t be interactive
+  if (tags[tagName]?.supportedRoles.length === 0) {
+    return false;
+  }
+
   const role = getRole(element, options);
 
   // separator is a special case, and does NOT care about the HTML element

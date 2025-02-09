@@ -221,14 +221,18 @@ isInteractive({
 }); // true (see https://www.w3.org/TR/wai-aria-1.3/#separator)
 ```
 
-The methodology for this is somewhat complex to follow the complete ARIA specification:
+> ![WARNING]
+>
+> This doesn’t check for `display: none`, which could be applied with CSS that would make any element non-interactive.
+
+The methodology for this follows the complete ARIA specification:
 
 1. If the role is a [widget](https://www.w3.org/TR/wai-aria-1.3/#widget_roles) or [window](https://www.w3.org/TR/wai-aria-1.3/#window_roles) subclass, then it is interactive
-   - Note: if the element manually specifies `role`, and if it natively is NOT a widget or window role, `tabindex` must also be supplied
+   - If the element manually specifies `role`, and if it natively is NOT a widget or window role, `tabindex` must also be supplied
 1. If the element is `disabled` or `aria-disabled`, then it is NOT interactive
 1. Handle some explicit edge cases like [separator](https://www.w3.org/TR/wai-aria-1.3/#separator)
 
-Note that `aria-hidden` elements may be interactive (even if it’s not best practice) as a part of [2.4.5 Multiple Ways](https://www.w3.org/WAI/WCAG21/Understanding/multiple-ways.html) if an alternative is made for screenreaders, etc.
+Note that `aria-hidden` elements MAY be interactive (even if it’s not best practice) as a part of [2.4.5 Multiple Ways](https://www.w3.org/WAI/WCAG21/Understanding/multiple-ways.html) if an alternative is made for screenreaders, etc.
 
 ### isNameRequired()
 
@@ -345,21 +349,16 @@ _Note: `—` = [no corresponding role](#whats-the-difference-between-no-correspo
 
 Though the [HTML in ARIA](https://www.w3.org/TR/html-aria) spec was the foundation for this library, at points it conflicts with [AAM](https://www.w3.org/TR/html-aam-1.0). We also have browsers sometimes showing inconsistent roles, too. For these discrepancies, we compare what the specs recommend, along with the library’s current decision in an attempt to follow the most helpful path.
 
-| Element        | [HTML in ARIA](https://www.w3.org/TR/html-aria) | [AAM](https://www.w3.org/TR/html-aam-1.0) | Browsers\*                       | html-aria             |
-| :------------- | :---------------------------------------------- | :---------------------------------------- | :------------------------------- | --------------------- |
-| `<dd>`         | No corresponding role                           | definition                                | definition                       | definition            |
-| `<dl>`         | No corresponding role                           | list                                      | (inconsistent)                   | No corresponding role |
-| `<dt>`         | No corresponding role                           | term                                      | term                             | term                  |
-| `<figcaption>` | No corresponding role                           | caption                                   | caption (`Figcaption` in Chrome) | caption               |
-| `<mark>`       | No corresponding role                           | mark                                      | mark                             | mark                  |
+| Element        | [HTML in ARIA](https://www.w3.org/TR/html-aria) | [AAM](https://www.w3.org/TR/html-aam-1.0) | Browsers\*                                                        | html-aria             |
+| :------------- | :---------------------------------------------- | :---------------------------------------- | :---------------------------------------------------------------- | --------------------- |
+| `<dd>`         | No corresponding role                           | `definition`                              | `definition`                                                      | `definition`          |
+| `<dl>`         | No corresponding role                           | `list`                                    | (inconsistent)                                                    | No corresponding role |
+| `<dt>`         | No corresponding role                           | `term`                                    | `term`                                                            | `term`                |
+| `<figcaption>` | No corresponding role                           | `caption`                                 | `caption` (`Figcaption` in Chrome)                                | `caption`             |
+| `<mark>`       | No corresponding role                           | `mark`                                    | `mark`                                                            | `mark`                |
+| `<svg>`        | `graphics-document`                             | `graphics-document`                       | `graphics-document` (Firefox), `img` (Chrome), `generic` (Safari) | `graphics-document`   |
 
-_\* Chrome 132, Safari 18, Firefox 135. _
-
-#### SVG
-
-SVG is tricky. Though the [spec says](https://www.w3.org/TR/html-aria/#el-svg) `<svg>` should get the `graphics-document` role by default, browsers chose chaos. Firefox 134 displays `graphics-document`, Chrome 131 defaults to `image` (previously it returned nothing, or other roles), and Safari defaults to `generic` (which is one of the worst roles you could probably give it).
-
-Since we have 1 spec and 1 browser agreeing, this library defaults to `graphics-document`. Though the best answer is _SVGs should ALWAYS get an explicit `role`_.
+_\* Chrome 132, Safari 18, Firefox 135._
 
 ### Node.js vs DOM behavior
 

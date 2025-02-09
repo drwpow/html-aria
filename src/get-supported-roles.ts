@@ -26,32 +26,32 @@ export interface SupportedRoleOptions {
  */
 export function getSupportedRoles(element: Element | VirtualElement, options?: SupportedRoleOptions): ARIARole[] {
   const tagName = getTagName(element);
-  const tag = tags[tagName];
-  if (!tag) {
-    return [];
+  const tagData = tags[tagName];
+  if (!tagData) {
+    return ALL_ROLES;
   }
 
   // special cases: some HTML elements require unique logic to determine supported roles based on attributes, etc.
   switch (tagName) {
     case 'a': {
       const href = attr(element, 'href');
-      return typeof href === 'string' ? tag.supportedRoles : ALL_ROLES;
+      return typeof href === 'string' ? tagData.supportedRoles : ALL_ROLES;
     }
     case 'area': {
       const href = attr(element, 'href');
-      return typeof href === 'string' ? tag.supportedRoles : ['button', 'generic', 'link'];
+      return typeof href === 'string' ? tagData.supportedRoles : ['button', 'generic', 'link'];
     }
     case 'footer':
     case 'header': {
       const role = getFooterRole(element, options);
-      return role?.name === 'generic' ? ['generic', 'group', 'none', 'presentation'] : tag.supportedRoles;
+      return role?.name === 'generic' ? ['generic', 'group', 'none', 'presentation'] : tagData.supportedRoles;
     }
     case 'div': {
       const DL_PARENT_ROLES: ARIARole[] = ['none', 'presentation'];
       if (typeof Element !== 'undefined' && element instanceof Element) {
-        return element.parentElement?.closest('dl:not([role])') ? DL_PARENT_ROLES : tag.supportedRoles;
+        return element.parentElement?.closest('dl:not([role])') ? DL_PARENT_ROLES : tagData.supportedRoles;
       }
-      return options?.ancestors?.[0]?.tagName === 'dl' ? DL_PARENT_ROLES : tag.supportedRoles;
+      return options?.ancestors?.[0]?.tagName === 'dl' ? DL_PARENT_ROLES : tagData.supportedRoles;
     }
     case 'img': {
       const name = calculateAccessibleName(element, roles.img);
@@ -59,7 +59,7 @@ export function getSupportedRoles(element: Element | VirtualElement, options?: S
         /** @see https://www.w3.org/TR/html-aria/#el-img */
         return ['button', 'checkbox', 'image', 'img', 'link', 'math', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'meter', 'option', 'progressbar', 'radio', 'scrollbar', 'separator', 'slider', 'switch', 'tab', 'treeitem']; // biome-ignore format: long list
       }
-      return tag.supportedRoles;
+      return tagData.supportedRoles;
     }
     case 'li': {
       return hasListParent(element, options?.ancestors) ? ['listitem'] : ALL_ROLES;
@@ -72,9 +72,9 @@ export function getSupportedRoles(element: Element | VirtualElement, options?: S
     }
     case 'summary': {
       if (typeof Element !== 'undefined' && element instanceof Element) {
-        return element.parentElement?.closest('details:not([role])') ? [] : tag.supportedRoles;
+        return element.parentElement?.closest('details:not([role])') ? [] : tagData.supportedRoles;
       }
-      return options?.ancestors?.some((a) => a.tagName === 'details') ? [] : tag.supportedRoles;
+      return options?.ancestors?.some((a) => a.tagName === 'details') ? [] : tagData.supportedRoles;
     }
     case 'td': {
       const role = getTDRole(element, options);
@@ -91,17 +91,14 @@ export function getSupportedRoles(element: Element | VirtualElement, options?: S
       }
     }
     case 'th': {
-      return hasTableParent(element, options?.ancestors) ? tag.supportedRoles : ALL_ROLES;
+      return hasTableParent(element, options?.ancestors) ? tagData.supportedRoles : ALL_ROLES;
     }
     case 'tr': {
-      return hasTableParent(element, options?.ancestors) ? tag.supportedRoles : ALL_ROLES;
+      return hasTableParent(element, options?.ancestors) ? tagData.supportedRoles : ALL_ROLES;
     }
   }
 
-  // Known cases that aren’t possible to detect without scanning full DOM:
-  // - <div> directly <dl> MUST be either role="presentation" or role="none"
-
-  return tag.supportedRoles;
+  return tagData.supportedRoles;
 }
 
 /** Helper function for getSupportedRoles that returns a boolean instead */

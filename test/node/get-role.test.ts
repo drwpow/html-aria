@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { NO_CORRESPONDING_ROLE, type TagName, getRole, tags } from '../../src/index.js';
-import { checkTestAndTagName } from '../helpers.js';
+import { checkAllTagsTested, checkTestAndTagName } from '../helpers.js';
 
 describe('getRole', () => {
   /**
@@ -419,12 +419,15 @@ describe('getRole', () => {
     ['animate', { given: [{ tagName: 'animate' }], want: 'none' }],
     ['animateMotion', { given: [{ tagName: 'animateMotion' }], want: 'none' }],
     ['animateTransform', { given: [{ tagName: 'animateTransform' }], want: 'none' }],
-    ['circle', { given: [{ tagName: 'circle' }], want: 'graphics-symbol' }],
+    ['circle', { given: [{ tagName: 'circle' }], want: 'none' }],
+    [
+      'circle[aria-label]',
+      { given: [{ tagName: 'circle', attributes: { 'aria-label': 'Circle' } }], want: 'graphics-symbol' },
+    ],
     ['clipPath', { given: [{ tagName: 'clipPath' }], want: 'none' }],
-    ['cursor', { given: [{ tagName: 'cursor' }], want: 'none' }],
     ['defs', { given: [{ tagName: 'defs' }], want: 'none' }],
-    ['discard', { given: [{ tagName: 'discard' }], want: 'none' }],
-    ['ellipse', { given: [{ tagName: 'ellipse' }], want: 'graphics-symbol' }],
+    ['desc', { given: [{ tagName: 'desc' }], want: 'none' }],
+    ['ellipse', { given: [{ tagName: 'ellipse' }], want: 'none' }],
     ['feBlend', { given: [{ tagName: 'feBlend' }], want: 'none' }],
     ['feColorMatrix', { given: [{ tagName: 'feColorMatrix' }], want: 'none' }],
     ['feComponentTransfer', { given: [{ tagName: 'feComponentTransfer' }], want: 'none' }],
@@ -452,34 +455,29 @@ describe('getRole', () => {
     ['feTurbulence', { given: [{ tagName: 'feTurbulence' }], want: 'none' }],
     ['filter', { given: [{ tagName: 'filter' }], want: 'none' }],
     ['foreignObject', { given: [{ tagName: 'foreignObject' }], want: 'none' }],
-    ['g', { given: [{ tagName: 'g' }], want: NO_CORRESPONDING_ROLE }],
-    ['hatch', { given: [{ tagName: 'hatch' }], want: 'none' }],
-    ['hatchPath', { given: [{ tagName: 'hatchPath' }], want: 'none' }],
-    ['image', { given: [{ tagName: 'image' }], want: 'img' }],
-    ['line', { given: [{ tagName: 'line' }], want: 'graphics-symbol' }],
+    ['g', { given: [{ tagName: 'g' }], want: 'none' }],
+    ['g[aria-label]', { given: [{ tagName: 'g', attributes: { 'aria-label': 'Group' } }], want: 'group' }],
+    ['image', { given: [{ tagName: 'image' }], want: 'none' }],
+    ['line', { given: [{ tagName: 'line' }], want: 'none' }],
     ['linearGradient', { given: [{ tagName: 'linearGradient' }], want: 'none' }],
     ['marker', { given: [{ tagName: 'marker' }], want: 'none' }],
     ['mask', { given: [{ tagName: 'mask' }], want: 'none' }],
-    ['mesh', { given: [{ tagName: 'mesh' }], want: 'none' }],
-    ['meshPatch', { given: [{ tagName: 'meshPatch' }], want: 'none' }],
-    ['meshRow', { given: [{ tagName: 'meshRow' }], want: 'none' }],
     ['metadata', { given: [{ tagName: 'metadata' }], want: 'none' }],
     ['mpath', { given: [{ tagName: 'mpath' }], want: 'none' }],
-    ['path', { given: [{ tagName: 'path' }], want: 'graphics-symbol' }],
+    ['path', { given: [{ tagName: 'path' }], want: 'none' }],
     ['pattern', { given: [{ tagName: 'pattern' }], want: 'none' }],
-    ['polygon', { given: [{ tagName: 'polygon' }], want: 'graphics-symbol' }],
-    ['polyline', { given: [{ tagName: 'polyline' }], want: 'graphics-symbol' }],
+    ['polygon', { given: [{ tagName: 'polygon' }], want: 'none' }],
+    ['polyline', { given: [{ tagName: 'polyline' }], want: 'none' }],
     ['radialGradient', { given: [{ tagName: 'radialGradient' }], want: 'none' }],
-    ['rect', { given: [{ tagName: 'rect' }], want: 'graphics-symbol' }],
+    ['rect', { given: [{ tagName: 'rect' }], want: 'none' }],
     ['set', { given: [{ tagName: 'set' }], want: 'none' }],
-    ['solidcolor', { given: [{ tagName: 'solidColor' }], want: 'none' }],
     ['stop', { given: [{ tagName: 'stop' }], want: 'none' }],
     ['switch', { given: [{ tagName: 'switch' }], want: 'none' }],
     ['symbol', { given: [{ tagName: 'symbol' }], want: 'none' }],
-    ['text', { given: [{ tagName: 'text' }], want: 'graphics-symbol' }],
+    ['text', { given: [{ tagName: 'text' }], want: 'group' }],
     ['textPath', { given: [{ tagName: 'textPath' }], want: 'none' }],
     ['tspan', { given: [{ tagName: 'tspan' }], want: 'none' }],
-    ['use', { given: [{ tagName: 'use' }], want: 'graphics-symbol' }],
+    ['use', { given: [{ tagName: 'use' }], want: 'none' }],
     ['view', { given: [{ tagName: 'view' }], want: 'none' }],
   ];
 
@@ -492,11 +490,6 @@ describe('getRole', () => {
   });
 
   test('all tags are tested', () => {
-    const allTags = Object.keys(tags);
-    for (const tag of allTags) {
-      if (!testedTags.has(tag)) {
-        console.warn(`Tag "${tag}" is not tested`);
-      }
-    }
+    checkAllTagsTested(testedTags);
   });
 });
