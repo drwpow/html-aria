@@ -59,19 +59,19 @@ export function getSupportedAttributes(element: Element | VirtualElement, option
           return [];
         }
         default: {
-          return roleData?.supported?.length ? roleData.supported : roles.textbox.supported;
+          return roleData?.supported ?? roles.textbox.supported;
         }
       }
       break;
     }
     case 'summary': {
-      const supported = roleData?.supported.length ? roleData.supported : GLOBAL_ATTRIBUTES;
+      const supported = roleData?.supported ?? GLOBAL_ATTRIBUTES;
       return concatDedupeAndSort(supported, ['aria-disabled', 'aria-haspopup']);
     }
   }
 
   const attrList: ARIAAttribute[] = [];
-  if (roleData?.supported.length) {
+  if (roleData) {
     attrList.push(...roleData.supported);
   } else {
     attrList.push(...GLOBAL_ATTRIBUTES);

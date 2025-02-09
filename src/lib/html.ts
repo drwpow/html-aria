@@ -189,9 +189,12 @@ export const tags: Record<TagName, TagInfo> = {
     supportedAttributesOverride: undefined,
   },
   dd: {
-    defaultRole: NO_CORRESPONDING_ROLE,
+    // - html-aria: no corresponding role
+    // - AAM: definition
+    // - Chrome, Firefox, Safari: definition
+    defaultRole: 'definition',
     namingProhibited: false,
-    supportedRoles: NO_ROLES,
+    supportedRoles: ['definition'],
     supportedAttributesOverride: undefined,
   },
   div: {
@@ -201,21 +204,30 @@ export const tags: Record<TagName, TagInfo> = {
     supportedAttributesOverride: undefined,
   },
   dl: {
+    // - html-aria: no corresponding role
+    // - AAM: list
+    // - Chrome: Definitionlist, Firefox: definitionlist, Safari: no corresponding role
     defaultRole: NO_CORRESPONDING_ROLE,
     namingProhibited: false,
     supportedRoles: ['group', 'list', 'none', 'presentation'],
     supportedAttributesOverride: undefined,
   },
   dt: {
-    defaultRole: NO_CORRESPONDING_ROLE,
+    // - html-aria: no corresponding role
+    // - AAM: term
+    // - Chrome, Firefox, Safari: term
+    defaultRole: 'term',
     namingProhibited: false,
-    supportedRoles: ['listitem'],
+    supportedRoles: ['listitem', 'term'],
     supportedAttributesOverride: undefined,
   },
   figcaption: {
-    defaultRole: NO_CORRESPONDING_ROLE,
+    // - html-aria: no corresponding role
+    // - AAM: caption
+    // - Chrome, Firefox, Safari: caption
+    defaultRole: 'caption',
     namingProhibited: true,
-    supportedRoles: ['group', 'none', 'presentation'],
+    supportedRoles: ['caption', 'group', 'none', 'presentation'],
     supportedAttributesOverride: undefined,
   },
   figure: {

@@ -53,9 +53,9 @@ describe('getSupportedRoles', () => {
     ['code', { given: ['<code></code>', 'code'], want: ALL_ROLES }],
     ['col', { given: ['<table><col></col></table>', 'col'], want: NO_ROLES }],
     ['colgroup', { given: ['<table><colgroup></colgroup></table>', 'colgroup'], want: NO_ROLES }],
-    ['dd', { given: ['<dd></dd>', 'dd'], want: NO_ROLES }],
     ['data', { given: ['<data></data>', 'data'], want: ALL_ROLES }],
     ['datalist', { given: ['<datalist></datalist>', 'datalist'], want: ['listbox'] }],
+    ['dd', { given: ['<dd></dd>', 'dd'], want: ['definition'] }],
     ['del', { given: ['<del></del>', 'del'], want: ALL_ROLES }],
     ['details', { given: ['<details></details>', 'details'], want: ['group'] }],
     ['dfn', { given: ['<dfn></dfn>', 'dfn'], want: ALL_ROLES }],
@@ -63,7 +63,7 @@ describe('getSupportedRoles', () => {
     ['div', { given: ['<div></div>', 'div'], want: ALL_ROLES }],
     ['div (dl)', { given: ['<dl><div></div></dl>', 'div'], want: ['none', 'presentation'] }],
     ['dl', { given: ['<dl></dl>', 'dl'], want: ['group', 'list', 'none', 'presentation'] }],
-    ['dt', { given: ['<dt></dt>', 'dt'], want: ['listitem'] }],
+    ['dt', { given: ['<dt></dt>', 'dt'], want: ['listitem', 'term'] }],
     ['em', { given: ['<em></em>', 'em'], want: ALL_ROLES }],
     [
       'embed',
@@ -78,7 +78,10 @@ describe('getSupportedRoles', () => {
       { given: ['<fieldset></fieldset>', 'fieldset'], want: ['group', 'none', 'presentation', 'radiogroup'] },
     ],
     ['figure', { given: ['<figure></figure>', 'figure'], want: ALL_ROLES }],
-    ['figcaption', { given: ['<figcaption></figcaption>', 'figcaption'], want: ['group', 'none', 'presentation'] }],
+    [
+      'figcaption',
+      { given: ['<figcaption></figcaption>', 'figcaption'], want: ['caption', 'group', 'none', 'presentation'] },
+    ],
     [
       'footer (landmark)',
       { given: ['<main><footer></footer></main>', 'footer'], want: ['generic', 'group', 'none', 'presentation'] },
@@ -186,67 +189,109 @@ describe('getSupportedRoles', () => {
     ['input[type=time]', { given: ['<input type="time" />', 'input'], want: [] }],
     ['input[type=url]', { given: ['<input type="url" />', 'input'], want: ['textbox'] }],
     ['input[type=week]', { given: ['<input type="week" />', 'input'], want: [] }],
-    ['input (list)', { given: ['<input list="things" />', 'input'], want: ['combobox'] }],
+    [
+      'input (list)',
+      { given: ['<input list="suggestions" /><datalist id="suggestions"></datalist>', 'input'], want: ['combobox'] },
+    ],
     [
       'input[type=button] (list)',
       {
-        given: ['<input type="button" list="buttons" />', 'input'],
+        given: ['<input type="button" list="suggestions" />', 'input'],
         want: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
       },
     ],
     [
       'input[type=checkbox] (list)',
       {
-        given: ['<input type="checkbox" list="checkboxes" />', 'input'],
+        given: ['<input type="checkbox" list="suggestions" />', 'input'],
         want: ['checkbox', 'menuitemcheckbox', 'option', 'switch'],
       },
     ],
     [
       'input[type=checkbox] (list, pressed)',
       {
-        given: ['<input type="checkbox" list="checkboxes" aria-pressed="true" />', 'input'],
+        given: ['<input type="checkbox" list="suggestions" aria-pressed="true" />', 'input'],
         want: ['button', 'checkbox', 'menuitemcheckbox', 'option', 'switch'],
       },
     ],
-    ['input[type=color] (list)', { given: ['<input type="color" list="colors" />', 'input'], want: [] }],
-    ['input[type=date] (list)', { given: ['<input type="date" list="dates" />', 'input'], want: [] }],
+    ['input[type=color] (list)', { given: ['<input type="color" list="suggestions" />', 'input'], want: [] }],
+    ['input[type=date] (list)', { given: ['<input type="date" list="suggestions" />', 'input'], want: [] }],
     [
       'input[type=datetime-local] (list)',
-      { given: ['<input type="datetime-local" list="datetimes" />', 'input'], want: [] },
+      { given: ['<input type="datetime-local" list="suggestions" />', 'input'], want: [] },
     ],
-    ['input[type=email] (list)', { given: ['<input type="email" list="emails" />', 'input'], want: ['combobox'] }],
-    ['input[type=file] (list)', { given: ['<input type="file" list="files" />', 'input'], want: [] }],
-    ['input[type=hidden] (list)', { given: ['<input type="hidden" list="secrets" />', 'input'], want: [] }],
-    ['input[type=month] (list)', { given: ['<input type="month" list="months" />', 'input'], want: [] }],
-    ['input[type=number] (list)', { given: ['<input type="number" list="numbers" />', 'input'], want: ['spinbutton'] }],
-    ['input[type=range] (list)', { given: ['<input type="range" list="sliders" />', 'input'], want: ['slider'] }],
-    ['input[type=password] (list)', { given: ['<input type="password" list="passwords" />', 'input'], want: [] }],
     [
-      'input[type=radio]',
-      { given: ['<input type="radio" list="radios" />', 'input'], want: ['menuitemradio', 'radio'] },
+      'input[type=email] (list)',
+      {
+        given: ['<input type="email" list="suggestions" /><datalist id="suggestions"></datalist>', 'input'],
+        want: ['combobox'],
+      },
     ],
-    ['input[type=range] (list)', { given: ['<input type="range" list="sliders" />', 'input'], want: ['slider'] }],
+    ['input[type=file] (list)', { given: ['<input type="file" list="suggestions" />', 'input'], want: [] }],
+    ['input[type=hidden] (list)', { given: ['<input type="hidden" list="suggestions" />', 'input'], want: [] }],
+    ['input[type=month] (list)', { given: ['<input type="month" list="suggestions" />', 'input'], want: [] }],
+    [
+      'input[type=number] (list)',
+      { given: ['<input type="number" list="suggestions" />', 'input'], want: ['spinbutton'] },
+    ],
+    ['input[type=range] (list)', { given: ['<input type="range" list="suggestions" />', 'input'], want: ['slider'] }],
+    ['input[type=password] (list)', { given: ['<input type="password" list="suggestions" />', 'input'], want: [] }],
+    [
+      'input[type=radio] (list)',
+      { given: ['<input type="radio" list="suggestions" />', 'input'], want: ['menuitemradio', 'radio'] },
+    ],
+    ['input[type=range] (list)', { given: ['<input type="range" list="suggestions" />', 'input'], want: ['slider'] }],
     [
       'input[type=reset]',
       {
-        given: ['<input type="reset" list="buttons" />', 'input'],
+        given: ['<input type="reset" list="suggestions" />', 'input'],
         want: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
       },
     ],
-    ['input[type=search] (list)', { given: ['<input type="search" list="searchbox" />', 'input'], want: ['combobox'] }],
     [
-      'input[type=submit]',
+      'input[type=search] (list)',
       {
-        given: ['<input type="submit" list="buttons" />', 'input'],
+        given: ['<input type="search" list="suggestions" /><datalist id="suggestions"></datalist>', 'input'],
+        want: ['combobox'],
+      },
+    ],
+    [
+      'input[type=submit] (list)',
+      {
+        given: ['<input type="submit" list="suggestions" />', 'input'],
         want: ['button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'separator', 'slider', 'switch', 'tab', 'treeitem'], // biome-ignore format: long list
       },
     ],
-    ['input[type=tel] (list)', { given: ['<input type="tel" list="phone numbers" />', 'input'], want: ['combobox'] }],
-    ['input[type=text] (list)', { given: ['<input type="text" list="texts" />', 'input'], want: ['combobox'] }],
-    ['input[type=shrek] (list)', { given: ['<input type="shrek"  list="ogres" />', 'input'], want: ['combobox'] }],
-    ['input[type=time] (list)', { given: ['<input type="time" list="times" />', 'input'], want: [] }],
-    ['input[type=url] (list)', { given: ['<input type="url" list="urls" />', 'input'], want: ['combobox'] }],
-    ['input[type=week] (list)', { given: ['<input type="week" list="weeks" />', 'input'], want: [] }],
+    [
+      'input[type=tel] (list)',
+      {
+        given: ['<input type="tel" list="suggestions" /><datalist id="suggestions"></datalist>', 'input'],
+        want: ['combobox'],
+      },
+    ],
+    [
+      'input[type=text] (list)',
+      {
+        given: ['<input type="text" list="suggestions" /><datalist id="suggestions"></datalist>', 'input'],
+        want: ['combobox'],
+      },
+    ],
+    [
+      'input[type=shrek] (list)',
+      {
+        given: ['<input type="shrek" list="suggestions" /><datalist id="suggestions"></datalist>', 'input'],
+        want: ['combobox'],
+      },
+    ],
+    ['input[type=time] (list)', { given: ['<input type="time" list="suggestions" />', 'input'], want: [] }],
+    [
+      'input[type=url] (list)',
+      {
+        given: ['<input type="url" list="suggestions" /><datalist id="suggestions"></datalist>', 'input'],
+        want: ['combobox'],
+      },
+    ],
+    ['input[type=week] (list)', { given: ['<input type="week" list="suggestions" />', 'input'], want: [] }],
     ['ins', { given: ['<ins></ins>', 'ins'], want: ALL_ROLES }],
     ['label', { given: ['<label></label>', 'label'], want: [] }],
     ['legend', { given: ['<legend></legend>', 'legend'], want: [] }],

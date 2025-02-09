@@ -21,7 +21,7 @@ const tests: [
   ['checkbox', { given: ['checkbox'], want: ['aria-checked'] }],
   ['code', { given: ['code'], want: [] }],
   ['columnheader', { given: ['columnheader'], want: [] }],
-  ['combobox', { given: ['combobox'], want: ['aria-expanded'] }],
+  ['combobox', { given: ['combobox'], want: ['aria-controls', 'aria-expanded'] }],
   ['comment', { given: ['comment'], want: [] }],
   ['complementary', { given: ['complementary'], want: [] }],
   ['contentinfo', { given: ['contentinfo'], want: [] }],
