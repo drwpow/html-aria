@@ -76,7 +76,7 @@ export function getRole(element: Element | VirtualElement, options?: GetRoleOpti
   switch (tagName) {
     case 'a':
     case 'area': {
-      const href = attr(element, 'href');
+      const href = attr(element, 'href') || attr(element, 'xlink:href'); // note: xlink:href only for SVG, but assume it’s used in correct context
       return typeof href === 'string' ? defaultRole : roles.generic;
     }
     case 'aside': {

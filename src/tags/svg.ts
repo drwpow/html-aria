@@ -1,7 +1,7 @@
 import { type RoleData, roles } from '../lib/aria-roles.js';
 import { tags } from '../lib/html.js';
-import { attr } from '../lib/util.js';
-import type { TagName, VirtualElement } from '../types.js';
+import { attr, getTagName } from '../lib/util.js';
+import type { VirtualElement } from '../types.js';
 
 // ONLY applied if it meets the criteria
 const SVG_ACCESSIBLE_ROLE_MAPPING = {
@@ -28,15 +28,23 @@ const SVG_ACCESSIBLE_ROLE_MAPPING = {
  * @see https://www.w3.org/TR/svg-aam-1.0/#include_elements
  */
 export function getSvgElementRole(element: Element | VirtualElement): RoleData | undefined {
-  const defaultRole = roles[tags[element.tagName as keyof typeof tags]?.defaultRole!];
-  if (!(element.tagName in SVG_ACCESSIBLE_ROLE_MAPPING)) {
+  const tagName = getTagName(element);
+  const defaultRole = roles[tags[tagName]?.defaultRole!];
+  if (!(tagName in SVG_ACCESSIBLE_ROLE_MAPPING)) {
     return defaultRole;
   }
 
-  const accessibleRole = SVG_ACCESSIBLE_ROLE_MAPPING[element.tagName as keyof typeof SVG_ACCESSIBLE_ROLE_MAPPING];
+  const accessibleRole = SVG_ACCESSIBLE_ROLE_MAPPING[tagName as keyof typeof SVG_ACCESSIBLE_ROLE_MAPPING];
 
   const ariaHidden = attr(element, 'aria-hidden');
   const isHidden = ariaHidden === '' || String(ariaHidden) === 'true';
+
+  // <image> tags: treat as img if it has a src
+  if (!isHidden && tagName === 'image' && attr(element, 'src')) {
+    return accessibleRole;
+  }
+
+  // Name step 1: look for name attributes on element
   const hasLabel =
     !isHidden &&
     (attr(element, 'aria-label') ||
@@ -47,7 +55,7 @@ export function getSvgElementRole(element: Element | VirtualElement): RoleData |
     return accessibleRole;
   }
 
-  // Check for <title> or <desc> children that have text content after trimming whitespace
+  // Name step 2: look for <title> or <desc> children (that aren’t empty whitespace)
   const hasTextChild = 'querySelector' in element && element.querySelector('title,desc')?.textContent?.trim().length;
   if (hasTextChild) {
     return accessibleRole;
