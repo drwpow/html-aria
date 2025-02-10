@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { ALL_ROLES, NO_ROLES, getSupportedRoles, isSupportedRole, tags } from '../../src/index.js';
-import { checkTestAndTagName } from '../helpers.js';
+import { ALL_ROLES, NO_ROLES, type TagName, getSupportedRoles, isSupportedRole, tags } from '../../src/index.js';
+import { checkAllTagsTested, checkTestAndTagName } from '../helpers.js';
 
 describe('getSupportedRoles', () => {
   const tests: [
@@ -84,7 +84,6 @@ describe('getSupportedRoles', () => {
       'footer (default)',
       { given: [{ tagName: 'footer' }], want: ['contentinfo', 'generic', 'group', 'none', 'presentation'] },
     ],
-    ['g', { given: [{ tagName: 'g' }], want: ['group', 'graphics-object'] }],
     ['h1', { given: [{ tagName: 'h1' }], want: ['heading', 'none', 'presentation', 'tab'] }],
     ['h2', { given: [{ tagName: 'h2' }], want: ['heading', 'none', 'presentation', 'tab'] }],
     ['h3', { given: [{ tagName: 'h3' }], want: ['heading', 'none', 'presentation', 'tab'] }],
@@ -422,6 +421,73 @@ describe('getSupportedRoles', () => {
     ['var', { given: [{ tagName: 'var' }], want: ALL_ROLES }],
     ['video', { given: [{ tagName: 'video' }], want: ['application'] }],
     ['wbr', { given: [{ tagName: 'wbr' }], want: ['none', 'presentation'] }],
+
+    // Custom elements
+    ['custom-element', { given: [{ tagName: 'custom-element' as TagName }], want: ALL_ROLES }],
+    [
+      'custom-element (no ancestors)',
+      { given: [{ tagName: 'custom-element' as TagName }, { ancestors: [] }], want: ALL_ROLES },
+    ],
+
+    // SVG
+    ['animate', { given: [{ tagName: 'animate' }], want: NO_ROLES }],
+    ['animateMotion', { given: [{ tagName: 'animateMotion' }], want: NO_ROLES }],
+    ['animateTransform', { given: [{ tagName: 'animateTransform' }], want: NO_ROLES }],
+    ['circle', { given: [{ tagName: 'circle' }], want: ALL_ROLES }],
+    ['clipPath', { given: [{ tagName: 'clipPath' }], want: NO_ROLES }],
+    ['defs', { given: [{ tagName: 'defs' }], want: NO_ROLES }],
+    ['desc', { given: [{ tagName: 'desc' }], want: NO_ROLES }],
+    ['ellipse', { given: [{ tagName: 'ellipse' }], want: ALL_ROLES }],
+    ['feBlend', { given: [{ tagName: 'feBlend' }], want: NO_ROLES }],
+    ['feColorMatrix', { given: [{ tagName: 'feColorMatrix' }], want: NO_ROLES }],
+    ['feComponentTransfer', { given: [{ tagName: 'feComponentTransfer' }], want: NO_ROLES }],
+    ['feComposite', { given: [{ tagName: 'feComposite' }], want: NO_ROLES }],
+    ['feConvolveMatrix', { given: [{ tagName: 'feConvolveMatrix' }], want: NO_ROLES }],
+    ['feDiffuseLighting', { given: [{ tagName: 'feDiffuseLighting' }], want: NO_ROLES }],
+    ['feDisplacementMap', { given: [{ tagName: 'feDisplacementMap' }], want: NO_ROLES }],
+    ['feDistantLight', { given: [{ tagName: 'feDistantLight' }], want: NO_ROLES }],
+    ['feDropShadow', { given: [{ tagName: 'feDropShadow' }], want: NO_ROLES }],
+    ['feFlood', { given: [{ tagName: 'feFlood' }], want: NO_ROLES }],
+    ['feFuncA', { given: [{ tagName: 'feFuncA' }], want: NO_ROLES }],
+    ['feFuncB', { given: [{ tagName: 'feFuncB' }], want: NO_ROLES }],
+    ['feFuncG', { given: [{ tagName: 'feFuncG' }], want: NO_ROLES }],
+    ['feFuncR', { given: [{ tagName: 'feFuncR' }], want: NO_ROLES }],
+    ['feGaussianBlur', { given: [{ tagName: 'feGaussianBlur' }], want: NO_ROLES }],
+    ['feImage', { given: [{ tagName: 'feImage' }], want: NO_ROLES }],
+    ['feMerge', { given: [{ tagName: 'feMerge' }], want: NO_ROLES }],
+    ['feMergeNode', { given: [{ tagName: 'feMergeNode' }], want: NO_ROLES }],
+    ['feMorphology', { given: [{ tagName: 'feMorphology' }], want: NO_ROLES }],
+    ['feOffset', { given: [{ tagName: 'feOffset' }], want: NO_ROLES }],
+    ['fePointLight', { given: [{ tagName: 'fePointLight' }], want: NO_ROLES }],
+    ['feSpecularLighting', { given: [{ tagName: 'feSpecularLighting' }], want: NO_ROLES }],
+    ['feSpotLight', { given: [{ tagName: 'feSpotLight' }], want: NO_ROLES }],
+    ['feTile', { given: [{ tagName: 'feTile' }], want: NO_ROLES }],
+    ['feTurbulence', { given: [{ tagName: 'feTurbulence' }], want: NO_ROLES }],
+    ['filter', { given: [{ tagName: 'filter' }], want: NO_ROLES }],
+    ['foreignObject', { given: [{ tagName: 'foreignObject' }], want: ALL_ROLES }],
+    ['g', { given: [{ tagName: 'g' }], want: ALL_ROLES }],
+    ['image', { given: [{ tagName: 'image' }], want: ALL_ROLES }],
+    ['line', { given: [{ tagName: 'line' }], want: ALL_ROLES }],
+    ['linearGradient', { given: [{ tagName: 'linearGradient' }], want: NO_ROLES }],
+    ['marker', { given: [{ tagName: 'marker' }], want: NO_ROLES }],
+    ['mask', { given: [{ tagName: 'mask' }], want: NO_ROLES }],
+    ['metadata', { given: [{ tagName: 'metadata' }], want: NO_ROLES }],
+    ['mpath', { given: [{ tagName: 'mpath' }], want: NO_ROLES }],
+    ['path', { given: [{ tagName: 'path' }], want: ALL_ROLES }],
+    ['pattern', { given: [{ tagName: 'pattern' }], want: NO_ROLES }],
+    ['polygon', { given: [{ tagName: 'polygon' }], want: ALL_ROLES }],
+    ['polyline', { given: [{ tagName: 'polyline' }], want: ALL_ROLES }],
+    ['radialGradient', { given: [{ tagName: 'radialGradient' }], want: NO_ROLES }],
+    ['rect', { given: [{ tagName: 'rect' }], want: ALL_ROLES }],
+    ['set', { given: [{ tagName: 'set' }], want: NO_ROLES }],
+    ['stop', { given: [{ tagName: 'stop' }], want: NO_ROLES }],
+    ['switch', { given: [{ tagName: 'switch' }], want: NO_ROLES }],
+    ['symbol', { given: [{ tagName: 'symbol' }], want: NO_ROLES }],
+    ['text', { given: [{ tagName: 'text' }], want: ALL_ROLES }],
+    ['textPath', { given: [{ tagName: 'textPath' }], want: ALL_ROLES }],
+    ['tspan', { given: [{ tagName: 'tspan' }], want: ALL_ROLES }],
+    ['use', { given: [{ tagName: 'use' }], want: ALL_ROLES }],
+    ['view', { given: [{ tagName: 'view' }], want: NO_ROLES }],
   ];
 
   const testedTags = new Set<string>();
@@ -433,12 +499,7 @@ describe('getSupportedRoles', () => {
   });
 
   test('all tags are tested', () => {
-    const allTags = Object.keys(tags);
-    for (const tag of allTags) {
-      if (!testedTags.has(tag)) {
-        console.warn(`Tag "${tag}" is not tested`);
-      }
-    }
+    checkAllTagsTested(testedTags);
   });
 });
 

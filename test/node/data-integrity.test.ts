@@ -10,7 +10,11 @@ describe('html data', () => {
   for (const [tag, tagData] of Object.entries(tags)) {
     if (tagData.defaultRole) {
       test(tag, () => {
-        expect(tagData.supportedRoles, 'defaultRole not in supportedRoles').toContain(tagData.defaultRole);
+        // Some tags have a role of "none" and are not allowed to take on any roles, e.g. SVG <filter>.
+        // Ignore those from the data check.
+        if (tagData.defaultRole !== 'none' && tagData.defaultRole !== 'presentation') {
+          expect(tagData.supportedRoles, 'defaultRole not in supportedRoles').toContain(tagData.defaultRole);
+        }
         const deduped = new Set(tagData.supportedRoles);
         expect(deduped.size, 'duplicate roles in supportedRoles').toBe(tagData.supportedRoles.length);
       });
@@ -57,4 +61,20 @@ describe('role data', () => {
       });
     });
   }
+
+  describe('synonyms', () => {
+    for (const [a, b] of [
+      ['image', 'img'],
+      ['none', 'presentation'],
+    ]) {
+      test(`${a} ↔ ${b}`, () => {
+        for (const [k, v] of Object.entries(roles[a])) {
+          if (k === 'name') {
+            continue;
+          }
+          expect(roles[b][k], k).toEqual(v);
+        }
+      });
+    }
+  });
 });

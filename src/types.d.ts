@@ -143,8 +143,65 @@ export type TagName =
   | 'canvas'
   | 'template'
 
-  // SVG extensions (partial)
-  | 'g';
+  // SVG extensions
+  | 'animate'
+  | 'animateMotion'
+  | 'animateTransform'
+  | 'circle'
+  | 'clipPath'
+  | 'defs'
+  | 'desc'
+  | 'ellipse'
+  | 'feBlend'
+  | 'feColorMatrix'
+  | 'feComponentTransfer'
+  | 'feComposite'
+  | 'feConvolveMatrix'
+  | 'feDiffuseLighting'
+  | 'feDisplacementMap'
+  | 'feDistantLight'
+  | 'feDropShadow'
+  | 'feFlood'
+  | 'feFuncA'
+  | 'feFuncB'
+  | 'feFuncG'
+  | 'feFuncR'
+  | 'feGaussianBlur'
+  | 'feImage'
+  | 'feMerge'
+  | 'feMergeNode'
+  | 'feMorphology'
+  | 'feOffset'
+  | 'fePointLight'
+  | 'feSpecularLighting'
+  | 'feSpotLight'
+  | 'feTile'
+  | 'feTurbulence'
+  | 'filter'
+  | 'foreignObject'
+  | 'g'
+  | 'image'
+  | 'line'
+  | 'linearGradient'
+  | 'marker'
+  | 'mask'
+  | 'metadata'
+  | 'mpath'
+  | 'path'
+  | 'pattern'
+  | 'polygon'
+  | 'polyline'
+  | 'radialGradient'
+  | 'rect'
+  | 'set'
+  | 'stop'
+  | 'switch'
+  | 'symbol'
+  | 'text'
+  | 'textPath'
+  | 'tspan'
+  | 'use'
+  | 'view';
 
 export type VirtualAncestorList = VirtualElement[];
 
@@ -297,26 +354,43 @@ export type NameProhibitedAttributes =
   | 'aria-label'
   | 'aria-labelledby'
   | 'aria-roledescription';
-/** Attribute may essentially allow any value. As a general rule, empty strings are NOT valid. */
-export type StringAttribute = { type: 'string'; default?: never; values?: never };
-/** Boolean attributes are essentially the same as enum types whose only allowed values are ["true", "false"] */
-export type BooleanAttribute = { type: 'boolean'; default: boolean | undefined; values?: never };
+/** Value representing either `true` or `false`. The default value for this value type is `false` unless otherwise specified. */
+export type TrueFalseAttribute = { type: 'true/false'; default: boolean; values?: never };
+/** Value representing `true`, `false`, `mixed`, or `undefined` values. The default value for this value type is `undefined` unless otherwise specified. */
+export type TristateAttribute = { type: 'tristate'; default: string | undefined; values?: never };
 /**
- * Enum attributes only allow one of a list of specific values.
- * Note that if a tokenlist (space-separated list) is allowed, it is type: "string".
- * Although the spec does allow “undefined” as a valid value (e.g.
- * aria-checked), that indicates the absence of the attribute altogether; this
- * only tests the presence of attributes, thus, `undefined` is omitted.
+ * Value representing `true`, `false`, or `undefined` (not applicable). The default
+ * value for this value type is `undefined` unless otherwise specified. For
+ * example, an element with aria-expanded set to `false` is not currently
+ * expanded; an element with aria-expanded set to `undefined` is not expandable.
  */
-export type EnumAttribute = { type: 'enum'; default: string | undefined; values: string[] };
-/** Number attributes represent both integer and scalar (floating point) types. */
+export type TrueFalseUndefinedAttribute = { type: 'true/false/undefined'; default: undefined; values?: never };
+/** Reference to the ID of another element in the same document */
+export type IDRefAttribute = { type: 'idRef'; default?: never; values?: never };
+/** A list of one or more ID references. */
+export type IDRefListAttribute = { type: 'idRefList'; default?: never; values?: never };
+/** A numerical value without a fractional component. */
+export type IntegerAttribute = { type: 'integer'; default?: never; values?: never };
+/** Any real numerical value. */
 export type NumberAttribute = { type: 'number'; default?: never; values?: never };
+/** Unconstrained value type. */
+export type StringAttribute = { type: 'string'; default?: never; values?: never };
+/** One of a limited set of allowed values. The default value is defined in each attribute's Values table, as specified in the Attribute Values section. */
+export type TokenAttribute = { type: 'token'; default: string | undefined; values: string[] };
+/** A list of one or more tokens. */
+export type TokenListAttribute = { type: 'tokenList'; default: string | undefined; values: string[] };
 
 export type AttributeData = { category: AttributeCategory[] } & (
-  | StringAttribute
-  | BooleanAttribute
-  | EnumAttribute
+  | TrueFalseAttribute
+  | TristateAttribute
+  | TrueFalseUndefinedAttribute
+  | IDRefAttribute
+  | IDRefListAttribute
+  | IntegerAttribute
   | NumberAttribute
+  | StringAttribute
+  | TokenAttribute
+  | TokenListAttribute
 );
 
 /**

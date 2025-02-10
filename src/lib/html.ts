@@ -27,6 +27,27 @@ export interface TagInfo {
   namingProhibited: boolean;
 }
 
+/**
+ * SVG elements that are always hidden from screenreaders.
+ * @see https://www.w3.org/TR/svg-aam-1.0/#include_elements
+ */
+const SVG_ALWAYS_INACCESSIBLE_ELEMENT: TagInfo = {
+  defaultRole: 'none',
+  namingProhibited: true,
+  supportedRoles: [],
+  supportedAttributesOverride: [],
+};
+/**
+ * SVG elements that by default aren’t added to the a11y tree, but MAY be included if certain criteria are met.
+ * @see https://www.w3.org/TR/svg-aam-1.0/#include_elements
+ */
+const SVG_MAYBE_ACCESSIBLE_ELEMENT: TagInfo = {
+  defaultRole: 'none', // ⚠️ these elements will get different default roles if they have an accessible name, but they all default to 'none'
+  namingProhibited: true,
+  supportedRoles: ALL_ROLES,
+  supportedAttributesOverride: undefined,
+};
+
 export const tags: Record<TagName, TagInfo> = {
   // Main root
   html: {
@@ -754,11 +775,78 @@ export const tags: Record<TagName, TagInfo> = {
     supportedAttributesOverride: [],
   },
 
-  // SVG tags (partial)
-  g: {
-    defaultRole: NO_CORRESPONDING_ROLE,
+  // SVG
+  // @see https://www.w3.org/TR/svg-aam-1.0/#mapping_role_table
+  // a: (use HTML <a>)
+  animate: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  animateMotion: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  animateTransform: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  // audio: (use HTML <audio>)
+  // canvas: (use HTML <canvas>)
+  circle: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  clipPath: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  defs: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  desc: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  ellipse: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  feBlend: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feColorMatrix: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feComponentTransfer: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feComposite: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feConvolveMatrix: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feDiffuseLighting: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feDisplacementMap: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feDistantLight: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feDropShadow: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feFlood: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feFuncA: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feFuncB: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feFuncG: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feFuncR: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feGaussianBlur: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feImage: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feMerge: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feMergeNode: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feMorphology: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feOffset: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  fePointLight: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feSpecularLighting: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feSpotLight: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feTile: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  feTurbulence: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  filter: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  foreignObject: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  g: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  image: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  line: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  linearGradient: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  marker: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  mask: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  metadata: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  mpath: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  path: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  pattern: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  polygon: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  polyline: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  radialGradient: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  rect: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  set: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  stop: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  // style: (use HTML <style>)
+  switch: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  symbol: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
+  // Note: text is the ONLY SVG element that defaults to "group" unconditionally
+  // because it contains text nodes by its nature.
+  text: {
+    defaultRole: 'group',
     namingProhibited: false,
-    supportedRoles: ['group', 'graphics-object'],
+    supportedRoles: ALL_ROLES,
     supportedAttributesOverride: undefined,
   },
+  textPath: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  // title: (use HTML <title>)
+  // track: (use HTML <track>)
+  tspan: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  use: SVG_MAYBE_ACCESSIBLE_ELEMENT,
+  // video: (use HTML <video>)
+  view: SVG_ALWAYS_INACCESSIBLE_ELEMENT,
 };

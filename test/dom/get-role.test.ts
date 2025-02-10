@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { NO_CORRESPONDING_ROLE, getRole, getTagName, tags } from '../../src/index.js';
-import { checkTestAndTagName, setUpDOM } from '../helpers.js';
+import { checkAllTagsTested, checkTestAndTagName, setUpDOM } from '../helpers.js';
 
 describe('getRole', () => {
   /**
@@ -91,7 +91,6 @@ describe('getRole', () => {
     ['footer', { given: ['<footer></footer>', 'footer'], want: 'contentinfo' }],
     ['footer (landmark)', { given: ['<article><footer></footer></article>', 'footer'], want: 'generic' }],
     ['form', { given: ['<form></form>', 'form'], want: 'form' }],
-    ['g', { given: ['<g></g>', 'g'], want: NO_CORRESPONDING_ROLE }],
     ['h1', { given: ['<h1></h1>', 'h1'], want: 'heading' }],
     ['h2', { given: ['<h2></h2>', 'h2'], want: 'heading' }],
     ['h3', { given: ['<h3></h3>', 'h3'], want: 'heading' }],
@@ -280,12 +279,6 @@ describe('getRole', () => {
     ['sub', { given: ['<sub></sub>', 'sub'], want: 'subscript' }],
     ['summary', { given: ['<summary></summary>', 'summary'], want: NO_CORRESPONDING_ROLE }],
     ['sup', { given: ['<sup></sup>', 'sup'], want: 'superscript' }],
-    ['svg', { given: ['<svg></svg>', 'svg'], want: 'graphics-document' }],
-    ['svg[role=img]', { given: ['<svg role="img"></svg>', 'svg'], want: 'img' }],
-    [
-      'svg[role=graphics-symbol img]',
-      { given: ['<svg role="graphics-symbol img"></svg>', 'svg'], want: 'graphics-symbol' },
-    ],
     ['table', { given: ['<table></table>', 'table'], want: 'table' }],
     ['tbody', { given: ['<table><tbody></tbody></table>', 'tbody'], want: 'rowgroup' }],
     ['td', { given: ['<table><tr><td></td></tr></table>', 'td'], want: 'cell' }],
@@ -326,11 +319,165 @@ describe('getRole', () => {
     ['var', { given: ['<var></var>', 'var'], want: NO_CORRESPONDING_ROLE }],
     ['video', { given: ['<video></video>', 'video'], want: NO_CORRESPONDING_ROLE }],
     ['wbr', { given: ['<wbr></wbr>', 'wbr'], want: NO_CORRESPONDING_ROLE }],
+
+    // Custom elements
     ['custom element', { given: ['<x-button>My Button</x-button>', 'x-button'], want: 'generic' }],
     [
       'custom element (with role)',
       { given: ['<x-button role="button">My Button</x-button>', 'x-button'], want: 'button' },
     ],
+
+    // SVG
+    ['svg', { given: ['<svg></svg>', 'svg'], want: 'graphics-document' }],
+    ['svg[role=img]', { given: ['<svg role="img"></svg>', 'svg'], want: 'img' }],
+    [
+      'svg[role=graphics-symbol img]',
+      { given: ['<svg role="graphics-symbol img"></svg>', 'svg'], want: 'graphics-symbol' },
+    ],
+    ['animate', { given: ['<svg><animate></animate></svg>', 'animate'], want: 'none' }],
+    ['animateMotion', { given: ['<svg><animateMotion></animateMotion></svg>', 'animateMotion'], want: 'none' }],
+    [
+      'animateTransform',
+      { given: ['<svg><animateTransform></animateTransform></svg>', 'animateTransform'], want: 'none' },
+    ],
+    ['circle', { given: ['<svg><circle /></svg>', 'circle'], want: 'none' }],
+    ['circle (empty title)', { given: ['<svg><circle><title></title></circle></svg>', 'circle'], want: 'none' }],
+    [
+      'circle (title)',
+      { given: ['<svg><circle><title>Circle</title></circle></svg>', 'circle'], want: 'graphics-symbol' },
+    ],
+    ['circle (empty desc)', { given: ['<svg><circle /></svg>', 'circle'], want: 'none' }],
+    [
+      'circle (desc)',
+      { given: ['<svg><circle><desc>Circle</desc></circle></svg>', 'circle'], want: 'graphics-symbol' },
+    ],
+    ['circle[aria-label]', { given: ['<svg><circle aria-label="Circle" /></svg>', 'circle'], want: 'graphics-symbol' }],
+    [
+      'circle[aria-label][aria-hidden]',
+      { given: ['<svg><circle aria-label="Circle" aria-hidden /></svg>', 'circle'], want: 'none' },
+    ],
+    [
+      'circle[aria-labelledby]',
+      { given: ['<svg><circle aria-labelledby="element" /></svg>', 'circle'], want: 'graphics-symbol' },
+    ],
+    [
+      'circle[aria-describedby]',
+      { given: ['<svg><circle aria-describedby="element" /></svg>', 'circle'], want: 'graphics-symbol' },
+    ],
+    [
+      'circle[aria-roledescription]',
+      {
+        given: ['<svg><circle aria-roledescription="Interactive circle element" /></svg>', 'circle'],
+        want: 'graphics-symbol',
+      },
+    ],
+    ['clipPath', { given: ['<svg><clipPath></clipPath></svg>', 'clipPath'], want: 'none' }],
+    ['defs', { given: ['<svg><defs></defs></svg>', 'defs'], want: 'none' }],
+    ['desc', { given: ['<svg><desc></desc></svg>', 'desc'], want: 'none' }],
+    ['ellipse', { given: ['<svg><ellipse /></svg>', 'ellipse'], want: 'none' }],
+    ['feBlend', { given: ['<svg><filter><feBlend /></filter></svg>', 'feBlend'], want: 'none' }],
+    ['feColorMatrix', { given: ['<svg><filter><feColorMatrix /></filter></svg>', 'feColorMatrix'], want: 'none' }],
+    [
+      'feComponentTransfer',
+      { given: ['<svg><filter><feComponentTransfer /></filter></svg>', 'feComponentTransfer'], want: 'none' },
+    ],
+    ['feComposite', { given: ['<svg><filter><feComposite /></filter></svg>', 'feComposite'], want: 'none' }],
+    [
+      'feConvolveMatrix',
+      { given: ['<svg><filter><feConvolveMatrix /></filter></svg>', 'feConvolveMatrix'], want: 'none' },
+    ],
+    [
+      'feDiffuseLighting',
+      {
+        given: ['<svg><filter><feDiffuseLighting></feDiffuseLighting></filter></svg>', 'feDiffuseLighting'],
+        want: 'none',
+      },
+    ],
+    [
+      'feDisplacementMap',
+      { given: ['<svg><filter><feDisplacementMap /></filter></svg>', 'feDisplacementMap'], want: 'none' },
+    ],
+    [
+      'feDistantLight',
+      {
+        given: [
+          '<svg><filter><feSpecularLighting><feDistantLight /></feSpecularLighting></filter></svg>',
+          'feDistantLight',
+        ],
+        want: 'none',
+      },
+    ],
+    [
+      'feDropShadow',
+      {
+        given: ['<svg><filter><feDropShadow /></filter></svg>', 'feDropShadow'],
+        want: 'none',
+      },
+    ],
+    ['feFlood', { given: ['<svg><filter><feFlood /></filter></svg>', 'feFlood'], want: 'none' }],
+    ['feFuncA', { given: ['<svg><filter><feFuncA /></filter></svg>', 'feFuncA'], want: 'none' }],
+    ['feFuncB', { given: ['<svg><filter><feFuncB /></filter></svg>', 'feFuncB'], want: 'none' }],
+    ['feFuncG', { given: ['<svg><filter><feFuncG /></filter></svg>', 'feFuncG'], want: 'none' }],
+    ['feFuncR', { given: ['<svg><filter><feFuncR /></filter></svg>', 'feFuncR'], want: 'none' }],
+    ['feGaussianBlur', { given: ['<svg><filter><feGaussianBlur /></filter></svg>', 'feGaussianBlur'], want: 'none' }],
+    ['feImage', { given: ['<svg><filter><feImage /></filter></svg>', 'feImage'], want: 'none' }],
+    ['feMerge', { given: ['<svg><filter><feMerge /></filter></svg>', 'feMerge'], want: 'none' }],
+    ['feMergeNode', { given: ['<svg><filter><feMergeNode /></filter></svg>', 'feMergeNode'], want: 'none' }],
+    ['feMorphology', { given: ['<svg><filter><feMorphology /></filter></svg>', 'feMorphology'], want: 'none' }],
+    ['feOffset', { given: ['<svg><filter><feOffset /></filter></svg>', 'feOffset'], want: 'none' }],
+    [
+      'fePointLight',
+      {
+        given: [
+          '<svg><filter><feSpecularLighting><fePointLight /></feSpecularLighting></filter></svg>',
+          'fePointLight',
+        ],
+        want: 'none',
+      },
+    ],
+    [
+      'feSpecularLighting',
+      {
+        given: ['<svg><filter><feSpecularLighting></feSpecularLighting></filter></svg>', 'feSpecularLighting'],
+        want: 'none',
+      },
+    ],
+    [
+      'feSpotLight',
+      {
+        given: ['<svg><filter><feSpecularLighting><feSpotLight /></feSpecularLighting></filter></svg>', 'feSpotLight'],
+        want: 'none',
+      },
+    ],
+    ['feTile', { given: ['<svg><filter><feTile /></fitler></svg>', 'feTile'], want: 'none' }],
+    ['feTurbulence', { given: ['<svg><filter><feTurbulence /></filter></svg>', 'feTurbulence'], want: 'none' }],
+    ['filter', { given: ['<svg><filter></filter></svg>', 'filter'], want: 'none' }],
+    ['foreignObject', { given: ['<svg><foreignObject></foreignObject></svg>', 'foreignObject'], want: 'none' }],
+    ['g', { given: ['<svg><g></g></svg>', 'g'], want: 'none' }],
+    ['g (title)', { given: ['<svg><g><title>Group</title></g></svg>', 'g'], want: 'group' }],
+    ['image', { given: ['<svg><image></image></svg>', 'image'], want: 'none' }],
+    ['line', { given: ['<svg><line></line></svg>', 'line'], want: 'none' }],
+    ['linearGradient', { given: ['<svg><linearGradient></linearGradient></svg>', 'linearGradient'], want: 'none' }],
+    ['marker', { given: ['<svg><marker></marker></svg>', 'marker'], want: 'none' }],
+    ['mask', { given: ['<svg><mask></mask></svg>', 'mask'], want: 'none' }],
+    ['metadata', { given: ['<svg><metadata></metadata></svg>', 'metadata'], want: 'none' }],
+    ['mpath', { given: ['<svg><mpath /></svg>', 'mpath'], want: 'none' }],
+    ['path', { given: ['<svg><path /></svg>', 'path'], want: 'none' }],
+    ['pattern', { given: ['<svg><pattern></pattern></svg>', 'pattern'], want: 'none' }],
+    ['polygon', { given: ['<svg><polygon /></svg>', 'polygon'], want: 'none' }],
+    ['polyline', { given: ['<svg><polyline /></svg>', 'polyline'], want: 'none' }],
+    ['radialGradient', { given: ['<svg><radialGradient></radialGradient></svg>', 'radialGradient'], want: 'none' }],
+    ['rect', { given: ['<svg><rect></rect></svg>', 'rect'], want: 'none' }],
+    ['set', { given: ['<svg><set></set></svg>', 'set'], want: 'none' }],
+    ['stop', { given: ['<svg><linearGradient><stop></stop></linearGradient></svg>', 'stop'], want: 'none' }],
+    ['switch', { given: ['<svg><switch></switch></svg>', 'switch'], want: 'none' }],
+    ['symbol', { given: ['<svg><symbol></symbol></svg>', 'symbol'], want: 'none' }],
+    ['text', { given: ['<svg><text></text></svg>', 'text'], want: 'group' }],
+    ['textPath', { given: ['<svg><textPath></textPath></svg>', 'textPath'], want: 'none' }],
+    ['tspan', { given: ['<svg><tspan></tspan></svg>', 'tspan'], want: 'none' }],
+    ['tspan (title)', { given: ['<svg><tspan></tspan></svg>', 'tspan'], want: 'none' }],
+    ['use', { given: ['<svg><use></use></svg>', 'use'], want: 'none' }],
+    ['view', { given: ['<svg><view></view></svg>', 'view'], want: 'none' }],
   ];
 
   const testedTags = new Set<string>();
@@ -344,11 +491,6 @@ describe('getRole', () => {
   });
 
   test('all tags are tested', () => {
-    const allTags = Object.keys(tags);
-    for (const tag of allTags) {
-      if (!testedTags.has(tag)) {
-        console.warn(`Tag "${tag}" is not tested`);
-      }
-    }
+    checkAllTagsTested(testedTags);
   });
 });

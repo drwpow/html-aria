@@ -1,12 +1,24 @@
+import { tags } from '../src';
+
 /** Ensure no copypasta error */
 export function checkTestAndTagName(testName: string, tagName: string) {
   // ignore custom elements
   if (tagName.includes('-')) {
     return;
   }
-
   if (!testName.includes(tagName)) {
     throw new Error(`Test "${testName}" is testing tag "${tagName}". Has there been a mistake?`);
+  }
+}
+
+const ALL_TAG_KEYS = Object.keys(tags);
+
+/** Ensure all tags are tested */
+export function checkAllTagsTested(testedTags: Set<string>) {
+  const untestedTags = new Set(ALL_TAG_KEYS.filter((tag) => !testedTags.has(tag)));
+  if (untestedTags.size) {
+    throw new Error(`The following tags are not tested:
+  - ${Array.from(untestedTags).join('  - ')}`);
   }
 }
 
@@ -33,5 +45,10 @@ export function setUpDOM(html: string, querySelector: string) {
   const container = document.createElement('div');
 
   container.innerHTML = html;
-  return { root: container, element: (container.querySelector(querySelector) || container.children[0]) as Element };
+  return {
+    root: container,
+    element: (container.querySelector(querySelector) ||
+      container.querySelector(querySelector.toLowerCase()) || // hack: jsdom and happy-dom convert `feDropShadow` to `feDropShadow`
+      container.children[0]) as Element,
+  };
 }

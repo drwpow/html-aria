@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import {
   type ARIAAttribute,
   NO_ATTRIBUTES,
+  type TagName,
   attributes,
   getSupportedAttributes,
   globalAttributes,
@@ -9,9 +10,8 @@ import {
   isValidAttributeValue,
   removeProhibited,
   roles,
-  tags,
 } from '../../src/index.js';
-import { checkTestAndTagName } from '../helpers.js';
+import { checkAllTagsTested, checkTestAndTagName } from '../helpers.js';
 
 // These tests are the most difficult to write—it’s very easy to make them
 // circular. To avoid that, it’s worth describing where the data came from.
@@ -137,7 +137,6 @@ const tests: [
   ['figure', { given: [{ tagName: 'figure' }], want: roles.figure.supported }],
   ['form', { given: [{ tagName: 'form' }], want: roles.form.supported }],
   ['footer', { given: [{ tagName: 'footer' }], want: roles.contentinfo.supported }],
-  ['g', { given: [{ tagName: 'g' }], want: GLOBAL_ATTRIBUTES }],
   ['h1', { given: [{ tagName: 'h1' }], want: roles.heading.supported }],
   ['h2', { given: [{ tagName: 'h2' }], want: roles.heading.supported }],
   ['h3', { given: [{ tagName: 'h3' }], want: roles.heading.supported }],
@@ -440,6 +439,73 @@ const tests: [
   ['var', { given: [{ tagName: 'var' }], want: removeProhibited(GLOBAL_ATTRIBUTES, { nameProhibited: true }) }],
   ['video', { given: [{ tagName: 'video' }], want: roles.application.supported }],
   ['wbr', { given: [{ tagName: 'wbr' }], want: ['aria-hidden'] }],
+
+  // Custom elements
+  ['custom-element', { given: [{ tagName: 'custom-element' as TagName }], want: GENERIC_NO_NAMING }],
+  [
+    'custom-element[role=button]',
+    { given: [{ tagName: 'custom-element' as TagName, attributes: { role: 'button' } }], want: roles.button.supported },
+  ],
+
+  // SVG
+  ['animate', { given: [{ tagName: 'animate' }], want: NO_ATTRIBUTES }],
+  ['animateMotion', { given: [{ tagName: 'animateMotion' }], want: NO_ATTRIBUTES }],
+  ['animateTransform', { given: [{ tagName: 'animateTransform' }], want: NO_ATTRIBUTES }],
+  ['circle', { given: [{ tagName: 'circle' }], want: roles.none.supported }],
+  ['clipPath', { given: [{ tagName: 'clipPath' }], want: NO_ATTRIBUTES }],
+  ['defs', { given: [{ tagName: 'defs' }], want: NO_ATTRIBUTES }],
+  ['desc', { given: [{ tagName: 'desc' }], want: NO_ATTRIBUTES }],
+  ['ellipse', { given: [{ tagName: 'ellipse' }], want: roles.none.supported }],
+  ['feBlend', { given: [{ tagName: 'feBlend' }], want: NO_ATTRIBUTES }],
+  ['feColorMatrix', { given: [{ tagName: 'feColorMatrix' }], want: NO_ATTRIBUTES }],
+  ['feComponentTransfer', { given: [{ tagName: 'feComponentTransfer' }], want: NO_ATTRIBUTES }],
+  ['feComposite', { given: [{ tagName: 'feComposite' }], want: NO_ATTRIBUTES }],
+  ['feConvolveMatrix', { given: [{ tagName: 'feConvolveMatrix' }], want: NO_ATTRIBUTES }],
+  ['feDiffuseLighting', { given: [{ tagName: 'feDiffuseLighting' }], want: NO_ATTRIBUTES }],
+  ['feDisplacementMap', { given: [{ tagName: 'feDisplacementMap' }], want: NO_ATTRIBUTES }],
+  ['feDistantLight', { given: [{ tagName: 'feDistantLight' }], want: NO_ATTRIBUTES }],
+  ['feDropShadow', { given: [{ tagName: 'feDropShadow' }], want: NO_ATTRIBUTES }],
+  ['feFlood', { given: [{ tagName: 'feFlood' }], want: NO_ATTRIBUTES }],
+  ['feFuncA', { given: [{ tagName: 'feFuncA' }], want: NO_ATTRIBUTES }],
+  ['feFuncB', { given: [{ tagName: 'feFuncB' }], want: NO_ATTRIBUTES }],
+  ['feFuncG', { given: [{ tagName: 'feFuncG' }], want: NO_ATTRIBUTES }],
+  ['feFuncR', { given: [{ tagName: 'feFuncR' }], want: NO_ATTRIBUTES }],
+  ['feGaussianBlur', { given: [{ tagName: 'feGaussianBlur' }], want: NO_ATTRIBUTES }],
+  ['feImage', { given: [{ tagName: 'feImage' }], want: NO_ATTRIBUTES }],
+  ['feMerge', { given: [{ tagName: 'feMerge' }], want: NO_ATTRIBUTES }],
+  ['feMergeNode', { given: [{ tagName: 'feMergeNode' }], want: NO_ATTRIBUTES }],
+  ['feMorphology', { given: [{ tagName: 'feMorphology' }], want: NO_ATTRIBUTES }],
+  ['feOffset', { given: [{ tagName: 'feOffset' }], want: NO_ATTRIBUTES }],
+  ['fePointLight', { given: [{ tagName: 'fePointLight' }], want: NO_ATTRIBUTES }],
+  ['feSpecularLighting', { given: [{ tagName: 'feSpecularLighting' }], want: NO_ATTRIBUTES }],
+  ['feSpotLight', { given: [{ tagName: 'feSpotLight' }], want: NO_ATTRIBUTES }],
+  ['feTile', { given: [{ tagName: 'feTile' }], want: NO_ATTRIBUTES }],
+  ['feTurbulence', { given: [{ tagName: 'feTurbulence' }], want: NO_ATTRIBUTES }],
+  ['filter', { given: [{ tagName: 'filter' }], want: NO_ATTRIBUTES }],
+  ['foreignObject', { given: [{ tagName: 'foreignObject' }], want: roles.none.supported }],
+  ['g', { given: [{ tagName: 'g' }], want: roles.none.supported }],
+  ['image', { given: [{ tagName: 'image' }], want: roles.none.supported }],
+  ['line', { given: [{ tagName: 'line' }], want: roles.none.supported }],
+  ['linearGradient', { given: [{ tagName: 'linearGradient' }], want: NO_ATTRIBUTES }],
+  ['marker', { given: [{ tagName: 'marker' }], want: NO_ATTRIBUTES }],
+  ['mask', { given: [{ tagName: 'mask' }], want: NO_ATTRIBUTES }],
+  ['metadata', { given: [{ tagName: 'metadata' }], want: NO_ATTRIBUTES }],
+  ['mpath', { given: [{ tagName: 'mpath' }], want: NO_ATTRIBUTES }],
+  ['path', { given: [{ tagName: 'path' }], want: roles.none.supported }],
+  ['pattern', { given: [{ tagName: 'pattern' }], want: NO_ATTRIBUTES }],
+  ['polygon', { given: [{ tagName: 'polygon' }], want: roles.none.supported }],
+  ['polyline', { given: [{ tagName: 'polyline' }], want: roles.none.supported }],
+  ['radialGradient', { given: [{ tagName: 'radialGradient' }], want: NO_ATTRIBUTES }],
+  ['rect', { given: [{ tagName: 'rect' }], want: roles.none.supported }],
+  ['set', { given: [{ tagName: 'set' }], want: NO_ATTRIBUTES }],
+  ['stop', { given: [{ tagName: 'stop' }], want: NO_ATTRIBUTES }],
+  ['switch', { given: [{ tagName: 'switch' }], want: NO_ATTRIBUTES }],
+  ['symbol', { given: [{ tagName: 'symbol' }], want: NO_ATTRIBUTES }],
+  ['text', { given: [{ tagName: 'text' }], want: roles.group.supported }],
+  ['textPath', { given: [{ tagName: 'textPath' }], want: roles.none.supported }],
+  ['tspan', { given: [{ tagName: 'tspan' }], want: roles.none.supported }],
+  ['use', { given: [{ tagName: 'use' }], want: roles.none.supported }],
+  ['view', { given: [{ tagName: 'view' }], want: NO_ATTRIBUTES }],
 ];
 
 describe('getSupportedAttributes', () => {
@@ -453,8 +519,7 @@ describe('getSupportedAttributes', () => {
   });
 
   test('all tags are tested', () => {
-    const missingTags = Object.keys(tags).filter((tag) => !testedTags.has(tag));
-    expect(missingTags).toEqual([]);
+    checkAllTagsTested(testedTags);
   });
 });
 
@@ -475,23 +540,77 @@ const valueTests: [
     want: ReturnType<typeof isValidAttributeValue>;
   },
 ][] = [
-  // enum
-  ['aria-checked="true"', { given: ['aria-checked', 'true'], want: true }],
-  ['aria-checked="false"', { given: ['aria-checked', 'false'], want: true }],
-  ['aria-checked="mixed"', { given: ['aria-checked', 'mixed'], want: true }],
-  ['aria-checked={true}', { given: ['aria-checked', true], want: true }],
-  ['aria-checked={false}', { given: ['aria-checked', false], want: true }],
-  ['aria-checked=""', { given: ['aria-checked', ''], want: false }], // acceptable for boolean, but this is an enum!
-  ['aria-checked="?"', { given: ['aria-checked', undefined], want: false }], // "undefined" is a valid value, however, this method assumes presence of an attribute (undefined is absence)
+  // token
+
   ['aria-checked="foobar"', { given: ['aria-checked', 'foobar'], want: false }],
 
-  // boolean
+  // true/false
   ['aria-disabled="true"', { given: ['aria-disabled', 'true'], want: true }],
   ['aria-disabled="false"', { given: ['aria-disabled', 'false'], want: true }],
   ['aria-disabled={true}', { given: ['aria-disabled', true], want: true }],
   ['aria-disabled={false}', { given: ['aria-disabled', false], want: true }],
   ['aria-disabled=""', { given: ['aria-disabled', ''], want: true }],
   ['aria-disabled="foobar"', { given: ['aria-disabled', 'foobar'], want: false }],
+
+  // true/false/undefined
+  ['aria-expanded=""', { given: ['aria-expanded', ''], want: true }],
+  ['aria-expanded="true"', { given: ['aria-expanded', 'true'], want: true }],
+  ['aria-expanded="false"', { given: ['aria-expanded', 'false'], want: true }],
+  ['aria-expanded={true}', { given: ['aria-expanded', true], want: true }],
+  ['aria-expanded={true}', { given: ['aria-expanded', undefined], want: true }],
+  ['aria-expanded="foobar"', { given: ['aria-expanded', 'foobar'], want: false }],
+
+  // tristate
+  ['aria-checked="true"', { given: ['aria-checked', 'true'], want: true }],
+  ['aria-checked="false"', { given: ['aria-checked', 'false'], want: true }],
+  ['aria-checked="mixed"', { given: ['aria-checked', 'mixed'], want: true }],
+  ['aria-checked={true}', { given: ['aria-checked', true], want: true }],
+  ['aria-checked={false}', { given: ['aria-checked', false], want: true }],
+  ['aria-checked=""', { given: ['aria-checked', ''], want: false }],
+  ['aria-checked={undefined}', { given: ['aria-checked', undefined], want: false }],
+
+  // ID Ref
+  ['aria-activedescendant="element-id"', { given: ['aria-activedescendant', 'element-id'], want: true }],
+  ['aria-activedescendant=""', { given: ['aria-activedescendant', ''], want: false }],
+
+  // ID Ref List
+  ['aria-owns="id1"', { given: ['aria-owns', 'id1'], want: true }],
+  ['aria-owns="id1 id2 id3"', { given: ['aria-owns', 'id1 id2 id3'], want: true }],
+  ['aria-owns=""', { given: ['aria-owns', ''], want: false }],
+
+  // Integer
+  ['aria-level="1"', { given: ['aria-level', '1'], want: true }],
+  ['aria-level={1}', { given: ['aria-level', 1], want: true }],
+  ['aria-level="0"', { given: ['aria-level', '0'], want: true }],
+  ['aria-level={0}', { given: ['aria-level', 0], want: true }],
+  ['aria-level=""', { given: ['aria-level', ''], want: false }],
+  ['aria-level="foobar"', { given: ['aria-level', 'foobar'], want: false }],
+  ['aria-level="1.1"', { given: ['aria-level', '1.1'], want: false }],
+  ['aria-level="1.1"', { given: ['aria-level', 1.1], want: false }],
+
+  // Number
+  ['aria-valuemax="100"', { given: ['aria-valuemax', '100'], want: true }],
+  ['aria-valuemax={100}', { given: ['aria-valuemax', 100], want: true }],
+  ['aria-valuemax="0"', { given: ['aria-valuemax', '0'], want: true }],
+  ['aria-valuemax={0}', { given: ['aria-valuemax', 0], want: true }],
+  ['aria-valuemax="50.435"', { given: ['aria-valuemax', '50.435'], want: true }],
+  ['aria-valuemax={50.435}', { given: ['aria-valuemax', 50.435], want: true }],
+  ['aria-valuemax="foobar"', { given: ['aria-valuemax', 'foobar'], want: false }],
+  ['aria-valuemax=""', { given: ['aria-valuemax', ''], want: false }],
+
+  // Token
+  ['aria-live="assertive"', { given: ['aria-live', 'assertive'], want: true }],
+  ['aria-live="off"', { given: ['aria-live', 'off'], want: true }],
+  ['aria-live="polite"', { given: ['aria-live', 'polite'], want: true }],
+  ['aria-live="assertive polite"', { given: ['aria-live', 'assertive polite'], want: false }],
+
+  // Token List
+  ['aria-relevant="additions"', { given: ['aria-relevant', 'additions'], want: true }],
+  ['aria-relevant="additions removals"', { given: ['aria-relevant', 'additions removals'], want: true }],
+  ['aria-relevant="additions text removals"', { given: ['aria-relevant', 'additions text removals'], want: true }],
+  ['aria-relevant="all"', { given: ['aria-relevant', 'all'], want: true }],
+  ['aria-relevant=""', { given: ['aria-relevant', ''], want: false }],
+  ['aria-relevant="false"', { given: ['aria-relevant', 'false'], want: false }],
 ];
 
 describe('isValidAttributeValue', () => {

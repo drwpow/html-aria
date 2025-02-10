@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { NO_CORRESPONDING_ROLE, type TagName, getRole, tags } from '../../src/index.js';
-import { checkTestAndTagName } from '../helpers.js';
+import { checkAllTagsTested, checkTestAndTagName } from '../helpers.js';
 
 describe('getRole', () => {
   /**
@@ -112,7 +112,6 @@ describe('getRole', () => {
     ['footer', { given: [{ tagName: 'footer' }], want: 'contentinfo' }],
     ['footer (landmark)', { given: [{ tagName: 'footer' }, { ancestors: [{ tagName: 'article' }] }], want: 'generic' }],
     ['form', { given: [{ tagName: 'form' }], want: 'form' }],
-    ['g', { given: [{ tagName: 'g' }], want: NO_CORRESPONDING_ROLE }],
     ['h1', { given: [{ tagName: 'h1' }], want: 'heading' }],
     ['h2', { given: [{ tagName: 'h2' }], want: 'heading' }],
     ['h3', { given: [{ tagName: 'h3' }], want: 'heading' }],
@@ -341,12 +340,6 @@ describe('getRole', () => {
     ['sub', { given: [{ tagName: 'sub' }], want: 'subscript' }],
     ['summary', { given: [{ tagName: 'summary' }], want: NO_CORRESPONDING_ROLE }],
     ['sup', { given: [{ tagName: 'sup' }], want: 'superscript' }],
-    ['svg', { given: [{ tagName: 'svg' }], want: 'graphics-document' }],
-    ['svg[role=img]', { given: [{ tagName: 'svg', attributes: { role: 'img' } }], want: 'img' }],
-    [
-      'svg[role=graphics-symbol img]',
-      { given: [{ tagName: 'svg', attributes: { role: 'graphics-symbol img' } }], want: 'graphics-symbol' },
-    ],
     ['table', { given: [{ tagName: 'table' }], want: 'table' }],
     ['tbody', { given: [{ tagName: 'tbody' }], want: 'rowgroup' }],
     ['td', { given: [{ tagName: 'td' }], want: 'cell' }],
@@ -408,11 +401,84 @@ describe('getRole', () => {
     ['var', { given: [{ tagName: 'var' }], want: NO_CORRESPONDING_ROLE }],
     ['video', { given: [{ tagName: 'video' }], want: NO_CORRESPONDING_ROLE }],
     ['wbr', { given: [{ tagName: 'wbr' }], want: NO_CORRESPONDING_ROLE }],
+
+    // Custom elements
     ['custom element', { given: [{ tagName: 'x-button' as TagName }], want: 'generic' }],
     [
       'custom element (with role)',
       { given: [{ tagName: 'x-button' as TagName, attributes: { role: 'button' } }], want: 'button' },
     ],
+
+    // SVG
+    ['svg', { given: [{ tagName: 'svg' }], want: 'graphics-document' }],
+    ['svg[role=img]', { given: [{ tagName: 'svg', attributes: { role: 'img' } }], want: 'img' }],
+    [
+      'svg[role=graphics-symbol img]',
+      { given: [{ tagName: 'svg', attributes: { role: 'graphics-symbol img' } }], want: 'graphics-symbol' },
+    ],
+    ['animate', { given: [{ tagName: 'animate' }], want: 'none' }],
+    ['animateMotion', { given: [{ tagName: 'animateMotion' }], want: 'none' }],
+    ['animateTransform', { given: [{ tagName: 'animateTransform' }], want: 'none' }],
+    ['circle', { given: [{ tagName: 'circle' }], want: 'none' }],
+    [
+      'circle[aria-label]',
+      { given: [{ tagName: 'circle', attributes: { 'aria-label': 'Circle' } }], want: 'graphics-symbol' },
+    ],
+    ['clipPath', { given: [{ tagName: 'clipPath' }], want: 'none' }],
+    ['defs', { given: [{ tagName: 'defs' }], want: 'none' }],
+    ['desc', { given: [{ tagName: 'desc' }], want: 'none' }],
+    ['ellipse', { given: [{ tagName: 'ellipse' }], want: 'none' }],
+    ['feBlend', { given: [{ tagName: 'feBlend' }], want: 'none' }],
+    ['feColorMatrix', { given: [{ tagName: 'feColorMatrix' }], want: 'none' }],
+    ['feComponentTransfer', { given: [{ tagName: 'feComponentTransfer' }], want: 'none' }],
+    ['feComposite', { given: [{ tagName: 'feComposite' }], want: 'none' }],
+    ['feConvolveMatrix', { given: [{ tagName: 'feConvolveMatrix' }], want: 'none' }],
+    ['feDiffuseLighting', { given: [{ tagName: 'feDiffuseLighting' }], want: 'none' }],
+    ['feDisplacementMap', { given: [{ tagName: 'feDisplacementMap' }], want: 'none' }],
+    ['feDistantLight', { given: [{ tagName: 'feDistantLight' }], want: 'none' }],
+    ['feDropShadow', { given: [{ tagName: 'feDropShadow' }], want: 'none' }],
+    ['feFlood', { given: [{ tagName: 'feFlood' }], want: 'none' }],
+    ['feFuncA', { given: [{ tagName: 'feFuncA' }], want: 'none' }],
+    ['feFuncB', { given: [{ tagName: 'feFuncB' }], want: 'none' }],
+    ['feFuncG', { given: [{ tagName: 'feFuncG' }], want: 'none' }],
+    ['feFuncR', { given: [{ tagName: 'feFuncR' }], want: 'none' }],
+    ['feGaussianBlur', { given: [{ tagName: 'feGaussianBlur' }], want: 'none' }],
+    ['feImage', { given: [{ tagName: 'feImage' }], want: 'none' }],
+    ['feMerge', { given: [{ tagName: 'feMerge' }], want: 'none' }],
+    ['feMergeNode', { given: [{ tagName: 'feMergeNode' }], want: 'none' }],
+    ['feMorphology', { given: [{ tagName: 'feMorphology' }], want: 'none' }],
+    ['feOffset', { given: [{ tagName: 'feOffset' }], want: 'none' }],
+    ['fePointLight', { given: [{ tagName: 'fePointLight' }], want: 'none' }],
+    ['feSpecularLighting', { given: [{ tagName: 'feSpecularLighting' }], want: 'none' }],
+    ['feSpotLight', { given: [{ tagName: 'feSpotLight' }], want: 'none' }],
+    ['feTile', { given: [{ tagName: 'feTile' }], want: 'none' }],
+    ['feTurbulence', { given: [{ tagName: 'feTurbulence' }], want: 'none' }],
+    ['filter', { given: [{ tagName: 'filter' }], want: 'none' }],
+    ['foreignObject', { given: [{ tagName: 'foreignObject' }], want: 'none' }],
+    ['g', { given: [{ tagName: 'g' }], want: 'none' }],
+    ['g[aria-label]', { given: [{ tagName: 'g', attributes: { 'aria-label': 'Group' } }], want: 'group' }],
+    ['image', { given: [{ tagName: 'image' }], want: 'none' }],
+    ['line', { given: [{ tagName: 'line' }], want: 'none' }],
+    ['linearGradient', { given: [{ tagName: 'linearGradient' }], want: 'none' }],
+    ['marker', { given: [{ tagName: 'marker' }], want: 'none' }],
+    ['mask', { given: [{ tagName: 'mask' }], want: 'none' }],
+    ['metadata', { given: [{ tagName: 'metadata' }], want: 'none' }],
+    ['mpath', { given: [{ tagName: 'mpath' }], want: 'none' }],
+    ['path', { given: [{ tagName: 'path' }], want: 'none' }],
+    ['pattern', { given: [{ tagName: 'pattern' }], want: 'none' }],
+    ['polygon', { given: [{ tagName: 'polygon' }], want: 'none' }],
+    ['polyline', { given: [{ tagName: 'polyline' }], want: 'none' }],
+    ['radialGradient', { given: [{ tagName: 'radialGradient' }], want: 'none' }],
+    ['rect', { given: [{ tagName: 'rect' }], want: 'none' }],
+    ['set', { given: [{ tagName: 'set' }], want: 'none' }],
+    ['stop', { given: [{ tagName: 'stop' }], want: 'none' }],
+    ['switch', { given: [{ tagName: 'switch' }], want: 'none' }],
+    ['symbol', { given: [{ tagName: 'symbol' }], want: 'none' }],
+    ['text', { given: [{ tagName: 'text' }], want: 'group' }],
+    ['textPath', { given: [{ tagName: 'textPath' }], want: 'none' }],
+    ['tspan', { given: [{ tagName: 'tspan' }], want: 'none' }],
+    ['use', { given: [{ tagName: 'use' }], want: 'none' }],
+    ['view', { given: [{ tagName: 'view' }], want: 'none' }],
   ];
 
   const testedTags = new Set<string>();
@@ -424,11 +490,6 @@ describe('getRole', () => {
   });
 
   test('all tags are tested', () => {
-    const allTags = Object.keys(tags);
-    for (const tag of allTags) {
-      if (!testedTags.has(tag)) {
-        console.warn(`Tag "${tag}" is not tested`);
-      }
-    }
+    checkAllTagsTested(testedTags);
   });
 });

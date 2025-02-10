@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { ALL_ROLES, NO_ROLES, getSupportedRoles, getTagName, isSupportedRole, tags } from '../../src/index.js';
-import { checkTestAndTagName, setUpDOM } from '../helpers.js';
+import { checkAllTagsTested, checkTestAndTagName, setUpDOM } from '../helpers.js';
 
 describe('getSupportedRoles', () => {
   const tests: [
@@ -90,7 +90,6 @@ describe('getSupportedRoles', () => {
       'footer (default)',
       { given: ['<footer></footer>', 'footer'], want: ['contentinfo', 'generic', 'group', 'none', 'presentation'] },
     ],
-    ['g', { given: ['<g></g>', 'g'], want: ['group', 'graphics-object'] }],
     ['h1', { given: ['<h1></h1>', 'h1'], want: ['heading', 'none', 'presentation', 'tab'] }],
     ['h2', { given: ['<h2></h2>', 'h2'], want: ['heading', 'none', 'presentation', 'tab'] }],
     ['h3', { given: ['<h3></h3>', 'h3'], want: ['heading', 'none', 'presentation', 'tab'] }],
@@ -395,6 +394,118 @@ describe('getSupportedRoles', () => {
     ['var', { given: ['<var></var>', 'var'], want: ALL_ROLES }],
     ['video', { given: ['<video></video>', 'video'], want: ['application'] }],
     ['wbr', { given: ['<wbr></wbr>', 'wbr'], want: ['none', 'presentation'] }],
+
+    // Custom elements
+    ['custom-element', { given: ['<custom-element></custom-element>', 'custom-element'], want: ALL_ROLES }],
+    [
+      'custom-element (role)',
+      { given: ['<custom-element role="button"></custom-element>', 'custom-element'], want: ALL_ROLES },
+    ],
+
+    // SVG
+    ['animate', { given: ['<svg><animate /></svg>', 'animate'], want: NO_ROLES }],
+    ['animateMotion', { given: ['<svg><animateMotion /></svg>', 'animateMotion'], want: NO_ROLES }],
+    ['animateTransform', { given: ['<svg><animateTransform /></svg>', 'animateTransform'], want: NO_ROLES }],
+    ['circle', { given: ['<svg><circle /></svg>', 'circle'], want: ALL_ROLES }],
+    ['clipPath', { given: ['<svg><clipPath /></svg>', 'clipPath'], want: NO_ROLES }],
+    ['defs', { given: ['<svg><defs /></svg>', 'defs'], want: NO_ROLES }],
+    ['desc', { given: ['<svg><desc /></svg>', 'desc'], want: NO_ROLES }],
+    ['ellipse', { given: ['<svg><ellipse /></svg>', 'ellipse'], want: ALL_ROLES }],
+    ['feBlend', { given: ['<svg><filter><feBlend /></filter></svg>', 'feBlend'], want: NO_ROLES }],
+    ['feColorMatrix', { given: ['<svg><filter><feColorMatrix /></filter></svg>', 'feColorMatrix'], want: NO_ROLES }],
+    [
+      'feComponentTransfer',
+      { given: ['<svg><filter><feComponentTransfer /></filter></svg>', 'feComponentTransfer'], want: NO_ROLES },
+    ],
+    ['feComposite', { given: ['<svg><filter><feComposite /></filter></svg>', 'feComposite'], want: NO_ROLES }],
+    [
+      'feConvolveMatrix',
+      { given: ['<svg><filter><feConvolveMatrix /></filter></svg>', 'feConvolveMatrix'], want: NO_ROLES },
+    ],
+    [
+      'feDiffuseLighting',
+      {
+        given: ['<svg><filter><feDiffuseLighting></feDiffuseLighting></filter></svg>', 'feDiffuseLighting'],
+        want: NO_ROLES,
+      },
+    ],
+    [
+      'feDisplacementMap',
+      { given: ['<svg><filter><feDisplacementMap /></filter></svg>', 'feDisplacementMap'], want: NO_ROLES },
+    ],
+    [
+      'feDistantLight',
+      {
+        given: [
+          '<svg><filter><feSpecularLighting><feDistantLight /></feSpecularLighting></filter></svg>',
+          'feDistantLight',
+        ],
+        want: NO_ROLES,
+      },
+    ],
+    ['feDropShadow', { given: ['<svg><filter><feDropShadow /></filter></svg>', 'feDropShadow'], want: NO_ROLES }],
+    ['feFlood', { given: ['<svg><filter><feFlood /></filter></svg>', 'feFlood'], want: NO_ROLES }],
+    ['feFuncA', { given: ['<svg><filter><feFuncA /></filter></svg>', 'feFuncA'], want: NO_ROLES }],
+    ['feFuncB', { given: ['<svg><filter><feFuncB /></filter></svg>', 'feFuncB'], want: NO_ROLES }],
+    ['feFuncG', { given: ['<svg><filter><feFuncG /></filter></svg>', 'feFuncG'], want: NO_ROLES }],
+    ['feFuncR', { given: ['<svg><filter><feFuncR /></filter></svg>', 'feFuncR'], want: NO_ROLES }],
+    ['feGaussianBlur', { given: ['<svg><filter><feGaussianBlur /></filter></svg>', 'feGaussianBlur'], want: NO_ROLES }],
+    ['feImage', { given: ['<svg><filter><feImage /></filter></svg>', 'feImage'], want: NO_ROLES }],
+    ['feMerge', { given: ['<svg><filter><feMerge /></filter></svg>', 'feMerge'], want: NO_ROLES }],
+    ['feMergeNode', { given: ['<svg><filter><feMergeNode /></filter></svg>', 'feMergeNode'], want: NO_ROLES }],
+    ['feMorphology', { given: ['<svg><filter><feMorphology /></filter></svg>', 'feMorphology'], want: NO_ROLES }],
+    ['feOffset', { given: ['<svg><filter><feOffset /></filter></svg>', 'feOffset'], want: NO_ROLES }],
+    [
+      'fePointLight',
+      {
+        given: [
+          '<svg><filter><feSpecularLighting><fePointLight /></feSpecularLighting></filter></svg>',
+          'fePointLight',
+        ],
+        want: NO_ROLES,
+      },
+    ],
+    [
+      'feSpecularLighting',
+      {
+        given: ['<svg><filter><feSpecularLighting></feSpecularLighting></filter></svg>', 'feSpecularLighting'],
+        want: NO_ROLES,
+      },
+    ],
+    [
+      'feSpotLight',
+      {
+        given: ['<svg><filter><feSpecularLighting><feSpotLight /></feSpecularLighting></filter></svg>', 'feSpotLight'],
+        want: NO_ROLES,
+      },
+    ],
+    ['feTile', { given: ['<svg><filter><feTile /></filter></svg>', 'feTile'], want: NO_ROLES }],
+    ['feTurbulence', { given: ['<svg><filter><feTurbulence /></filter></svg>', 'feTurbulence'], want: NO_ROLES }],
+    ['filter', { given: ['<svg><filter /></svg>', 'filter'], want: NO_ROLES }],
+    ['foreignObject', { given: ['<svg><foreignObject></foreignObject></svg>', 'foreignObject'], want: ALL_ROLES }],
+    ['g', { given: ['<svg><g /></svg>', 'g'], want: ALL_ROLES }],
+    ['image', { given: ['<svg><image /></svg>', 'image'], want: ALL_ROLES }],
+    ['line', { given: ['<svg><line /></svg>', 'line'], want: ALL_ROLES }],
+    ['linearGradient', { given: ['<svg><linearGradient /></svg>', 'linearGradient'], want: NO_ROLES }],
+    ['marker', { given: ['<svg><marker /></svg>', 'marker'], want: NO_ROLES }],
+    ['mask', { given: ['<svg><mask /></svg>', 'mask'], want: NO_ROLES }],
+    ['metadata', { given: ['<svg><metadata /></svg>', 'metadata'], want: NO_ROLES }],
+    ['mpath', { given: ['<svg><mpath /></svg>', 'mpath'], want: NO_ROLES }],
+    ['path', { given: ['<svg><path /></svg>', 'path'], want: ALL_ROLES }],
+    ['pattern', { given: ['<svg><pattern></pattern></svg>', 'pattern'], want: NO_ROLES }],
+    ['polygon', { given: ['<svg><polygon /></svg>', 'polygon'], want: ALL_ROLES }],
+    ['polyline', { given: ['<svg><polyline /></svg>', 'polyline'], want: ALL_ROLES }],
+    ['radialGradient', { given: ['<svg><radialGradient /></svg>', 'radialGradient'], want: NO_ROLES }],
+    ['rect', { given: ['<svg><rect /></svg>', 'rect'], want: ALL_ROLES }],
+    ['set', { given: ['<svg><set /></svg>', 'set'], want: NO_ROLES }],
+    ['stop', { given: ['<svg><linearGradient><stop /></linearGradient></svg>', 'stop'], want: NO_ROLES }],
+    ['switch', { given: ['<svg><switch /></svg>', 'switch'], want: NO_ROLES }],
+    ['symbol', { given: ['<svg><symbol></symbol></svg>', 'symbol'], want: NO_ROLES }],
+    ['text', { given: ['<svg><text /></svg>', 'text'], want: ALL_ROLES }],
+    ['textPath', { given: ['<svg><textPath /></svg>', 'textPath'], want: ALL_ROLES }],
+    ['tspan', { given: ['<svg><tspan /></svg>', 'tspan'], want: ALL_ROLES }],
+    ['use', { given: ['<svg><use /></svg>', 'use'], want: ALL_ROLES }],
+    ['view', { given: ['<svg><view /></svg>', 'view'], want: NO_ROLES }],
   ];
 
   const testedTags = new Set<string>();
@@ -408,12 +519,7 @@ describe('getSupportedRoles', () => {
   });
 
   test('all tags are tested', () => {
-    const allTags = Object.keys(tags);
-    for (const tag of allTags) {
-      if (!testedTags.has(tag)) {
-        console.warn(`Tag "${tag}" is not tested`);
-      }
-    }
+    checkAllTagsTested(testedTags);
   });
 });
 
