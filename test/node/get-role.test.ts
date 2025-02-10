@@ -29,55 +29,52 @@ describe('getRole', () => {
     ['area (href)', { given: [{ tagName: 'area', attributes: { href: '/about' } }], want: 'link' }],
     ['article', { given: [{ tagName: 'article' }], want: 'article' }],
     ['aside', { given: [{ tagName: 'aside' }], want: 'complementary' }],
+    ['aside (in main)', { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'main' }] }], want: 'complementary' }],
     [
-      'aside (name, sectioning article)',
+      'aside (in article in main)',
+      { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'article' }, { tagName: 'main' }] }], want: 'generic' },
+    ],
+    [
+      'aside[aria-label] (in article in main)',
       {
         given: [
-          { tagName: 'aside', attributes: { 'aria-label': 'My aside' } },
-          { ancestors: [{ tagName: 'article' }] },
+          { tagName: 'aside', attributes: { 'aria-label': 'Aside' } },
+          { ancestors: [{ tagName: 'article' }, { tagName: 'main' }] },
         ],
         want: 'complementary',
       },
     ],
+    ['aside (in article)', { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'article' }] }], want: 'generic' }],
     [
-      'aside (name, sectioning aside)',
+      'aside[aria-label] (in article)',
       {
-        given: [{ tagName: 'aside', attributes: { 'aria-label': 'My aside' } }, { ancestors: [{ tagName: 'aside' }] }],
+        given: [{ tagName: 'aside', attributes: { 'aria-label': 'Aside' } }, { ancestors: [{ tagName: 'article' }] }],
         want: 'complementary',
       },
     ],
+    ['aside (in aside)', { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'aside' }] }], want: 'generic' }],
     [
-      'aside (name, sectioning nav)',
+      'aside[aria-label] (in aside)',
       {
-        given: [{ tagName: 'aside', attributes: { 'aria-label': 'My aside' } }, { ancestors: [{ tagName: 'nav' }] }],
+        given: [{ tagName: 'aside', attributes: { 'aria-label': 'Aside' } }, { ancestors: [{ tagName: 'aside' }] }],
         want: 'complementary',
       },
     ],
+    ['aside (in nav)', { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'nav' }] }], want: 'generic' }],
     [
-      'aside (name, sectioning section)',
+      'aside[aria-label] (in nav)',
       {
-        given: [
-          { tagName: 'aside', attributes: { 'aria-label': 'My aside' } },
-          { ancestors: [{ tagName: 'section' }] },
-        ],
+        given: [{ tagName: 'aside', attributes: { 'aria-label': 'Aside' } }, { ancestors: [{ tagName: 'nav' }] }],
         want: 'complementary',
       },
     ],
+    ['aside (in section)', { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'section' }] }], want: 'generic' }],
     [
-      'aside (no name, sectioning article)',
-      { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'article' }] }], want: 'generic' },
-    ],
-    [
-      'aside (no name, sectioning aside)',
-      { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'aside' }] }], want: 'generic' },
-    ],
-    [
-      'aside (no name, sectioning nav)',
-      { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'nav' }] }], want: 'generic' },
-    ],
-    [
-      'aside (no name, sectioning section)',
-      { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'section' }] }], want: 'generic' },
+      'aside[aria-label] (in section)',
+      {
+        given: [{ tagName: 'aside', attributes: { 'aria-label': 'Aside' } }, { ancestors: [{ tagName: 'section' }] }],
+        want: 'complementary',
+      },
     ],
     ['audio', { given: [{ tagName: 'audio' }], want: NO_CORRESPONDING_ROLE }],
     ['b', { given: [{ tagName: 'b' }], want: 'generic' }],
@@ -316,15 +313,15 @@ describe('getRole', () => {
     ['samp', { given: [{ tagName: 'samp' }], want: 'generic' }],
     ['script', { given: [{ tagName: 'script' }], want: NO_CORRESPONDING_ROLE }],
     ['search', { given: [{ tagName: 'search' }], want: 'search' }],
+    ['section', { given: [{ tagName: 'section' }], want: 'generic' }],
     [
-      'section (named by label)',
+      'section[aria-label]',
       { given: [{ tagName: 'section', attributes: { 'aria-label': 'My section' } }], want: 'region' },
     ],
     [
-      'section (named by labelledby)',
+      'section[aria-labelledby]',
       { given: [{ tagName: 'section', attributes: { 'aria-labelledby': 'My section' } }], want: 'region' },
     ],
-    ['section (no name)', { given: [{ tagName: 'section' }], want: 'generic' }],
     ['select', { given: [{ tagName: 'select' }], want: 'combobox' }],
     ['select[size=0]', { given: [{ tagName: 'select', attributes: { size: 0 } }], want: 'combobox' }],
     ['select[size=1]', { given: [{ tagName: 'select', attributes: { size: 1 } }], want: 'combobox' }],
@@ -458,6 +455,7 @@ describe('getRole', () => {
     ['g', { given: [{ tagName: 'g' }], want: 'none' }],
     ['g[aria-label]', { given: [{ tagName: 'g', attributes: { 'aria-label': 'Group' } }], want: 'group' }],
     ['image', { given: [{ tagName: 'image' }], want: 'none' }],
+    ['image', { given: [{ tagName: 'image', attributes: { src: 'foo.png' } }], want: 'img' }],
     ['line', { given: [{ tagName: 'line' }], want: 'none' }],
     ['linearGradient', { given: [{ tagName: 'linearGradient' }], want: 'none' }],
     ['marker', { given: [{ tagName: 'marker' }], want: 'none' }],
