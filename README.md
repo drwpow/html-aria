@@ -207,7 +207,7 @@ Worth noting that this is slightly-different from a [related concept](https://ww
 
 ### isInteractive()
 
-Return `true` if a given HTML tag may be interacted with or not.
+Return `true` if a given HTML tag _MAY_ be interacted with or not. It does NOT check if an element is interactive in the moment (e.g. it won’t account for `display: none` or more advanced scenarios).
 
 ```ts
 isInteractive({ tagName: "button" }); // true
@@ -220,10 +220,6 @@ isInteractive({
   attributes: { tabindex: 0, "aria-valuenow": 10 },
 }); // true (see https://www.w3.org/TR/wai-aria-1.3/#separator)
 ```
-
-> ![WARNING]
->
-> This doesn’t check for `display: none`, which could be applied with CSS that would make any element non-interactive.
 
 The methodology for this follows the complete ARIA specification:
 
