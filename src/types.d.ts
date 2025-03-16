@@ -549,7 +549,62 @@ export type WindowRole = 'alertdialog' | 'dialog';
  */
 export type GraphicsRole = 'graphics-document' | 'graphics-object' | 'graphics-symbol';
 
-export type ARIARole = WidgetRole | DocumentStructureRole | LandmarkRole | LiveRegionRole | WindowRole | GraphicsRole;
+/**
+ * Digital Publishing Roles extensions
+ * @see https://www.w3.org/TR/dpub-aria-1.1/#roles
+ */
+export type DigitalPublishingRole =
+  | 'doc-abstract'
+  | 'doc-acknowledgements'
+  | 'doc-afterword'
+  | 'doc-appendix'
+  | 'doc-backlink'
+  | 'doc-biblioentry'
+  | 'doc-bibliography'
+  | 'doc-biblioref'
+  | 'doc-chapter'
+  | 'doc-colophon'
+  | 'doc-conclusion'
+  | 'doc-cover'
+  | 'doc-cover'
+  | 'doc-credit'
+  | 'doc-credits'
+  | 'doc-dedication'
+  | 'doc-endnote'
+  | 'doc-endnotes'
+  | 'doc-epigraph'
+  | 'doc-epilogue'
+  | 'doc-errata'
+  | 'doc-example'
+  | 'doc-footnote'
+  | 'doc-foreword'
+  | 'doc-glossary'
+  | 'doc-glossref'
+  | 'doc-index'
+  | 'doc-introduction'
+  | 'doc-noteref'
+  | 'doc-notice'
+  | 'doc-pagebreak'
+  | 'doc-pagefooter'
+  | 'doc-pageheader'
+  | 'doc-pagelist'
+  | 'doc-part'
+  | 'doc-preface'
+  | 'doc-prologue'
+  | 'doc-pullquote'
+  | 'doc-qna'
+  | 'doc-subtitle'
+  | 'doc-tip'
+  | 'doc-toc';
+
+export type ARIARole =
+  | WidgetRole
+  | DocumentStructureRole
+  | LandmarkRole
+  | LiveRegionRole
+  | WindowRole
+  | GraphicsRole
+  | DigitalPublishingRole;
 
 /** Useful in places where the DOM isn’t available, e.g. SSR */
 export interface VirtualElement {
