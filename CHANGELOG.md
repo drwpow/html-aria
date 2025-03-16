@@ -1,5 +1,11 @@
 # html-aria
 
+## 0.3.0
+
+### Minor Changes
+
+- [#46](https://github.com/drwpow/html-aria/pull/46) [`e49b399`](https://github.com/drwpow/html-aria/commit/e49b399fe29fdd0ef9f71df33879f2a406a4a83e) Thanks [@jlp-craigmorten](https://github.com/jlp-craigmorten)! - Add digital publishing (dpub) extensions roles
+
 ## 0.2.0
 
 ### Minor Changes
