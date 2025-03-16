@@ -2,6 +2,7 @@ import type {
   ARIAAttribute,
   ARIARole,
   AbstractRole,
+  DigitalPublishingRole,
   DocumentStructureRole,
   GraphicsRole,
   LandmarkRole,
@@ -11,7 +12,15 @@ import type {
   WindowRole,
 } from '../types.js';
 
-export type RoleType = 'abstract' | 'widget' | 'document' | 'landmark' | 'liveregion' | 'window' | 'graphics';
+export type RoleType =
+  | 'abstract'
+  | 'widget'
+  | 'document'
+  | 'landmark'
+  | 'liveregion'
+  | 'window'
+  | 'graphics'
+  | 'digitalpublishing';
 
 // note: all fields required to be monomorphic
 export interface RoleData {
@@ -1702,6 +1711,713 @@ export const graphicsRoles: Record<GraphicsRole, RoleData> = {
   },
 };
 
+// digital publishing extensions from https://www.w3.org/TR/dpub-aam-1.1/
+export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
+  /** A short summary of the principal ideas, concepts, and conclusions of the work, or of a section or excerpt within it. */
+  'doc-abstract': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-abstract',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['section'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A section or statement that acknowledges significant contributions by persons, organizations, governments, and other entities to the realization of the work. */
+  'doc-acknowledgements': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-acknowledgements',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A closing statement from the author or a person of importance, typically providing insight into how the content came to be written, its significance, or related events that have transpired since its timeline. */
+  'doc-afterword': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-afterword',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A section of supplemental information located after the primary content that informs the content but is not central to it. */
+  'doc-appendix': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-appendix',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A link that allows the user to return to a related location in the content (e.g., from a footnote to its reference or from a glossary definition to where a term is used). */
+  'doc-backlink': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-backlink',
+    nameFrom: 'authorAndContents',
+    nameRequired: true,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['link'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /**
+   * A single reference to an external source in a bibliography. A biblioentry typically provides more detailed information than its reference(s) in the content (e.g., full title, author(s), publisher, publication date, etc.).
+   * @deprecated [Deprecated in DPUB-ARIA 1.1]
+   */
+  'doc-biblioentry': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-biblioentry',
+    nameFrom: 'author',
+    nameRequired: true,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['listitem'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage',  'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A list of external references cited in the work, which may be to print or digital sources. */
+  'doc-bibliography': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-bibliography',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A reference to a bibliography entry. */
+  'doc-biblioref': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-biblioref',
+    nameFrom: 'authorAndContents',
+    nameRequired: true,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['link'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A major thematic section of content in a work. */
+  'doc-chapter': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-chapter',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A short section of production notes particular to the edition (e.g., describing the typeface used), often located at the end of a work. */
+  'doc-colophon': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-colophon',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['section'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A concluding section or statement that summarizes the work or wraps up the narrative. */
+  'doc-conclusion': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-conclusion',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** An image that sets the mood or tone for the work and typically includes the title and author. */
+  'doc-cover': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-cover',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['img'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** An acknowledgment of the source of integrated content from third-party sources, such as photos. Typically identifies the creator, copyright, and any restrictions on reuse. */
+  'doc-credit': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-credit',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['section'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A collection of credits. */
+  'doc-credits': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-credits',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** An inscription at the front of the work, typically addressed in tribute to one or more persons close to the author. */
+  'doc-dedication': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-dedication',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['section'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /**
+   * One of a collection of notes that occur at the end of a work, or a section within it, that provides additional context to a referenced passage of text.
+   * @deprecated [Deprecated in DPUB-ARIA 1.1]
+   */
+  'doc-endnote': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-endnote',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['listitem'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A collection of notes at the end of a work or a section within it. */
+  'doc-endnotes': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-endnotes',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A quotation set at the start of the work or a section that establishes the theme or sets the mood. */
+  'doc-epigraph': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-epigraph',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['section'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A concluding section of narrative that wraps up or comments on the actions and events of the work, typically from a future perspective. */
+  'doc-epilogue': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-epilogue',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A set of corrections discovered after initial publication of the work, sometimes referred to as corrigenda. */
+  'doc-errata': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-errata',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** An illustration of a key concept of the work, such as a code listing, case study or problem. */
+  'doc-example': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-example',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['figure'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** Ancillary information, such as a citation or commentary, that provides additional context to a referenced passage of text. */
+  'doc-footnote': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-footnote',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['section'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** An introductory section that precedes the work, typically not written by the author of the work. */
+  'doc-foreword': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-foreword',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A brief dictionary of new, uncommon, or specialized terms used in the content. */
+  'doc-glossary': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-glossary',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A reference to a glossary definition. */
+  'doc-glossref': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-glossref',
+    nameFrom: 'authorAndContents',
+    nameRequired: true,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['link'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A navigational aid that provides a detailed list of links to key subjects, names and other important topics covered in the work. */
+  'doc-index': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-index',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['navigation'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A preliminary section that typically introduces the scope or nature of the work. */
+  'doc-introduction': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-introduction',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A reference to a footnote or endnote, typically appearing as a superscripted number or symbol in the main body of text. */
+  'doc-noteref': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-noteref',
+    nameFrom: 'authorAndContents',
+    nameRequired: true,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['link'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** Notifies the user of consequences that might arise from an action or event. Examples include warnings, cautions and dangers. */
+  'doc-notice': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-notice',
+    nameFrom: 'authorAndContents',
+    nameRequired: true,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['note'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A separator denoting the position before which a break occurs between two contiguous pages in a statically paginated version of the content. */
+  'doc-pagebreak': {
+    allowedChildRoles: [],
+    childrenPresentational: true,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-pagebreak',
+    nameFrom: 'authorAndContents',
+    nameRequired: true,
+    prohibited: [],
+    required: ['aria-valuenow'],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['separator'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-orientation', 'aria-owns', 'aria-relevant', 'aria-roledescription', 'aria-valuemax', 'aria-valuemin', 'aria-valuenow', 'aria-valuetext'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A section of text appearing at the bottom of a page that provides context about the current work and location within it. The page footer is distinct from the body text and normally follows a repeating template that contains (possibly truncated) items such as the document title, current section, author name(s), and page number.  */
+  'doc-pagefooter': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-pagefooter',
+    nameFrom: 'prohibited',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['section'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A section of text appearing at the top of a page that provides context about the current work and location within it. The page header is distinct from the body text and normally follows a repeating template that contains (possibly truncated) items such as the document title, current section, author name(s), and page number.  */
+  'doc-pageheader': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-pageheader',
+    nameFrom: 'prohibited',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['section'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A navigational aid that provides a list of links to the page breaks in the content. */
+  'doc-pagelist': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-pagelist',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['navigation'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A major structural division in a work that contains a set of related sections dealing with a particular subject, narrative arc, or similar encapsulated theme. */
+  'doc-part': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-part',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** An introductory section that precedes the work, typically written by the author of the work. */
+  'doc-preface': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-preface',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** An introductory section that sets the background to a work, typically part of the narrative. */
+  'doc-prologue': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-prologue',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['landmark'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A distinctively placed or highlighted quotation from the current content designed to draw attention to a topic or highlight a key point. */
+  'doc-pullquote': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-pullquote',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['section'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A section of content structured as a series of questions and answers, such as an interview or list of frequently asked questions. */
+  'doc-qna': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-qna',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['section'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** An explanatory or alternate title for the work, or a section or component within it. */
+  'doc-subtitle': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-subtitle',
+    nameFrom: 'authorAndContents',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['sectionhead'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** Helpful information that clarifies some aspect of the content or assists in its comprehension. */
+  'doc-tip': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-tip',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['note'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+  /** A navigational aid that provides an ordered list of links to the major sectional headings in the content. A table of contents may cover an entire work, or only a smaller section of it.  */
+  'doc-toc': {
+    allowedChildRoles: [],
+    childrenPresentational: false,
+    defaultAttributeValues: {},
+    elements: [],
+    name: 'doc-toc',
+    nameFrom: 'author',
+    nameRequired: false,
+    prohibited: [],
+    required: [],
+    requiredParentRoles: [],
+    subclasses: [],
+    superclasses: ['navigation'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    type: ['digitalpublishing'],
+  },
+};
+
 // Note: this would throw a type error if we missed any!
 export const roles: Record<ARIARole, RoleData> = {
   ...widgetRoles,
@@ -1710,6 +2426,7 @@ export const roles: Record<ARIARole, RoleData> = {
   ...liveRegionRoles,
   ...windowRoles,
   ...graphicsRoles,
+  ...digitalPublishingRoles,
 };
 
 export const ALL_ROLES = Object.keys(roles).sort((a, b) => a.localeCompare(b)) as ARIARole[];
