@@ -1731,12 +1731,12 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     type: ['digitalpublishing'],
   },
   /** A section or statement that acknowledges significant contributions by persons, organizations, governments, and other entities to the realization of the work. */
-  'doc-acknowledgements': {
+  'doc-acknowledgments': {
     allowedChildRoles: [],
     childrenPresentational: false,
     defaultAttributeValues: {},
     elements: [],
-    name: 'doc-acknowledgements',
+    name: 'doc-acknowledgments',
     nameFrom: 'author',
     nameRequired: false,
     prohibited: [],

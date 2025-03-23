@@ -25,7 +25,7 @@ describe('isNameRequired', () => {
     ['dialog', { given: 'dialog', want: true }],
     ['directory', { given: 'directory', want: false }],
     ['doc-abstract', { given: 'doc-abstract', want: false }],
-    ['doc-acknowledgements', { given: 'doc-acknowledgements', want: false }],
+    ['doc-acknowledgments', { given: 'doc-acknowledgments', want: false }],
     ['doc-afterword', { given: 'doc-afterword', want: false }],
     ['doc-appendix', { given: 'doc-appendix', want: false }],
     ['doc-backlink', { given: 'doc-backlink', want: true }],
