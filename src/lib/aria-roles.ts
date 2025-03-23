@@ -161,7 +161,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     nameRequired: false,
     prohibited: [],
     required: [],
-    requiredParentRoles: [],
+    requiredParentRoles: ['row'],
     subclasses: ['columnheader', 'rowheader'],
     superclasses: ['cell', 'widget'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-colindex', 'aria-colindextext', 'aria-colspan', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-readonly', 'aria-relevant', 'aria-required', 'aria-roledescription', 'aria-rowindex', 'aria-rowindextext', 'aria-rowspan', 'aria-selected'], // biome-ignore format: long list
@@ -252,7 +252,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     nameRequired: true,
     prohibited: [],
     required: [],
-    requiredParentRoles: ['menu', 'menubar'],
+    requiredParentRoles: ['menu', 'menubar', 'group'],
     subclasses: ['menuitemcheckbox', 'menuitemradio'],
     superclasses: ['command'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
@@ -269,7 +269,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     nameRequired: true,
     prohibited: [],
     required: ['aria-checked'],
-    requiredParentRoles: ['menu', 'menubar'],
+    requiredParentRoles: ['menu', 'menubar', 'group'],
     subclasses: [],
     superclasses: ['menuitem'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-checked', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
@@ -286,7 +286,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     nameRequired: true,
     prohibited: [],
     required: ['aria-checked'],
-    requiredParentRoles: ['menu', 'menubar'],
+    requiredParentRoles: ['menu', 'menubar', 'group'],
     subclasses: [],
     superclasses: ['menuitem'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-checked', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
@@ -303,7 +303,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     nameRequired: true,
     prohibited: [],
     required: [],
-    requiredParentRoles: ['listbox'],
+    requiredParentRoles: ['listbox', 'group'],
     subclasses: ['treeitem'],
     superclasses: ['input'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-checked', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-selected', 'aria-setsize'], // biome-ignore format: long list
