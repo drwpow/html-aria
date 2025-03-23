@@ -126,7 +126,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     required: ['aria-controls', 'aria-expanded'],
     requiredParentRoles: [],
     subclasses: [],
-    superclasses: [],
+    superclasses: ['input'],
     supported: ['aria-activedescendant', 'aria-atomic', 'aria-autocomplete', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-readonly', 'aria-relevant', 'aria-required', 'aria-roledescription'], // biome-ignore format: long list
     type: ['widget'],
   },
@@ -180,7 +180,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     required: [],
     requiredParentRoles: [],
     subclasses: [],
-    superclasses: [],
+    superclasses: ['command'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['widget'],
   },
@@ -359,7 +359,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     required: [],
     requiredParentRoles: [],
     subclasses: [],
-    superclasses: ['list'],
+    superclasses: ['select'],
     supported: ['aria-activedescendant', 'aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-orientation', 'aria-owns', 'aria-readonly', 'aria-relevant', 'aria-required', 'aria-roledescription'], // biome-ignore format: long list
     type: ['widget'],
   },
@@ -549,7 +549,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     required: [],
     requiredParentRoles: [],
     subclasses: [],
-    superclasses: ['tabpanel'],
+    superclasses: ['section'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['widget'],
   },
@@ -1318,7 +1318,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     required: [],
     requiredParentRoles: [],
     subclasses: [],
-    superclasses: ['term'],
+    superclasses: ['section'],
     supported: ['aria-atomic', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['document'],
   },
