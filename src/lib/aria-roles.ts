@@ -2203,7 +2203,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     elements: [],
     name: 'doc-notice',
     nameFrom: 'author',
-    nameRequired: true,
+    nameRequired: false,
     prohibited: [],
     required: [],
     requiredParentRoles: [],
