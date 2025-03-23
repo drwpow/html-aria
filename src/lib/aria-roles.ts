@@ -404,7 +404,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   /** A type of textbox intended for specifying search criteria. See related textbox and search. */
   searchbox: {
     allowedChildRoles: [],
-    childrenPresentational: true,
+    childrenPresentational: false,
     defaultAttributeValues: {},
     elements: [{ tagName: 'input', attributes: { type: 'search' } }],
     name: 'searchbox',
@@ -1695,7 +1695,7 @@ export const graphicsRoles: Record<GraphicsRole, RoleData> = {
   },
   'graphics-symbol': {
     allowedChildRoles: [],
-    childrenPresentational: false,
+    childrenPresentational: true,
     defaultAttributeValues: {},
     elements: [{ tagName: 'svg', attributes: { role: 'graphics-symbol img' } }],
     name: 'graphics-symbol',
