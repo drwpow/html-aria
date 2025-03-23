@@ -53,7 +53,7 @@ describe('isNameRequired', () => {
     ['doc-index', { given: 'doc-index', want: false }],
     ['doc-introduction', { given: 'doc-introduction', want: false }],
     ['doc-noteref', { given: 'doc-noteref', want: true }],
-    ['doc-notice', { given: 'doc-notice', want: true }],
+    ['doc-notice', { given: 'doc-notice', want: false }],
     ['doc-pagebreak', { given: 'doc-pagebreak', want: true }],
     ['doc-pagefooter', { given: 'doc-pagefooter', want: false }],
     ['doc-pageheader', { given: 'doc-pageheader', want: false }],
