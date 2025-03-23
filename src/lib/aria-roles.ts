@@ -186,7 +186,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   },
   /** A widget that allows the user to select one or more items from a list of choices. See related combobox and list. */
   listbox: {
-    allowedChildRoles: [],
+    allowedChildRoles: ['group', 'option'],
     childrenPresentational: false,
     defaultAttributeValues: {
       'aria-orientation': 'vertical',
@@ -205,7 +205,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   },
   /** A type of widget that offers a list of choices to the user. */
   menu: {
-    allowedChildRoles: [],
+    allowedChildRoles: ['group', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'separator'],
     childrenPresentational: false,
     defaultAttributeValues: {
       'aria-orientation': 'vertical',
@@ -515,7 +515,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   },
   /** A list of tab elements, which are references to tabpanel elements. */
   tablist: {
-    allowedChildRoles: [],
+    allowedChildRoles: ['tab'],
     childrenPresentational: false,
     defaultAttributeValues: {
       'aria-orientation': 'horizontal',
@@ -858,7 +858,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
   },
   /** A scrollable list of articles where scrolling might cause articles to be added to or removed from either end of the list. */
   feed: {
-    allowedChildRoles: [],
+    allowedChildRoles: ['article'],
     childrenPresentational: false,
     defaultAttributeValues: {},
     elements: [],
