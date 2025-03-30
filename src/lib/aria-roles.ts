@@ -34,8 +34,18 @@ export interface RoleData {
    * @see https://w3c.github.io/aria/#childrenArePresentational
    */
   childrenPresentational: boolean;
-  /** Default values for ARIA attributes (if any) */
-  defaultAttributeValues: Record<string, string>;
+  /**
+   * Default values for role supported ARIA attributes (if any)
+   * @see https://www.w3.org/TR/wai-aria-1.3/#implictValueForRole
+   *
+   * OR
+   *
+   * Fallback values for role required ARIA attributes (if any)
+   * @see https://www.w3.org/TR/wai-aria-1.3/#document-handling_author-errors_states-properties
+   *
+   * ARIA attribute defaults independent of role constraints are not exposed here.
+   */
+  defaultAttributeValues: Record<string, boolean | number | string>;
   /** Which HTML elements inherit this role, if any (note: attributes may be necessary) */
   elements: VirtualElement[];
   name: ARIARole;
@@ -96,7 +106,9 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   checkbox: {
     allowedChildRoles: [],
     childrenPresentational: true,
-    defaultAttributeValues: {},
+    defaultAttributeValues: {
+      'aria-checked': false,
+    },
     elements: [{ tagName: 'input', attributes: { type: 'checkbox' } }],
     name: 'checkbox',
     nameFrom: 'authorAndContents',
@@ -115,6 +127,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     childrenPresentational: false,
     defaultAttributeValues: {
       'aria-haspopup': 'listbox',
+      'aria-expanded': false,
     },
     elements: [{ tagName: 'select' }],
     name: 'combobox',
@@ -262,7 +275,9 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   menuitemcheckbox: {
     allowedChildRoles: [],
     childrenPresentational: true,
-    defaultAttributeValues: {},
+    defaultAttributeValues: {
+      'aria-checked': false,
+    },
     elements: [],
     name: 'menuitemcheckbox',
     nameFrom: 'authorAndContents',
@@ -279,7 +294,9 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   menuitemradio: {
     allowedChildRoles: [],
     childrenPresentational: true,
-    defaultAttributeValues: {},
+    defaultAttributeValues: {
+      'aria-checked': false,
+    },
     elements: [],
     name: 'menuitemradio',
     nameFrom: 'authorAndContents',
@@ -314,8 +331,8 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     allowedChildRoles: [],
     childrenPresentational: true,
     defaultAttributeValues: {
-      'aria-valuemin': '0',
-      'aria-valuemax': '100',
+      'aria-valuemax': 100,
+      'aria-valuemin': 0,
     },
     elements: [{ tagName: 'progress' }],
     name: 'progressbar',
@@ -333,7 +350,9 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   radio: {
     allowedChildRoles: [],
     childrenPresentational: true,
-    defaultAttributeValues: {},
+    defaultAttributeValues: {
+      'aria-checked': false,
+    },
     elements: [{ tagName: 'input', attributes: { type: 'radio' } }],
     name: 'radio',
     nameFrom: 'authorAndContents',
@@ -386,8 +405,10 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     childrenPresentational: true,
     defaultAttributeValues: {
       'aria-orientation': 'vertical',
-      'aria-valuemax': '100',
-      'aria-valuemin': '0',
+      'aria-valuemax': 100,
+      'aria-valuemin': 0,
+      // If missing or not a number,(aria-valuemax - aria-valuemin) / 2. If present but less than aria-valuemin, the value of aria-valuemin. If present but greater than aria-valuemax, the value of aria-valuemax.
+      // 'aria-valuenow': TBD
     },
     elements: [],
     name: 'scrollbar',
@@ -424,8 +445,10 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     childrenPresentational: true,
     defaultAttributeValues: {
       'aria-orientation': 'horizontal',
-      'aria-valuemax': '100',
-      'aria-valuemin': '0',
+      'aria-valuemax': 100,
+      'aria-valuemin': 0,
+      // If missing or not a number,(aria-valuemax - aria-valuemin) / 2. If present but less than aria-valuemin, the value of aria-valuemin. If present but greater than aria-valuemax, the value of aria-valuemax.
+      // 'aria-valuenow': TBD
     },
     elements: [{ tagName: 'hr' }],
     name: 'separator',
@@ -445,8 +468,10 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     childrenPresentational: true,
     defaultAttributeValues: {
       'aria-orientation': 'horizontal',
-      'aria-valuemax': '100',
-      'aria-valuemin': '0',
+      'aria-valuemax': 100,
+      'aria-valuemin': 0,
+      // If missing or not a number,(aria-valuemax - aria-valuemin) / 2. If present but less than aria-valuemin, the value of aria-valuemin. If present but greater than aria-valuemax, the value of aria-valuemax.
+      // 'aria-valuenow': TBD
     },
     elements: [{ tagName: 'input', attributes: { type: 'range' } }],
     name: 'slider',
@@ -481,7 +506,9 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   switch: {
     allowedChildRoles: [],
     childrenPresentational: true,
-    defaultAttributeValues: {},
+    defaultAttributeValues: {
+      'aria-checked': false,
+    },
     elements: [{ tagName: 'input', attributes: { type: 'checkbox', role: 'switch' } }],
     name: 'switch',
     nameFrom: 'authorAndContents',
@@ -499,7 +526,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     allowedChildRoles: [],
     childrenPresentational: true,
     defaultAttributeValues: {
-      'aria-selected': 'false',
+      'aria-selected': false,
     },
     elements: [{ tagName: 'button', attributes: { type: 'button', role: 'tab' } }],
     name: 'tab',
@@ -597,9 +624,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   treegrid: {
     allowedChildRoles: ['caption', 'row', 'rowgroup'],
     childrenPresentational: false,
-    defaultAttributeValues: {
-      'aria-orientation': 'vertical', // inherited from tree
-    },
+    defaultAttributeValues: {},
     elements: [{ tagName: 'table', attributes: { role: 'treegrid' } }],
     name: 'treegrid',
     nameFrom: 'author',
@@ -928,7 +953,9 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
   heading: {
     allowedChildRoles: [],
     childrenPresentational: false,
-    defaultAttributeValues: {},
+    defaultAttributeValues: {
+      'aria-level': 2,
+    },
     elements: [{ tagName: 'h1' }, { tagName: 'h2' }, { tagName: 'h3' }, { tagName: 'h4' }, { tagName: 'h5' }, { tagName: 'h6' }], // biome-ignore format: long list
     name: 'heading',
     nameFrom: 'authorAndContents',
@@ -1065,8 +1092,10 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     allowedChildRoles: [],
     childrenPresentational: true,
     defaultAttributeValues: {
-      'aria-valuemin': '0',
-      'aria-valuemax': '100',
+      'aria-valuemin': 0,
+      'aria-valuemax': 100,
+      // A value matching the implicit or explicitly set aria-valuemin.
+      // 'aria-valuenow': TBD
     },
     elements: [],
     name: 'meter',
@@ -1527,7 +1556,7 @@ export const liveRegionRoles: Record<LiveRegionRole, RoleData> = {
     childrenPresentational: false,
     defaultAttributeValues: {
       'aria-live': 'assertive',
-      'aria-atomic': 'true',
+      'aria-atomic': true,
     },
     elements: [],
     name: 'alert',
@@ -1583,7 +1612,7 @@ export const liveRegionRoles: Record<LiveRegionRole, RoleData> = {
     childrenPresentational: false,
     defaultAttributeValues: {
       'aria-live': 'polite',
-      'aria-atomic': 'true',
+      'aria-atomic': true,
     },
     elements: [{ tagName: 'output' }],
     name: 'status',
@@ -1623,10 +1652,7 @@ export const windowRoles: Record<WindowRole, RoleData> = {
   alertdialog: {
     allowedChildRoles: [],
     childrenPresentational: false,
-    defaultAttributeValues: {
-      'aria-live': 'assertive', // inherited from alert
-      'aria-atomic': 'true',
-    },
+    defaultAttributeValues: {},
     elements: [],
     name: 'alertdialog',
     nameFrom: 'author',
