@@ -39,6 +39,7 @@
     "name": "Drew Powers",
     "email": "drew@pow.rs"
   },
+  "packageManager": "pnpm@10.8.0",
   "scripts": {
     "benchmark": "vitest bench",
     "build": "unbuild",
