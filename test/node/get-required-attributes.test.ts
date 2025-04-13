@@ -30,7 +30,7 @@ const tests: [
   ['dialog', { given: ['dialog'], want: [] }],
   ['directory', { given: ['directory'], want: [] }],
   ['doc-abstract', { given: ['doc-abstract'], want: [] }],
-  ['doc-acknowledgements', { given: ['doc-acknowledgements'], want: [] }],
+  ['doc-acknowledgments', { given: ['doc-acknowledgments'], want: [] }],
   ['doc-afterword', { given: ['doc-afterword'], want: [] }],
   ['doc-appendix', { given: ['doc-appendix'], want: [] }],
   ['doc-backlink', { given: ['doc-backlink'], want: [] }],

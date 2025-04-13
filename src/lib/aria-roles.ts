@@ -34,8 +34,18 @@ export interface RoleData {
    * @see https://w3c.github.io/aria/#childrenArePresentational
    */
   childrenPresentational: boolean;
-  /** Default values for ARIA attributes (if any) */
-  defaultAttributeValues: Record<string, string>;
+  /**
+   * Default values for role supported ARIA attributes (if any)
+   * @see https://www.w3.org/TR/wai-aria-1.3/#implictValueForRole
+   *
+   * OR
+   *
+   * Fallback values for role required ARIA attributes (if any)
+   * @see https://www.w3.org/TR/wai-aria-1.3/#document-handling_author-errors_states-properties
+   *
+   * ARIA attribute defaults independent of role constraints are not exposed here.
+   */
+  defaultAttributeValues: Record<string, boolean | number | string>;
   /** Which HTML elements inherit this role, if any (note: attributes may be necessary) */
   elements: VirtualElement[];
   name: ARIARole;
@@ -96,7 +106,9 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   checkbox: {
     allowedChildRoles: [],
     childrenPresentational: true,
-    defaultAttributeValues: {},
+    defaultAttributeValues: {
+      'aria-checked': false,
+    },
     elements: [{ tagName: 'input', attributes: { type: 'checkbox' } }],
     name: 'checkbox',
     nameFrom: 'authorAndContents',
@@ -115,6 +127,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     childrenPresentational: false,
     defaultAttributeValues: {
       'aria-haspopup': 'listbox',
+      'aria-expanded': false,
     },
     elements: [{ tagName: 'select' }],
     name: 'combobox',
@@ -126,7 +139,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     required: ['aria-controls', 'aria-expanded'],
     requiredParentRoles: [],
     subclasses: [],
-    superclasses: [],
+    superclasses: ['input'],
     supported: ['aria-activedescendant', 'aria-atomic', 'aria-autocomplete', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-readonly', 'aria-relevant', 'aria-required', 'aria-roledescription'], // biome-ignore format: long list
     type: ['widget'],
   },
@@ -161,7 +174,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     nameRequired: false,
     prohibited: [],
     required: [],
-    requiredParentRoles: [],
+    requiredParentRoles: ['row'],
     subclasses: ['columnheader', 'rowheader'],
     superclasses: ['cell', 'widget'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-colindex', 'aria-colindextext', 'aria-colspan', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-readonly', 'aria-relevant', 'aria-required', 'aria-roledescription', 'aria-rowindex', 'aria-rowindextext', 'aria-rowspan', 'aria-selected'], // biome-ignore format: long list
@@ -179,14 +192,14 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     prohibited: [],
     required: [],
     requiredParentRoles: [],
-    subclasses: [],
-    superclasses: [],
+    subclasses: ['doc-backlink', 'doc-biblioref', 'doc-glossref', 'doc-noteref'],
+    superclasses: ['command'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['widget'],
   },
   /** A widget that allows the user to select one or more items from a list of choices. See related combobox and list. */
   listbox: {
-    allowedChildRoles: [],
+    allowedChildRoles: ['group', 'option'],
     childrenPresentational: false,
     defaultAttributeValues: {
       'aria-orientation': 'vertical',
@@ -205,7 +218,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   },
   /** A type of widget that offers a list of choices to the user. */
   menu: {
-    allowedChildRoles: [],
+    allowedChildRoles: ['group', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'separator'],
     childrenPresentational: false,
     defaultAttributeValues: {
       'aria-orientation': 'vertical',
@@ -252,7 +265,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     nameRequired: true,
     prohibited: [],
     required: [],
-    requiredParentRoles: ['menu', 'menubar'],
+    requiredParentRoles: ['menu', 'menubar', 'group'],
     subclasses: ['menuitemcheckbox', 'menuitemradio'],
     superclasses: ['command'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
@@ -262,14 +275,16 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   menuitemcheckbox: {
     allowedChildRoles: [],
     childrenPresentational: true,
-    defaultAttributeValues: {},
+    defaultAttributeValues: {
+      'aria-checked': false,
+    },
     elements: [],
     name: 'menuitemcheckbox',
     nameFrom: 'authorAndContents',
     nameRequired: true,
     prohibited: [],
     required: ['aria-checked'],
-    requiredParentRoles: ['menu', 'menubar'],
+    requiredParentRoles: ['menu', 'menubar', 'group'],
     subclasses: [],
     superclasses: ['menuitem'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-checked', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
@@ -279,14 +294,16 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   menuitemradio: {
     allowedChildRoles: [],
     childrenPresentational: true,
-    defaultAttributeValues: {},
+    defaultAttributeValues: {
+      'aria-checked': false,
+    },
     elements: [],
     name: 'menuitemradio',
     nameFrom: 'authorAndContents',
     nameRequired: true,
     prohibited: [],
     required: ['aria-checked'],
-    requiredParentRoles: ['menu', 'menubar'],
+    requiredParentRoles: ['menu', 'menubar', 'group'],
     subclasses: [],
     superclasses: ['menuitem'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-checked', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
@@ -303,7 +320,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     nameRequired: true,
     prohibited: [],
     required: [],
-    requiredParentRoles: ['listbox'],
+    requiredParentRoles: ['listbox', 'group'],
     subclasses: ['treeitem'],
     superclasses: ['input'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-checked', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-selected', 'aria-setsize'], // biome-ignore format: long list
@@ -314,8 +331,8 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     allowedChildRoles: [],
     childrenPresentational: true,
     defaultAttributeValues: {
-      'aria-valuemin': '0',
-      'aria-valuemax': '100',
+      'aria-valuemax': 100,
+      'aria-valuemin': 0,
     },
     elements: [{ tagName: 'progress' }],
     name: 'progressbar',
@@ -333,7 +350,9 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   radio: {
     allowedChildRoles: [],
     childrenPresentational: true,
-    defaultAttributeValues: {},
+    defaultAttributeValues: {
+      'aria-checked': false,
+    },
     elements: [{ tagName: 'input', attributes: { type: 'radio' } }],
     name: 'radio',
     nameFrom: 'authorAndContents',
@@ -359,7 +378,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     required: [],
     requiredParentRoles: [],
     subclasses: [],
-    superclasses: ['list'],
+    superclasses: ['select'],
     supported: ['aria-activedescendant', 'aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-orientation', 'aria-owns', 'aria-readonly', 'aria-relevant', 'aria-required', 'aria-roledescription'], // biome-ignore format: long list
     type: ['widget'],
   },
@@ -386,8 +405,10 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     childrenPresentational: true,
     defaultAttributeValues: {
       'aria-orientation': 'vertical',
-      'aria-valuemax': '100',
-      'aria-valuemin': '0',
+      'aria-valuemax': 100,
+      'aria-valuemin': 0,
+      // If missing or not a number,(aria-valuemax - aria-valuemin) / 2. If present but less than aria-valuemin, the value of aria-valuemin. If present but greater than aria-valuemax, the value of aria-valuemax.
+      // 'aria-valuenow': TBD
     },
     elements: [],
     name: 'scrollbar',
@@ -404,7 +425,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   /** A type of textbox intended for specifying search criteria. See related textbox and search. */
   searchbox: {
     allowedChildRoles: [],
-    childrenPresentational: true,
+    childrenPresentational: false,
     defaultAttributeValues: {},
     elements: [{ tagName: 'input', attributes: { type: 'search' } }],
     name: 'searchbox',
@@ -424,8 +445,10 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     childrenPresentational: true,
     defaultAttributeValues: {
       'aria-orientation': 'horizontal',
-      'aria-valuemax': '100',
-      'aria-valuemin': '0',
+      'aria-valuemax': 100,
+      'aria-valuemin': 0,
+      // If missing or not a number,(aria-valuemax - aria-valuemin) / 2. If present but less than aria-valuemin, the value of aria-valuemin. If present but greater than aria-valuemax, the value of aria-valuemax.
+      // 'aria-valuenow': TBD
     },
     elements: [{ tagName: 'hr' }],
     name: 'separator',
@@ -434,9 +457,9 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     prohibited: [],
     required: [], // aria-valuenow (if focusable)
     requiredParentRoles: [],
-    subclasses: [],
+    subclasses: ['doc-pagebreak'],
     superclasses: ['structure', 'widget'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-orientation', 'aria-owns', 'aria-relevant', 'aria-roledescription', 'aria-valuemax', 'aria-valuemin', 'aria-valuetext'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-orientation', 'aria-owns', 'aria-relevant', 'aria-roledescription', 'aria-valuemax', 'aria-valuemin', 'aria-valuenow', 'aria-valuetext'], // biome-ignore format: long list
     type: ['widget', 'document'],
   },
   /** An input where the user selects a value from within a given range. */
@@ -445,8 +468,10 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     childrenPresentational: true,
     defaultAttributeValues: {
       'aria-orientation': 'horizontal',
-      'aria-valuemax': '100',
-      'aria-valuemin': '0',
+      'aria-valuemax': 100,
+      'aria-valuemin': 0,
+      // If missing or not a number,(aria-valuemax - aria-valuemin) / 2. If present but less than aria-valuemin, the value of aria-valuemin. If present but greater than aria-valuemax, the value of aria-valuemax.
+      // 'aria-valuenow': TBD
     },
     elements: [{ tagName: 'input', attributes: { type: 'range' } }],
     name: 'slider',
@@ -467,7 +492,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     defaultAttributeValues: {},
     elements: [{ tagName: 'input', attributes: { type: 'number' } }],
     name: 'spinbutton',
-    nameFrom: 'authorAndContents',
+    nameFrom: 'author',
     nameRequired: true,
     prohibited: [],
     required: [],
@@ -481,7 +506,9 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   switch: {
     allowedChildRoles: [],
     childrenPresentational: true,
-    defaultAttributeValues: {},
+    defaultAttributeValues: {
+      'aria-checked': false,
+    },
     elements: [{ tagName: 'input', attributes: { type: 'checkbox', role: 'switch' } }],
     name: 'switch',
     nameFrom: 'authorAndContents',
@@ -499,7 +526,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     allowedChildRoles: [],
     childrenPresentational: true,
     defaultAttributeValues: {
-      'aria-selected': 'false',
+      'aria-selected': false,
     },
     elements: [{ tagName: 'button', attributes: { type: 'button', role: 'tab' } }],
     name: 'tab',
@@ -515,7 +542,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   },
   /** A list of tab elements, which are references to tabpanel elements. */
   tablist: {
-    allowedChildRoles: [],
+    allowedChildRoles: ['tab'],
     childrenPresentational: false,
     defaultAttributeValues: {
       'aria-orientation': 'horizontal',
@@ -549,7 +576,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
     required: [],
     requiredParentRoles: [],
     subclasses: [],
-    superclasses: ['tabpanel'],
+    superclasses: ['section'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['widget'],
   },
@@ -597,9 +624,7 @@ export const widgetRoles: Record<WidgetRole, RoleData> = {
   treegrid: {
     allowedChildRoles: ['caption', 'row', 'rowgroup'],
     childrenPresentational: false,
-    defaultAttributeValues: {
-      'aria-orientation': 'vertical', // inherited from tree
-    },
+    defaultAttributeValues: {},
     elements: [{ tagName: 'table', attributes: { role: 'treegrid' } }],
     name: 'treegrid',
     nameFrom: 'author',
@@ -748,7 +773,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     requiredParentRoles: ['row'],
     subclasses: [],
     superclasses: ['cell', 'gridcell', 'sectionhead'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-colindex', 'aria-colindextext', 'aria-colspan', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-readonly', 'aria-relevant', 'aria-required', 'aria-roledescription', 'aria-rowindex', 'aria-rowindextext', 'aria-rowspan', 'aria-selected'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-colindex', 'aria-colindextext', 'aria-colspan', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-readonly', 'aria-relevant', 'aria-required', 'aria-roledescription', 'aria-rowindex', 'aria-rowindextext', 'aria-rowspan', 'aria-selected', 'aria-sort'], // biome-ignore format: long list
     type: ['document'],
   },
   /** A comment contains content expressing reaction to other content. */
@@ -834,7 +859,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     prohibited: [],
     required: [],
     requiredParentRoles: [],
-    subclasses: ['article'],
+    subclasses: ['article', 'graphics-document'],
     superclasses: ['structure'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['document'],
@@ -858,7 +883,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
   },
   /** A scrollable list of articles where scrolling might cause articles to be added to or removed from either end of the list. */
   feed: {
-    allowedChildRoles: [],
+    allowedChildRoles: ['article'],
     childrenPresentational: false,
     defaultAttributeValues: {},
     elements: [],
@@ -868,7 +893,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     prohibited: [],
     required: [],
     requiredParentRoles: [],
-    subclasses: ['article'],
+    subclasses: [],
     superclasses: ['list'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['document'],
@@ -885,7 +910,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     prohibited: [],
     required: [],
     requiredParentRoles: [],
-    subclasses: [],
+    subclasses: ['doc-example'],
     superclasses: ['section'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['document'],
@@ -919,7 +944,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     prohibited: [],
     required: [],
     requiredParentRoles: [],
-    subclasses: ['row', 'select', 'toolbar'],
+    subclasses: ['graphics-object', 'row', 'select', 'toolbar'],
     superclasses: ['section'],
     supported: ['aria-activedescendant', 'aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['document'],
@@ -928,7 +953,9 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
   heading: {
     allowedChildRoles: [],
     childrenPresentational: false,
-    defaultAttributeValues: {},
+    defaultAttributeValues: {
+      'aria-level': 2,
+    },
     elements: [{ tagName: 'h1' }, { tagName: 'h2' }, { tagName: 'h3' }, { tagName: 'h4' }, { tagName: 'h5' }, { tagName: 'h6' }], // biome-ignore format: long list
     name: 'heading',
     nameFrom: 'authorAndContents',
@@ -953,7 +980,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     prohibited: [],
     required: [],
     requiredParentRoles: [],
-    subclasses: ['graphics-symbol'],
+    subclasses: ['doc-cover', 'graphics-symbol'],
     superclasses: ['section'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['document'],
@@ -970,7 +997,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     prohibited: [],
     required: [],
     requiredParentRoles: [],
-    subclasses: ['graphics-symbol'],
+    subclasses: ['doc-cover', 'graphics-symbol'],
     superclasses: ['section'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['document'],
@@ -1021,7 +1048,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     prohibited: [],
     required: [],
     requiredParentRoles: ['directory', 'list'],
-    subclasses: ['treeitem'],
+    subclasses: ['doc-biblioentry', 'doc-endnote', 'treeitem'],
     superclasses: ['section'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
     type: ['document'],
@@ -1065,8 +1092,10 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     allowedChildRoles: [],
     childrenPresentational: true,
     defaultAttributeValues: {
-      'aria-valuemin': '0',
-      'aria-valuemax': '100',
+      'aria-valuemin': 0,
+      'aria-valuemax': 100,
+      // A value matching the implicit or explicitly set aria-valuemin.
+      // 'aria-valuenow': TBD
     },
     elements: [],
     name: 'meter',
@@ -1109,7 +1138,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     prohibited: [],
     required: [],
     requiredParentRoles: [],
-    subclasses: [],
+    subclasses: ['doc-notice', 'doc-tip'],
     superclasses: ['section'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['document'],
@@ -1318,7 +1347,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     required: [],
     requiredParentRoles: [],
     subclasses: [],
-    superclasses: ['term'],
+    superclasses: ['section'],
     supported: ['aria-atomic', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['document'],
   },
@@ -1479,7 +1508,7 @@ export const landmarkRoles: Record<LandmarkRole, RoleData> = {
     prohibited: [],
     required: [],
     requiredParentRoles: [],
-    subclasses: [],
+    subclasses: ['doc-index', 'doc-pagelist', 'doc-toc'],
     superclasses: ['landmark'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['landmark'],
@@ -1527,7 +1556,7 @@ export const liveRegionRoles: Record<LiveRegionRole, RoleData> = {
     childrenPresentational: false,
     defaultAttributeValues: {
       'aria-live': 'assertive',
-      'aria-atomic': 'true',
+      'aria-atomic': true,
     },
     elements: [],
     name: 'alert',
@@ -1583,7 +1612,7 @@ export const liveRegionRoles: Record<LiveRegionRole, RoleData> = {
     childrenPresentational: false,
     defaultAttributeValues: {
       'aria-live': 'polite',
-      'aria-atomic': 'true',
+      'aria-atomic': true,
     },
     elements: [{ tagName: 'output' }],
     name: 'status',
@@ -1623,10 +1652,7 @@ export const windowRoles: Record<WindowRole, RoleData> = {
   alertdialog: {
     allowedChildRoles: [],
     childrenPresentational: false,
-    defaultAttributeValues: {
-      'aria-live': 'assertive', // inherited from alert
-      'aria-atomic': 'true',
-    },
+    defaultAttributeValues: {},
     elements: [],
     name: 'alertdialog',
     nameFrom: 'author',
@@ -1695,7 +1721,7 @@ export const graphicsRoles: Record<GraphicsRole, RoleData> = {
   },
   'graphics-symbol': {
     allowedChildRoles: [],
-    childrenPresentational: false,
+    childrenPresentational: true,
     defaultAttributeValues: {},
     elements: [{ tagName: 'svg', attributes: { role: 'graphics-symbol img' } }],
     name: 'graphics-symbol',
@@ -1705,7 +1731,7 @@ export const graphicsRoles: Record<GraphicsRole, RoleData> = {
     required: [],
     requiredParentRoles: [],
     subclasses: [],
-    superclasses: ['img'],
+    superclasses: ['image', 'img'],
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['graphics'],
   },
@@ -1727,16 +1753,16 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['section'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A section or statement that acknowledges significant contributions by persons, organizations, governments, and other entities to the realization of the work. */
-  'doc-acknowledgements': {
+  'doc-acknowledgments': {
     allowedChildRoles: [],
     childrenPresentational: false,
     defaultAttributeValues: {},
     elements: [],
-    name: 'doc-acknowledgements',
+    name: 'doc-acknowledgments',
     nameFrom: 'author',
     nameRequired: false,
     prohibited: [],
@@ -1744,7 +1770,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A closing statement from the author or a person of importance, typically providing insight into how the content came to be written, its significance, or related events that have transpired since its timeline. */
@@ -1761,7 +1787,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A section of supplemental information located after the primary content that informs the content but is not central to it. */
@@ -1778,7 +1804,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A link that allows the user to return to a related location in the content (e.g., from a footnote to its reference or from a glossary definition to where a term is used). */
@@ -1795,7 +1821,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['link'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /**
@@ -1815,7 +1841,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['listitem'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage',  'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect',  'aria-flowto', 'aria-grabbed', 'aria-hidden',   'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A list of external references cited in the work, which may be to print or digital sources. */
@@ -1832,7 +1858,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A reference to a bibliography entry. */
@@ -1849,7 +1875,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['link'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A major thematic section of content in a work. */
@@ -1866,7 +1892,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A short section of production notes particular to the edition (e.g., describing the typeface used), often located at the end of a work. */
@@ -1883,7 +1909,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['section'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A concluding section or statement that summarizes the work or wraps up the narrative. */
@@ -1900,7 +1926,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** An image that sets the mood or tone for the work and typically includes the title and author. */
@@ -1916,8 +1942,8 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     required: [],
     requiredParentRoles: [],
     subclasses: [],
-    superclasses: ['img'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    superclasses: ['image', 'img'],
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** An acknowledgment of the source of integrated content from third-party sources, such as photos. Typically identifies the creator, copyright, and any restrictions on reuse. */
@@ -1934,7 +1960,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['section'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A collection of credits. */
@@ -1951,7 +1977,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** An inscription at the front of the work, typically addressed in tribute to one or more persons close to the author. */
@@ -1968,7 +1994,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['section'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /**
@@ -1988,7 +2014,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['listitem'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-posinset', 'aria-relevant', 'aria-roledescription', 'aria-setsize'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A collection of notes at the end of a work or a section within it. */
@@ -2005,7 +2031,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A quotation set at the start of the work or a section that establishes the theme or sets the mood. */
@@ -2022,7 +2048,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['section'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A concluding section of narrative that wraps up or comments on the actions and events of the work, typically from a future perspective. */
@@ -2039,7 +2065,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A set of corrections discovered after initial publication of the work, sometimes referred to as corrigenda. */
@@ -2056,7 +2082,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** An illustration of a key concept of the work, such as a code listing, case study or problem. */
@@ -2073,7 +2099,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['figure'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** Ancillary information, such as a citation or commentary, that provides additional context to a referenced passage of text. */
@@ -2090,7 +2116,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['section'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** An introductory section that precedes the work, typically not written by the author of the work. */
@@ -2107,7 +2133,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A brief dictionary of new, uncommon, or specialized terms used in the content. */
@@ -2124,7 +2150,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A reference to a glossary definition. */
@@ -2141,7 +2167,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['link'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A navigational aid that provides a detailed list of links to key subjects, names and other important topics covered in the work. */
@@ -2158,7 +2184,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['navigation'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A preliminary section that typically introduces the scope or nature of the work. */
@@ -2175,7 +2201,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A reference to a footnote or endnote, typically appearing as a superscripted number or symbol in the main body of text. */
@@ -2192,7 +2218,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['link'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** Notifies the user of consequences that might arise from an action or event. Examples include warnings, cautions and dangers. */
@@ -2202,14 +2228,14 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     defaultAttributeValues: {},
     elements: [],
     name: 'doc-notice',
-    nameFrom: 'authorAndContents',
-    nameRequired: true,
+    nameFrom: 'author',
+    nameRequired: false,
     prohibited: [],
     required: [],
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['note'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A separator denoting the position before which a break occurs between two contiguous pages in a statically paginated version of the content. */
@@ -2226,7 +2252,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['separator'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-orientation', 'aria-owns', 'aria-relevant', 'aria-roledescription', 'aria-valuemax', 'aria-valuemin', 'aria-valuenow', 'aria-valuetext'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-orientation', 'aria-owns', 'aria-relevant', 'aria-roledescription', 'aria-valuemax', 'aria-valuemin', 'aria-valuenow', 'aria-valuetext'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A section of text appearing at the bottom of a page that provides context about the current work and location within it. The page footer is distinct from the body text and normally follows a repeating template that contains (possibly truncated) items such as the document title, current section, author name(s), and page number.  */
@@ -2243,7 +2269,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['section'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A section of text appearing at the top of a page that provides context about the current work and location within it. The page header is distinct from the body text and normally follows a repeating template that contains (possibly truncated) items such as the document title, current section, author name(s), and page number.  */
@@ -2260,7 +2286,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['section'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A navigational aid that provides a list of links to the page breaks in the content. */
@@ -2277,7 +2303,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['navigation'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A major structural division in a work that contains a set of related sections dealing with a particular subject, narrative arc, or similar encapsulated theme. */
@@ -2294,7 +2320,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** An introductory section that precedes the work, typically written by the author of the work. */
@@ -2311,7 +2337,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** An introductory section that sets the background to a work, typically part of the narrative. */
@@ -2328,7 +2354,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['landmark'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A distinctively placed or highlighted quotation from the current content designed to draw attention to a topic or highlight a key point. */
@@ -2345,7 +2371,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['section'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A section of content structured as a series of questions and answers, such as an interview or list of frequently asked questions. */
@@ -2362,7 +2388,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['section'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** An explanatory or alternate title for the work, or a section or component within it. */
@@ -2379,7 +2405,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['sectionhead'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** Helpful information that clarifies some aspect of the content or assists in its comprehension. */
@@ -2396,7 +2422,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['note'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
   /** A navigational aid that provides an ordered list of links to the major sectional headings in the content. A table of contents may cover an entire work, or only a smaller section of it.  */
@@ -2413,7 +2439,7 @@ export const digitalPublishingRoles: Record<DigitalPublishingRole, RoleData> = {
     requiredParentRoles: [],
     subclasses: [],
     superclasses: ['navigation'],
-    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffect', 'aria-errormessage', 'aria-flowto', 'aria-grabbed', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
+    supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['digitalpublishing'],
   },
 };

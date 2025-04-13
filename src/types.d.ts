@@ -555,7 +555,7 @@ export type GraphicsRole = 'graphics-document' | 'graphics-object' | 'graphics-s
  */
 export type DigitalPublishingRole =
   | 'doc-abstract'
-  | 'doc-acknowledgements'
+  | 'doc-acknowledgments'
   | 'doc-afterword'
   | 'doc-appendix'
   | 'doc-backlink'
