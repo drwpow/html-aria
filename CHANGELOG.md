@@ -1,5 +1,11 @@
 # html-aria
 
+## 0.4.0
+
+### Minor Changes
+
+- [#49](https://github.com/drwpow/html-aria/pull/49) [`1f90a50`](https://github.com/drwpow/html-aria/commit/1f90a50a1d5f213158792f510991d9c0f3cc3035) Thanks [@jlp-craigmorten](https://github.com/jlp-craigmorten)! - Role fixes
+
 ## 0.3.0
 
 ### Minor Changes
