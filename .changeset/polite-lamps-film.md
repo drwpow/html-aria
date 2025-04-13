@@ -1,5 +1,5 @@
 ---
-"html-aria": patch
+"html-aria": minor
 ---
 
 Role fixes
