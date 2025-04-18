@@ -1,5 +1,14 @@
 # html-aria
 
+## 0.5.0
+
+### Minor Changes
+
+- [#54](https://github.com/drwpow/html-aria/pull/54) [`74659ab`](https://github.com/drwpow/html-aria/commit/74659ab530d1a27727ba4598f598a9a97c2470a2) Thanks [@jlp-craigmorten](https://github.com/jlp-craigmorten)! - Adopt WAI-ARIA 1.3 default of image role in preference to img role.
+  Fix role calculation for img element with no alt.
+  Fix ACCNAME calculation to support title attribute.
+  Fix ACCNAME calculation for empty or whitespace only labels.
+
 ## 0.4.0
 
 ### Minor Changes
