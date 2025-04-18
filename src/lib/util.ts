@@ -64,22 +64,32 @@ export function calculateAccessibleName(element: Element | VirtualElement, role:
   // for author + authorAndContents, handle special cases first
   const tagName = getTagName(element);
   switch (tagName) {
+    /**
+     * @see https://www.w3.org/TR/html-aam-1.0/#img-element-accessible-name-computation
+     */
     case 'img': {
+      const label =
+        (attr(element, 'aria-label') as string | undefined)?.trim() ||
+        (attr(element, 'aria-labelledby') as string | undefined)?.trim();
+
+      if (label) {
+        return label;
+      }
+
       const alt = attr(element, 'alt');
-      /**
-       * According to spec, aria-label is technically allowed for <img> (even if alt is preferred)
-       * @see https://www.w3.org/TR/html-aam-1.0/#img-element-accessible-name-computation
-       */
-      if (alt) {
+
+      if (typeof alt !== 'undefined') {
         return alt as string;
       }
-      break;
+
+      return (attr(element, 'title') as string | undefined) || undefined;
     }
   }
 
   return (
-    (attr(element, 'aria-label') as string | undefined) ||
-    (attr(element, 'aria-labelledby') as string | undefined) ||
+    (attr(element, 'aria-label') as string | undefined)?.trim() ||
+    (attr(element, 'aria-labelledby') as string | undefined)?.trim() ||
+    (attr(element, 'title') as string | undefined) ||
     (role.nameFrom === 'authorAndContents' &&
       'innerText' in (element as HTMLElement) &&
       (element as HTMLElement).innerText) ||

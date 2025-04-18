@@ -41,7 +41,7 @@ export function getSupportedAttributes(element: Element | VirtualElement, option
       return roles.application.supported;
     }
     case 'img': {
-      const name = calculateAccessibleName(element, roles.img);
+      const name = calculateAccessibleName(element, roles.image);
       // if no accessible name, only aria-hidden allowed
       return name && roleData?.supported?.length ? roleData.supported : ['aria-hidden'];
     }

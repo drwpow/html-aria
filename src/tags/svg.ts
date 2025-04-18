@@ -10,7 +10,7 @@ const SVG_ACCESSIBLE_ROLE_MAPPING = {
   foreignObject: roles.group,
   g: roles.group,
   line: roles['graphics-symbol'],
-  image: roles.img,
+  image: roles.image,
   path: roles['graphics-symbol'],
   polygon: roles['graphics-symbol'],
   polyline: roles['graphics-symbol'],
