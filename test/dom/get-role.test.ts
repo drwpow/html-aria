@@ -63,6 +63,55 @@ describe('getRole', () => {
       'aside (in section[aria-label])',
       { given: ['<section aria-label="My section"><aside></aside></section>', 'aside'], want: 'generic' },
     ],
+    [
+      'aside[aria-label] (in section[aria-label])',
+      {
+        given: ['<section aria-label="My section"><aside aria-label="Aside"></aside></section>', 'aside'],
+        want: 'complementary',
+      },
+    ],
+    [
+      'aside[aria-labelledby] (in section[aria-label])',
+      {
+        given: ['<section aria-label="My section"><aside aria-labelledby="Aside"></aside></section>', 'aside'],
+        want: 'complementary',
+      },
+    ],
+    [
+      'aside (empty label in section[aria-label])',
+      {
+        given: ['<section aria-label="My section"><aside aria-label=""></aside></section>', 'aside'],
+        want: 'generic',
+      },
+    ],
+    [
+      'aside (whitespace label in section[aria-label])',
+      {
+        given: ['<section aria-label="My section"><aside aria-label=" "></aside></section>', 'aside'],
+        want: 'generic',
+      },
+    ],
+    [
+      'aside (empty labelledby in section[aria-label])',
+      {
+        given: ['<section aria-label="My section"><aside aria-labelledby=""></aside></section>', 'aside'],
+        want: 'generic',
+      },
+    ],
+    [
+      'aside (whitespace labelledby in section[aria-label])',
+      {
+        given: ['<section aria-label="My section"><aside aria-labelledby=" "></aside></section>', 'aside'],
+        want: 'generic',
+      },
+    ],
+    [
+      'aside[title] (in section[aria-label])',
+      {
+        given: ['<section aria-label="My section"><aside title="Aside"></aside></section>', 'aside'],
+        want: 'complementary',
+      },
+    ],
     ['audio', { given: ['<audio></audio>', 'audio'], want: NO_CORRESPONDING_ROLE }],
     ['b', { given: ['<b></b>', 'b'], want: 'generic' }],
     ['base', { given: ['<base></base>', 'base'], want: NO_CORRESPONDING_ROLE }],
@@ -110,10 +159,25 @@ describe('getRole', () => {
     ['html', { given: ['<html></html>', 'html'], want: 'document' }],
     ['i', { given: ['<i></i>', 'i'], want: 'generic' }],
     ['iframe', { given: ['<iframe></iframe>', 'iframe'], want: NO_CORRESPONDING_ROLE }],
-    ['img (named by alt)', { given: ['<img alt="My image" />', 'img'], want: 'img' }],
-    ['img (named by label)', { given: ['<img aria-label="My image"/>', 'img'], want: 'img' }],
-    ['img (named by labelledby)', { given: ['<img aria-labelledby="My image" />', 'img'], want: 'img' }],
-    ['img (no name)', { given: ['<img />', 'img'], want: 'none' }],
+    ['img (named by alt)', { given: ['<img alt="My image" />', 'img'], want: 'image' }],
+    ['img (named by label)', { given: ['<img aria-label="My image"/>', 'img'], want: 'image' }],
+    ['img (named by labelledby)', { given: ['<img aria-labelledby="My image" />', 'img'], want: 'image' }],
+    ['img (named by title)', { given: ['<img title="My image" />', 'img'], want: 'image' }],
+    ['img (empty alt named by label)', { given: ['<img alt="" aria-label="My image"/>', 'img'], want: 'image' }],
+    [
+      'img (empty alt named by labelledby)',
+      { given: ['<img alt="" aria-labelledby="My image"/>', 'img'], want: 'image' },
+    ],
+    ['img (no name)', { given: ['<img />', 'img'], want: 'image' }],
+    ['img (empty string alt)', { given: ['<img alt="" />', 'img'], want: 'none' }],
+    ['img (empty alt)', { given: ['<img alt />', 'img'], want: 'none' }],
+    ['img (empty alt, empty label)', { given: ['<img alt aria-label="" />', 'img'], want: 'none' }],
+    ['img (empty alt, whitespace label)', { given: ['<img alt aria-label=" " />', 'img'], want: 'none' }],
+    ['img (empty alt, empty labelledby)', { given: ['<img alt aria-labelledby="" />', 'img'], want: 'none' }],
+    ['img (empty alt, whitespace labelledby)', { given: ['<img alt aria-labelledby=" " />', 'img'], want: 'none' }],
+    ['img (empty alt, title)', { given: ['<img alt title="My image" />', 'img'], want: 'none' }],
+    ['img (empty alt, empty title)', { given: ['<img alt title="" />', 'img'], want: 'none' }],
+    ['img (empty alt, whitespace title)', { given: ['<img alt title=" " />', 'img'], want: 'none' }],
     ['input', { given: ['<input></input>', 'input'], want: 'textbox' }],
     ['input[type=button]', { given: ['<input type="button" />', 'input'], want: 'button' }],
     ['input[type=color]', { given: ['<input type="color" />', 'input'], want: NO_CORRESPONDING_ROLE }],
@@ -269,6 +333,7 @@ describe('getRole', () => {
     ['section', { given: ['<section></section>', 'section'], want: 'generic' }],
     ['section[aria-label]', { given: ['<section aria-label="My section"></section>', 'section'], want: 'region' }],
     ['section[aria-labelledby]', { given: ['<section aria-labelledby="my-section">', 'section'], want: 'region' }],
+    ['section[title]', { given: ['<section title="my-section">', 'section'], want: 'region' }],
     ['select', { given: ['<select></select>', 'select'], want: 'combobox' }],
     ['select[size=0]', { given: ['<select size="0"></select>', 'select'], want: 'combobox' }],
     ['select[size=1]', { given: ['<select size="1"></select>', 'select'], want: 'combobox' }],
@@ -334,10 +399,10 @@ describe('getRole', () => {
 
     // SVG
     ['svg', { given: ['<svg></svg>', 'svg'], want: 'graphics-document' }],
-    ['svg[role=img]', { given: ['<svg role="img"></svg>', 'svg'], want: 'img' }],
+    ['svg[role=image]', { given: ['<svg role="image"></svg>', 'svg'], want: 'image' }],
     [
-      'svg[role=graphics-symbol img]',
-      { given: ['<svg role="graphics-symbol img"></svg>', 'svg'], want: 'graphics-symbol' },
+      'svg[role=graphics-symbol image]',
+      { given: ['<svg role="graphics-symbol image"></svg>', 'svg'], want: 'graphics-symbol' },
     ],
     ['a (in svg)', { given: ['<svg><a href="#"></a></svg>', 'a'], want: 'link' }],
     ['a[xlink:href] (in svg)', { given: ['<svg><a xlink:href="#"></a></svg>', 'a'], want: 'link' }],
@@ -464,7 +529,7 @@ describe('getRole', () => {
     ['g (title)', { given: ['<svg><g><title>Group</title></g></svg>', 'g'], want: 'group' }],
     ['g[aria-label]', { given: ['<svg><g aria-label="Group"></g></svg>', 'g'], want: 'group' }],
     ['image', { given: ['<svg><image /></svg>', 'image'], want: 'none' }],
-    ['image[src]', { given: ['<svg><image src="foo.png" /></svg>', 'image'], want: 'img' }],
+    ['image[src]', { given: ['<svg><image src="foo.png" /></svg>', 'image'], want: 'image' }],
     ['line', { given: ['<svg><line></line></svg>', 'line'], want: 'none' }],
     ['linearGradient', { given: ['<svg><linearGradient></linearGradient></svg>', 'linearGradient'], want: 'none' }],
     ['marker', { given: ['<svg><marker></marker></svg>', 'marker'], want: 'none' }],

@@ -87,8 +87,15 @@ export function getRole(element: Element | VirtualElement, options?: GetRoleOpti
       return getHeaderRole(element, options);
     }
     case 'img': {
-      const name = calculateAccessibleName(element, roles.img);
-      return name ? roles.img : roles.none;
+      const name = calculateAccessibleName(element, roles.image);
+
+      if (name) {
+        return roles.image;
+      }
+
+      const alt = attr(element, 'alt');
+
+      return alt === '' ? roles.none : roles.image;
     }
     case 'li': {
       return getLIRole(element, options);

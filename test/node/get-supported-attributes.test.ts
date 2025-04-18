@@ -150,7 +150,7 @@ const tests: [
   ['html', { given: [{ tagName: 'html' }], want: NO_ATTRIBUTES }],
   ['i', { given: [{ tagName: 'i' }], want: GENERIC_NO_NAMING }],
   ['iframe', { given: [{ tagName: 'iframe' }], want: GLOBAL_ATTRIBUTES }],
-  ['img (name)', { given: [{ tagName: 'img', attributes: { alt: 'Alt text' } }], want: roles.img.supported }],
+  ['img (name)', { given: [{ tagName: 'img', attributes: { alt: 'Alt text' } }], want: roles.image.supported }],
   ['img (no name)', { given: [{ tagName: 'img' }], want: ['aria-hidden'] }],
   ['input[type=button]', { given: [{ tagName: 'input', attributes: { type: 'button' } }], want: BUTTON_ATTRIBUTES }],
   [

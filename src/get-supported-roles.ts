@@ -54,7 +54,7 @@ export function getSupportedRoles(element: Element | VirtualElement, options?: S
       return options?.ancestors?.[0]?.tagName === 'dl' ? DL_PARENT_ROLES : tagData.supportedRoles;
     }
     case 'img': {
-      const name = calculateAccessibleName(element, roles.img);
+      const name = calculateAccessibleName(element, roles.image);
       if (name) {
         /** @see https://www.w3.org/TR/html-aria/#el-img */
         return ['button', 'checkbox', 'image', 'img', 'link', 'math', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'meter', 'option', 'progressbar', 'radio', 'scrollbar', 'separator', 'slider', 'switch', 'tab', 'treeitem']; // biome-ignore format: long list
