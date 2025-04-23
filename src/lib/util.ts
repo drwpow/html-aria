@@ -154,21 +154,6 @@ export interface RemoveProhibitedOptions<P extends ARIAAttribute[]> {
   prohibited?: P;
 }
 
-const ROWGROUP_ROLES: ARIARole[] = ['rowgroup'];
-const ROWGROUP_ELEMENTS: TagName[] = ['tfoot', 'thead'];
-const ROWGROUP_CSS_SELECTOR = ROWGROUP_ROLES.map((role) => `[role=${role}]`)
-  .concat(...ROWGROUP_ELEMENTS.map((el) => `${el}:not([role])`))
-  .join(',');
-
-export function hasRowgroupParent(element: Element | VirtualElement, ancestors?: VirtualAncestorList): boolean {
-  if (typeof Element !== 'undefined' && element instanceof Element) {
-    return !!element.parentElement?.closest(ROWGROUP_CSS_SELECTOR);
-  }
-  return !!ancestors?.some(
-    (el) => ROWGROUP_ELEMENTS.includes(el.tagName) || (ROWGROUP_ROLES as string[]).includes(attr(el, 'role') as string),
-  );
-}
-
 export function hasTableParent(element: Element | VirtualElement, ancestors?: VirtualAncestorList): boolean {
   if (typeof Element !== 'undefined' && element instanceof Element) {
     return !!element.parentElement?.closest('table,[role=table]');

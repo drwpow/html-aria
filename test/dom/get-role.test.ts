@@ -359,8 +359,36 @@ describe('getRole', () => {
     ['textarea', { given: ['<textarea></textarea>', 'textarea'], want: 'textbox' }],
     ['thead', { given: ['<table><thead></thead></table>', 'thead'], want: 'rowgroup' }],
     ['tfoot', { given: ['<table><tfoot></tfoot></table>', 'tfoot'], want: 'rowgroup' }],
-    ['th', { given: ['<table><tr><th></th></tr></table>', 'th'], want: 'cell' }],
-    ['th (in thead)', { given: ['<table><thead><tr><th></th></tr></thead></table>', 'th'], want: 'columnheader' }],
+    ['th (row, single)', { given: ['<table><tr><th></th></tr></table>', 'th'], want: 'columnheader' }],
+    ['th (row, multiple)', { given: ['<table><tr><th></th><th></th></tr></table>', 'th'], want: 'columnheader' }],
+    ['th (row, td sibling)', { given: ['<table><tr><th></th><td></td></tr></table>', 'th'], want: 'rowheader' }],
+    ['th (thead, single)', { given: ['<table><thead><tr><th></th></tr></thead></table>', 'th'], want: 'columnheader' }],
+    [
+      'th (thead, multiple)',
+      { given: ['<table><thead><tr><th></th><th></th></tr></thead></table>', 'th'], want: 'columnheader' },
+    ],
+    [
+      'th (thead, td sibling)',
+      { given: ['<table><thead><tr><th></th><td></td></tr></thead></table>', 'th'], want: 'rowheader' },
+    ],
+    ['th (tbody, single)', { given: ['<table><tbody><tr><th></th></tr></tbody></table>', 'th'], want: 'columnheader' }],
+    [
+      'th (tbody, multiple)',
+      { given: ['<table><tbody><tr><th></th><th></th></tr></tbody></table>', 'th'], want: 'columnheader' },
+    ],
+    [
+      'th (tbody, td sibling)',
+      { given: ['<table><tbody><tr><th></th><td></td></tr></tbody></table>', 'th'], want: 'rowheader' },
+    ],
+    ['th (tfoot, single)', { given: ['<table><tfoot><tr><th></th></tr></tfoot></table>', 'th'], want: 'columnheader' }],
+    [
+      'th (tfoot, multiple)',
+      { given: ['<table><tfoot><tr><th></th><th></th></tr></tfoot></table>', 'th'], want: 'columnheader' },
+    ],
+    [
+      'th (tfoot, td sibling)',
+      { given: ['<table><tfoot><tr><th></th><td></td></tr></tfoot></table>', 'th'], want: 'rowheader' },
+    ],
     ['th[scope=col]', { given: ['<table><tr><th scope="col"></th></tr></table>', 'th'], want: 'columnheader' }],
     [
       'th[scope=colgroup]',
@@ -377,7 +405,6 @@ describe('getRole', () => {
         want: 'rowheader',
       },
     ],
-    ['th (row)', { given: ['<table><tr><th></th></tr></table>', 'th'], want: 'cell' }],
     ['th (grid)', { given: ['<table role="grid"><tr><th></th></tr></table>', 'th'], want: 'gridcell' }],
     ['th (treegrid)', { given: ['<table role="treegrid"><tr><th></th></tr></table>', 'th'], want: 'gridcell' }],
     ['time', { given: ['<time></time>', 'time'], want: 'time' }],

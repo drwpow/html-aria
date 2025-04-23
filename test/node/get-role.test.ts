@@ -476,20 +476,28 @@ describe('getRole', () => {
     ['textarea', { given: [{ tagName: 'textarea' }], want: 'textbox' }],
     ['thead', { given: [{ tagName: 'thead' }], want: 'rowgroup' }],
     ['tfoot', { given: [{ tagName: 'tfoot' }], want: 'rowgroup' }],
-    ['th', { given: [{ tagName: 'th' }], want: 'cell' }],
+    ['th', { given: [{ tagName: 'th' }], want: 'rowheader' }],
     ['th (no ancestors)', { given: [{ tagName: 'th' }, { ancestors: [] }], want: NO_CORRESPONDING_ROLE }],
     ['th[scope=col]', { given: [{ tagName: 'th', attributes: { scope: 'col' } }], want: 'columnheader' }],
     ['th[scope=colgroup]', { given: [{ tagName: 'th', attributes: { scope: 'colgroup' } }], want: 'columnheader' }],
     ['th[scope=row]', { given: [{ tagName: 'th', attributes: { scope: 'row' } }], want: 'rowheader' }],
     ['th[scope=rowgroup]', { given: [{ tagName: 'th', attributes: { scope: 'rowgroup' } }], want: 'rowheader' }],
-    ['th (table)', { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'table' }] }], want: 'cell' }],
+    ['th (table)', { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'table' }] }], want: 'rowheader' }], // Note: in most browsers, they’ll “fix” it as if it were inside tbody > tr
     [
       'th (thead)',
       { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'thead' }, { tagName: 'table' }] }], want: 'columnheader' },
     ],
     [
+      'th (tbody)',
+      { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'tbody' }, { tagName: 'table' }] }], want: 'rowheader' },
+    ],
+    [
+      'th (tfoot)',
+      { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'tfoot' }, { tagName: 'table' }] }], want: 'rowheader' },
+    ],
+    [
       'th (row)',
-      { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'tr' }, { tagName: 'table' }] }], want: 'cell' },
+      { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'tr' }, { tagName: 'table' }] }], want: 'rowheader' },
     ],
     [
       'th (grid)',

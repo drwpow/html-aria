@@ -417,12 +417,29 @@ const tests: [
   ['template', { given: [{ tagName: 'template' }], want: NO_ATTRIBUTES }],
   ['textarea', { given: [{ tagName: 'textarea' }], want: TEXTBOX_ATTRIBUTES }],
   ['tfoot', { given: [{ tagName: 'tfoot' }], want: roles.rowgroup.supported }],
-  ['th', { given: [{ tagName: 'th' }], want: roles.cell.supported }],
+  ['th', { given: [{ tagName: 'th' }], want: roles.columnheader.supported }],
+  ['th (no ancestors)', { given: [{ tagName: 'th' }, { ancestors: [] }], want: GLOBAL_ATTRIBUTES }],
+  [
+    'th (table)',
+    { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'table' }] }], want: roles.columnheader.supported },
+  ],
   [
     'th (thead)',
     { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'thead' }] }], want: roles.columnheader.supported },
   ],
-  ['th', { given: [{ tagName: 'th', attributes: { scope: 'row' } }], want: roles.rowheader.supported }],
+  [
+    'th (tbody)',
+    { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'tbody' }] }], want: roles.rowheader.supported },
+  ],
+  [
+    'th (tfoot)',
+    { given: [{ tagName: 'th' }, { ancestors: [{ tagName: 'tfoot' }] }], want: roles.rowheader.supported },
+  ],
+  ['th[scope=row]', { given: [{ tagName: 'th', attributes: { scope: 'row' } }], want: roles.rowheader.supported }],
+  [
+    'th[scope=column]',
+    { given: [{ tagName: 'th', attributes: { scope: 'column' } }], want: roles.columnheader.supported },
+  ],
   ['thead', { given: [{ tagName: 'thead' }], want: roles.rowgroup.supported }],
   [
     'time',
