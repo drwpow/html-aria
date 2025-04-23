@@ -1,5 +1,11 @@
 # html-aria
 
+## 0.5.1
+
+### Patch Changes
+
+- [#59](https://github.com/drwpow/html-aria/pull/59) [`3ae51fc`](https://github.com/drwpow/html-aria/commit/3ae51fc7b586168787832170a62ebd2884d45083) Thanks [@drwpow](https://github.com/drwpow)! - Bugfix: <th> role now matches WPT tests and browser behavior
+
 ## 0.5.0
 
 ### Minor Changes
