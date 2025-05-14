@@ -39,7 +39,7 @@
     "name": "Drew Powers",
     "email": "drew@pow.rs"
   },
-  "packageManager": "pnpm@10.8.0",
+  "packageManager": "pnpm@10.11.0",
   "scripts": {
     "benchmark": "vitest bench",
     "build": "unbuild",
@@ -51,16 +51,16 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@changesets/changelog-github": "^0.5.1",
-    "@changesets/cli": "^2.29.2",
+    "@changesets/cli": "^2.29.4",
     "@types/aria-query": "^5.0.4",
-    "@vitest/browser": "^3.1.2",
+    "@vitest/browser": "^3.1.3",
     "aria-query": "^5.3.2",
     "dom-accessibility-api": "^0.7.0",
-    "happy-dom": "^17.4.4",
+    "happy-dom": "^17.4.7",
     "jsdom": "^25.0.1",
     "playwright": "^1.52.0",
     "typescript": "^5.8.3",
     "unbuild": "^3.5.0",
-    "vitest": "^3.1.2"
+    "vitest": "^3.1.3"
   }
 }
