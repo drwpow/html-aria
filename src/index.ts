@@ -1,5 +1,6 @@
 export * from './is-interactive.js';
 export * from './is-name-required.js';
+export * from './get-acc-name.js';
 export * from './get-elements.js';
 export * from './get-required-attributes.js';
 export * from './get-role.js';

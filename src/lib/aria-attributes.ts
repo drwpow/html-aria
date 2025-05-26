@@ -25,7 +25,7 @@ export const globalAttributes: Record<GlobalAttribute, AttributeData> = {
   'aria-hidden': { category: ['global', 'widget'], type: 'true/false/undefined', default: undefined },
   'aria-keyshortcuts': { category: ['global'], type: 'string', default: undefined },
   'aria-label': { category: ['global', 'widget'], type: 'string', default: undefined },
-  'aria-labelledby': { category: ['global', 'relationship'], type: 'string', default: undefined },
+  'aria-labelledby': { category: ['global', 'relationship'], type: 'idRefList', default: undefined },
   'aria-live': {
     category: ['global', 'liveregion'],
     type: 'token',

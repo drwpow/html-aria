@@ -12,6 +12,7 @@ export default defineWorkspace([
     test: {
       name: 'jsdom',
       include: ['./test/dom/**/*.test.ts'],
+      exclude: ['./test/dom/get-acc-name.test.ts'], // this doesn’t have full browser APIs
       environment: 'jsdom',
     },
   },
@@ -19,6 +20,7 @@ export default defineWorkspace([
     test: {
       name: 'happy-dom',
       include: ['./test/dom/**/*.test.ts'],
+      exclude: ['./test/dom/get-acc-name.test.ts'], // this doesn’t have full browser APIs
       environment: 'happy-dom',
     },
   },

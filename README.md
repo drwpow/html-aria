@@ -275,6 +275,19 @@ isValidAttribute("aria-valuenow", 0); // true
 
 ⚠️ _Be mindful of cases where a valid value may still be valid, but invoke different behavior according to the ARIA role, e.g. [`mixed` behavior for `radio`/`menuitemradio`/`switch`](https://www.w3.org/TR/wai-aria-1.3/#aria-checked)_
 
+### getAccNameAndDescription()
+
+> [!NOTE]
+> Only available in the DOM API.
+
+Get the [accessible name and description](https://www.w3.org/TR/html-aam-1.0/#accessible-name-and-description-computation) for an HTML element.
+
+```ts
+const el = document.querySelector("input");
+getAccNameAndDescription(el);
+// { name: "My Input", description: undefined }
+```
+
 ## Reference
 
 ### ARIA roles from HTML
