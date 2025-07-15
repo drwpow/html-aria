@@ -34,21 +34,42 @@ export function copyAndSortList<T = unknown>(list: T[]): T[] {
  * we would have to do more work isolating parallel tests AS WELL as come up
  * with a strategy for testing `<body>` and other structural tags.
  */
-export function setUpDOM(html: string, querySelector: string) {
+export function setUpDOM(
+  html: string,
+  querySelector: string,
+  options?: { before?: Parameters<ChildNode['before']>; after?: Parameters<ChildNode['before']>; mount?: boolean },
+) {
+  const randomID = `id-${Math.random().toString(36).substring(2, 10)}`;
+
+  let root: Element = document.documentElement;
+  let element: Element = document.documentElement;
+  let cleanup = () => {};
   if (querySelector === 'html') {
-    return { root: document.documentElement, element: document.documentElement as Element };
+    root = document.documentElement;
+  } else if (querySelector === 'head' || querySelector === 'body') {
+    root = document.querySelector(querySelector)!;
+    element = document.querySelector(querySelector)!;
+  } else {
+    root = document.createElement('div');
+    root.innerHTML = html.replace(/:id:/g, randomID);
+    element = root.querySelector(querySelector) || root.querySelector(querySelector.toLowerCase())!;
+    if (!element) throw new Error(`querySelector "${querySelector}" not found in document`);
   }
-  if (querySelector === 'head' || querySelector === 'body') {
-    return { root: document.documentElement, element: document.querySelector(querySelector) as Element };
+  if (options?.before) {
+    element.before(...options.before);
   }
-
-  const container = document.createElement('div');
-
-  container.innerHTML = html;
+  if (options?.after) {
+    element.after(...options.after);
+  }
+  if (options?.mount) {
+    document.body.appendChild(root);
+    cleanup = () => {
+      document.body.removeChild(root);
+    };
+  }
   return {
-    root: container,
-    element: (container.querySelector(querySelector) ||
-      container.querySelector(querySelector.toLowerCase()) || // hack: jsdom and happy-dom convert `feDropShadow` to `feDropShadow`
-      container.children[0]) as Element,
+    root,
+    element,
+    cleanup,
   };
 }

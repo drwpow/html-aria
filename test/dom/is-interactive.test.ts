@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { getTagName, isInteractive, tags } from '../../src/index.js';
-import { checkAllTagsTested, checkTestAndTagName, setUpDOM } from './../helpers';
+import { getTagName, isInteractive } from '../../src/index.js';
+import { checkTestAndTagName, setUpDOM } from './../helpers';
 
 // add <div tabindex=0>
 // add <div role="button" tabindex=0>
@@ -135,7 +135,7 @@ describe('isInteractive', () => {
     ['q', { given: ['<q></q>', 'q'], want: false }],
     ['rp', { given: ['<rp></rp>', 'rp'], want: false }],
     ['rt', { given: ['<rt></rt>', 'rt'], want: false }],
-    ['ruby', { given: ['<ruby></ruby>', 'rudy'], want: false }],
+    ['ruby', { given: ['<ruby></ruby>', 'ruby'], want: false }],
     ['s', { given: ['<s></s>', 's'], want: false }],
     ['samp', { given: ['<samp></samp>', 'samp'], want: false }],
     ['script', { given: ['<script></script>', 'script'], want: false }],
@@ -152,7 +152,7 @@ describe('isInteractive', () => {
     ['style', { given: ['<style></style>', 'style'], want: false }],
     ['sub', { given: ['<sub></sub>', 'sub'], want: false }],
     ['summary', { given: ['<summary></summary>', 'summary'], want: false }],
-    ['sup', { given: ['<sup></sup>', 'sub'], want: false }],
+    ['sup', { given: ['<sup></sup>', 'sup'], want: false }],
     ['table', { given: ['<table></table>', 'table'], want: false }],
     ['tbody', { given: ['<table><tbody></tbody></table>', 'tbody'], want: false }],
     ['td', { given: ['<table><td></td></table>', 'td'], want: false }],

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
+    "erasableSyntaxOnly": true,
     "lib": ["DOM", "ESNext"],
     "module": "NodeNext",
     "moduleResolution": "nodenext",
@@ -13,7 +14,8 @@
     "sourceMap": true,
     "strict": true,
     "target": "ESNext",
-    "types": ["@vitest/browser/providers/playwright"]
+    "types": ["@vitest/browser/providers/playwright"],
+    "verbatimModuleSyntax": true
   },
   "include": ["src"],
   "exclude": ["dist", "node_modules"]
