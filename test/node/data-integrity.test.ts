@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { type ARIARole, type AbstractRole, roles, tags } from '../../src/index.js';
+import { type AbstractRole, type ARIARole, roles, tags } from '../../src/index.js';
 import { copyAndSortList } from '../helpers.js';
 
 // simple tests that check for simple errors and inconsistencies in the data.

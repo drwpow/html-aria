@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { type TagName, isInteractive, tags } from '../../src/index.js';
+import { isInteractive, type TagName } from '../../src/index.js';
 import { checkAllTagsTested, checkTestAndTagName } from './../helpers';
 
 // add <div tabindex=0>

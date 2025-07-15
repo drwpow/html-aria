@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { ALL_ROLES, NO_ROLES, type TagName, getSupportedRoles, isSupportedRole, tags } from '../../src/index.js';
+import { ALL_ROLES, getSupportedRoles, isSupportedRole, NO_ROLES, type TagName } from '../../src/index.js';
 import { checkAllTagsTested, checkTestAndTagName } from '../helpers.js';
 
 describe('getSupportedRoles', () => {

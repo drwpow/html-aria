@@ -306,8 +306,6 @@ describe('isInteractive', () => {
     ['view', { given: ['<svg><view></view></svg>', 'view'], want: false }],
   ];
 
-  const testedTags = new Set<string>();
-
   test.each(tests)('%s', (name, { given, want }) => {
     const { element } = setUpDOM(...given);
     const tagName = getTagName(element);

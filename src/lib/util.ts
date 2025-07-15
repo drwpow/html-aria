@@ -7,7 +7,7 @@ import type {
   VirtualAncestorList,
   VirtualElement,
 } from '../types.js';
-import { type RoleData, landmarkRoles } from './aria-roles.js';
+import { landmarkRoles, type RoleData } from './aria-roles.js';
 
 /** Parse a list of roles, e.g. role="graphics-symbol img" */
 export function parseTokenList(tokenList: string): string[] {
