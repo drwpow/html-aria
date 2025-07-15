@@ -1,7 +1,7 @@
 import type {
+  AbstractRole,
   ARIAAttribute,
   ARIARole,
-  AbstractRole,
   DigitalPublishingRole,
   DocumentStructureRole,
   GraphicsRole,

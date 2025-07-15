@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.1.1/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -7,15 +7,19 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["dist/**", "package.json", "scripts/wpt"]
+    "includes": ["**", "!**/dist/**", "!**/package.json", "!**/scripts/wpt"]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
     "lineWidth": 120
   },
-  "organizeImports": {
-    "enabled": true
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "linter": {
     "enabled": true,
@@ -24,7 +28,7 @@
       "style": {
         "noNonNullAssertion": "off"
       },
-      "nursery": {
+      "suspicious": {
         "useGuardForIn": "error"
       }
     }

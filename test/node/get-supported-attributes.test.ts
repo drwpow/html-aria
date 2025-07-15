@@ -1,15 +1,15 @@
 import { describe, expect, test } from 'vitest';
 import {
   type ARIAAttribute,
-  NO_ATTRIBUTES,
-  type TagName,
   attributes,
   getSupportedAttributes,
   globalAttributes,
   isSupportedAttribute,
   isValidAttributeValue,
+  NO_ATTRIBUTES,
   removeProhibited,
   roles,
+  type TagName,
 } from '../../src/index.js';
 import { checkAllTagsTested, checkTestAndTagName } from '../helpers.js';
 

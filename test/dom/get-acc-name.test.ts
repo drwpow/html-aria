@@ -1663,7 +1663,7 @@ describe('getAccNameAndDescription', () => {
       ],
     ];
 
-    test.each(testCases)('%s', (name, { given, options, want }) => {
+    test.each(testCases)('%s', (_name, { given, options, want }) => {
       const { element, cleanup } = setUpDOM(...given, { mount: true, ...options });
       expect(getAccNameAndDescription(element).name).toBe(want);
       cleanup();
@@ -1807,7 +1807,7 @@ describe('getAccNameAndDescription', () => {
       ],
     ];
 
-    test.each(testCases)('%s', (name, { given, options, want }) => {
+    test.each(testCases)('%s', (_name, { given, options, want }) => {
       const { element, cleanup } = setUpDOM(...given, { mount: true, ...options });
       expect(getAccNameAndDescription(element).description).toBe(want);
       cleanup();

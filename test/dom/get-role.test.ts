@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { NO_CORRESPONDING_ROLE, getRole, getTagName, tags } from '../../src/index.js';
+import { getRole, getTagName, NO_CORRESPONDING_ROLE } from '../../src/index.js';
 import { checkAllTagsTested, checkTestAndTagName, setUpDOM } from '../helpers.js';
 
 describe('getRole', () => {
