@@ -1,5 +1,11 @@
 # html-aria
 
+## 0.5.2
+
+### Patch Changes
+
+- [#63](https://github.com/drwpow/html-aria/pull/63) [`e2cb0f2`](https://github.com/drwpow/html-aria/commit/e2cb0f2c721b0a6d5d3d76d2d1fecb96abb44362) Thanks [@drwpow](https://github.com/drwpow)! - Add getAccname() and getAccDescription() for getting accessible names + descriptions.
+
 ## 0.5.1
 
 ### Patch Changes
