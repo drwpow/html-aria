@@ -39,12 +39,12 @@ describe('getRole', () => {
       'aside[aria-label] (in article in main)',
       { given: ['<main><article><aside aria-label="Aside"></aside></article></main>', 'aside'], want: 'complementary' },
     ],
-    ['aside (in <article>)', { given: ['<article><aside>Aside</aside></article>', 'aside'], want: 'generic' }],
+    ['aside (in article)', { given: ['<article><aside>Aside</aside></article>', 'aside'], want: 'generic' }],
     [
       'aside[aria-label] (in article)',
       { given: ['<article><aside aria-label="Aside"></aside></article>', 'aside'], want: 'complementary' },
     ],
-    ['aside (in <aside>)', { given: ['<aside><aside>Aside</aside></aside>', 'aside aside'], want: 'generic' }],
+    ['aside (in aside)', { given: ['<aside><aside>Aside</aside></aside>', 'aside aside'], want: 'generic' }],
     [
       'aside[aria-label] (in aside)',
       { given: ['<aside><aside aria-label="Aside"></aside></aside>', 'aside[aria-label]'], want: 'complementary' },
@@ -64,6 +64,10 @@ describe('getRole', () => {
       { given: ['<section aria-label="My section"><aside></aside></section>', 'aside'], want: 'generic' },
     ],
     [
+      'aside[title] (in section)',
+      { given: ['<section><aside title="x">x</aside></section>', 'aside'], want: 'complementary' },
+    ],
+    [
       'aside[aria-label] (in section[aria-label])',
       {
         given: ['<section aria-label="My section"><aside aria-label="Aside"></aside></section>', 'aside'],
@@ -73,7 +77,10 @@ describe('getRole', () => {
     [
       'aside[aria-labelledby] (in section[aria-label])',
       {
-        given: ['<section aria-label="My section"><aside aria-labelledby="Aside"></aside></section>', 'aside'],
+        given: [
+          '<section aria-label="My section"><aside aria-labelledby="aside-label"></aside></section><div id="aside-label">aside</div>',
+          'aside',
+        ],
         want: 'complementary',
       },
     ],
@@ -161,12 +168,18 @@ describe('getRole', () => {
     ['iframe', { given: ['<iframe></iframe>', 'iframe'], want: NO_CORRESPONDING_ROLE }],
     ['img (named by alt)', { given: ['<img alt="My image" />', 'img'], want: 'image' }],
     ['img (named by label)', { given: ['<img aria-label="My image"/>', 'img'], want: 'image' }],
-    ['img (named by labelledby)', { given: ['<img aria-labelledby="My image" />', 'img'], want: 'image' }],
+    [
+      'img (named by labelledby)',
+      { given: ['<img aria-labelledby="my-image-1" /><div id="my-image-1">My image</div>', 'img'], want: 'image' },
+    ],
     ['img (named by title)', { given: ['<img title="My image" />', 'img'], want: 'image' }],
     ['img (empty alt named by label)', { given: ['<img alt="" aria-label="My image"/>', 'img'], want: 'image' }],
     [
       'img (empty alt named by labelledby)',
-      { given: ['<img alt="" aria-labelledby="My image"/>', 'img'], want: 'image' },
+      {
+        given: ['<img alt="" aria-labelledby="my-image-2"/><div id="my-image-2">My image</div>', 'img'],
+        want: 'image',
+      },
     ],
     ['img (no name)', { given: ['<img />', 'img'], want: 'image' }],
     ['img (empty string alt)', { given: ['<img alt="" />', 'img'], want: 'none' }],
@@ -332,8 +345,42 @@ describe('getRole', () => {
     ['search', { given: ['<search></search>', 'search'], want: 'search' }],
     ['section', { given: ['<section></section>', 'section'], want: 'generic' }],
     ['section[aria-label]', { given: ['<section aria-label="My section"></section>', 'section'], want: 'region' }],
-    ['section[aria-labelledby]', { given: ['<section aria-labelledby="my-section">', 'section'], want: 'region' }],
-    ['section[title]', { given: ['<section title="my-section">', 'section'], want: 'region' }],
+    ['section[aria-label] (empty)', { given: ['<section aria-label="">x</section>', 'section'], want: 'generic' }],
+    [
+      'section[aria-label] (whitespace)',
+      { given: ['<section class="ex-generic" aria-label=" ">x</section>', 'section'], want: 'generic' },
+    ],
+    [
+      'section[aria-labelledby]',
+      {
+        given: [
+          '<section aria-labelledby="my-section-labelledby"></section><div id="my-section-labelledby">x</div>',
+          'section',
+        ],
+        want: 'region',
+      },
+    ],
+    [
+      'section[aria-labelledby] (non-existing)',
+      { given: ['<section class="ex-generic" aria-labelledby="non-existing">x</section>', 'section'], want: 'generic' },
+    ],
+    [
+      'section[aria-labelledby] (empty)',
+      {
+        given: ['<section aria-labelledby="section-empty">x</section><div id="section-empty"></div>', 'section'],
+        want: 'generic',
+      },
+    ],
+    [
+      'section[aria-labelledby] (whitespace)',
+      {
+        given: ['<section aria-labelledby="section-space">x</section><div id="section-space"> </div>', 'section'],
+        want: 'generic',
+      },
+    ],
+    ['section[title]', { given: ['<section title="x">x</section>', 'section'], want: 'region' }],
+    ['section[title] (empty)', { given: ['<section title="">x</section>', 'section'], want: 'generic' }],
+    ['section[title] (whitespace)', { given: ['<section title=" ">x</section>', 'section'], want: 'generic' }],
     ['select', { given: ['<select></select>', 'select'], want: 'combobox' }],
     ['select[size=0]', { given: ['<select size="0"></select>', 'select'], want: 'combobox' }],
     ['select[size=1]', { given: ['<select size="1"></select>', 'select'], want: 'combobox' }],
@@ -457,11 +504,23 @@ describe('getRole', () => {
     ],
     [
       'circle[aria-labelledby]',
-      { given: ['<svg><circle aria-labelledby="element" /></svg>', 'circle'], want: 'graphics-symbol' },
+      {
+        given: [
+          '<svg><circle aria-labelledby="svg-circle-label" /></svg><div id="svg-circle-label">circle</div>',
+          'circle',
+        ],
+        want: 'graphics-symbol',
+      },
     ],
     [
       'circle[aria-describedby]',
-      { given: ['<svg><circle aria-describedby="element" /></svg>', 'circle'], want: 'graphics-symbol' },
+      {
+        given: [
+          '<svg><circle aria-describedby="svg-circle-description" /></svg><div id="circle-label-description">circle</div>',
+          'circle',
+        ],
+        want: 'graphics-symbol',
+      },
     ],
     [
       'circle[aria-roledescription]',
@@ -583,8 +642,8 @@ describe('getRole', () => {
 
   const testedTags = new Set<string>();
 
-  test.each(testCases)('%s', (name, { given, want }) => {
-    const { element } = setUpDOM(...given);
+  test.each(testCases)('%s', (name, { given: [html, querySelector], want }) => {
+    const { element } = setUpDOM(html, querySelector, { mount: true });
     const tagName = getTagName(element);
     testedTags.add(tagName);
     checkTestAndTagName(name, tagName);

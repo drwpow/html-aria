@@ -70,6 +70,13 @@ describe('getRole', () => {
     ],
     ['aside (in section)', { given: [{ tagName: 'aside' }, { ancestors: [{ tagName: 'section' }] }], want: 'generic' }],
     [
+      'aside[title] (in section)',
+      {
+        given: [{ tagName: 'aside', attributes: { title: 'x' } }, { ancestors: [{ tagName: 'section' }] }],
+        want: 'complementary',
+      },
+    ],
+    [
       'aside[aria-label] (in section)',
       {
         given: [{ tagName: 'aside', attributes: { 'aria-label': 'Aside' } }, { ancestors: [{ tagName: 'section' }] }],
@@ -437,7 +444,17 @@ describe('getRole', () => {
       'section[aria-labelledby]',
       { given: [{ tagName: 'section', attributes: { 'aria-labelledby': 'My section' } }], want: 'region' },
     ],
-    ['section[title]', { given: [{ tagName: 'section', attributes: { title: 'My section' } }], want: 'region' }],
+    [
+      'section[aria-label] (empty)',
+      { given: [{ tagName: 'section', attributes: { 'aria-label': '' } }], want: 'generic' },
+    ],
+    [
+      'section[aria-label] (whitespace)',
+      { given: [{ tagName: 'section', attributes: { 'aria-label': ' ' } }], want: 'generic' },
+    ],
+    ['section[title]', { given: [{ tagName: 'section', attributes: { title: 'x' } }], want: 'region' }],
+    ['section[title] (empty)', { given: [{ tagName: 'section', attributes: { title: '' } }], want: 'generic' }],
+    ['section[title] (whitespace)', { given: [{ tagName: 'section', attributes: { title: ' ' } }], want: 'generic' }],
     ['select', { given: [{ tagName: 'select' }], want: 'combobox' }],
     ['select[size=0]', { given: [{ tagName: 'select', attributes: { size: 0 } }], want: 'combobox' }],
     ['select[size=1]', { given: [{ tagName: 'select', attributes: { size: 1 } }], want: 'combobox' }],
