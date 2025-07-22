@@ -1,5 +1,6 @@
-import { getRole } from './get-role.js';
-import { getCSSContent, getDisplay, getTooltip, isHidden } from './lib/accname.js';
+import { type RoleData, roles } from './lib/aria-roles.js';
+import { attr, getCSSContent, getDisplay, getTagName, getTooltip, isHidden } from './lib/util.js';
+import type { VirtualElement } from './types.js';
 
 /** Common options */
 interface Options {
@@ -10,41 +11,38 @@ interface Options {
    * followed. This is done to avoid infinite loops.
    * @see https://www.w3.org/TR/accname-1.2/#computation-steps
    */
-  nodesReferenced: Set<Element>;
+  nodesReferenced: Set<Element | VirtualElement>;
 }
 
 /**
  * Get [acc]essible name & description.
- * Per spec, a missing name is represented as an empty string ("").
- * Name and description must be calculated together, to ensure
- * descriptions are not redundant.
+ * Per spec, a missing name is represented as an empty string ("").  Name and
+ * description must be calculated together, to ensure descriptions are not
+ * redundant.
+ *
  * @see https://www.w3.org/TR/html-aam-1.0/#accessible-name-and-description-computation
  */
 export function getAccNameAndDescription(
-  element: Element,
+  element: Element | VirtualElement,
   { nodesReferenced }: Options = { nodesReferenced: new Set<Element>() },
 ): {
   name: string;
   description: string | undefined;
 } {
-  if (typeof Element === 'undefined') {
-    throw new Error('getAccNameAndDescription is not supported in this environment.');
-  }
-
   // helper to conditionally return description, only if unique from name
   // https://www.w3.org/TR/accname-1.2/#mapping_additional_nd_description
   const nameFrom = (name: string | undefined) => {
     let description: string | undefined;
     // 1. aria-describedby
-    const describedby = element.getAttribute('aria-describedby');
+    const describedby = attr(element, 'aria-describedby');
     if (describedby) {
       description = concatIDRefList(element, 'aria-describedby', { nodesReferenced });
     } else {
       description =
         // 2. aria-description
-        element.getAttribute('aria-description') ||
+        attr(element, 'aria-description') ||
         // 3. title
-        element.getAttribute('title') ||
+        attr(element, 'title') ||
         // 4. no acc description
         undefined;
     }
@@ -54,19 +52,19 @@ export function getAccNameAndDescription(
     };
   };
 
-  const ariaLabelledby = element.getAttribute('aria-labelledby');
-  const ariaLabel = element.getAttribute('aria-label');
+  const ariaLabelledby = attr(element, 'aria-labelledby');
+  const ariaLabel = attr(element, 'aria-label');
 
   // https://www.w3.org/TR/html-aam-1.0/#accessible-name-and-description-computation
   // 4.1.1 input type="text", input type="password", input type="number", input
   // type="search", input type="tel", input type="email", input type="url", textarea
   if (!ariaLabel && !ariaLabelledby) {
-    switch (element.tagName) {
-      case 'INPUT':
-      case 'TEXTAREA': {
-        const inputType = element.getAttribute('type');
-        const title = element.getAttribute('title');
-        const placeholder = element.getAttribute('placeholder');
+    switch (getTagName(element)) {
+      case 'input':
+      case 'textarea': {
+        const inputType = attr(element, 'type');
+        const title = attr(element, 'title');
+        const placeholder = attr(element, 'placeholder');
         if (
           ['text', 'password', 'number', 'search', 'tel', 'email', 'url'].includes(inputType!) ||
           element.tagName === 'TEXTAREA'
@@ -129,45 +127,46 @@ export function getAccNameAndDescription(
       }
 
       // 4.1.4 button Element Accessible Name Computation
-      case 'BUTTON': {
+      case 'button': {
         // 1. aria-label (handled below)
         // 2. <label>
-        const parentLabel = element.parentElement?.closest('label');
+        const parentLabel = (element as Element).parentElement?.closest('label');
         if (parentLabel) return getAccNameAndDescription(parentLabel, { nodesReferenced });
         return nameFrom(
           // 3. visible text
           computeName(element, { nodesReferenced }) ||
             // 4. title
-            element.getAttribute('title') ||
+            attr(element, 'title') ||
             // 5. no accname
             undefined,
         );
       }
 
       // 4.1.5 fieldset Element Accessible Name Computation
-      case 'FIELDSET': {
+      case 'fieldset': {
         // 1. aria-label (handled below)
         // 2. <legend>
-        const legend = element.querySelector('legend');
+        const legend =
+          typeof Element !== 'undefined' && element instanceof Element ? element.querySelector('legend') : null;
         const legendText = legend ? computeName(legend, { nodesReferenced }) : undefined;
         if (legendText) return nameFrom(legendText);
         return nameFrom(
           // 3. title
-          element.getAttribute('title') ||
+          attr(element, 'title') ||
             // 4. no accname
             undefined,
         );
       }
 
       // 4.1.6 output Element Accessible Name Computation
-      case 'OUTPUT': {
+      case 'output': {
         // 1. aria-label (handled below)
         // 2. <label>
         const hll = calculateHostLanguageLabel(element, { nodesReferenced });
         if (hll) return nameFrom(hll);
         return nameFrom(
           // 3. title
-          element.getAttribute('title') ||
+          attr(element, 'title') ||
             // 4. no accname
             undefined,
         );
@@ -177,8 +176,8 @@ export function getAccNameAndDescription(
       // TODO: what are “other form elements?”
 
       // 4.1.8 summary Element Accessible Name Computation
-      case 'SUMMARY': {
-        if (element.parentElement?.tagName !== 'DETAILS') {
+      case 'summary': {
+        if (getTagName((element as Element).parentElement!) !== 'details') {
           break;
         }
 
@@ -188,7 +187,7 @@ export function getAccNameAndDescription(
         if (subtree) return nameFrom(subtree);
         // 3. title
         return nameFrom(
-          element.getAttribute('title') ||
+          attr(element, 'title') ||
             // 4. (user agent provided)
             // 5. no accname
             undefined,
@@ -196,139 +195,141 @@ export function getAccNameAndDescription(
       }
 
       // 4.1.9 figure Element Accessible Name Computation
-      case 'FIGURE': {
+      case 'figure': {
         // 1. aria-label (handled below)
         // 2. <figcaption>
-        const figcaptionEl = element.querySelector('figcaption');
+        const figcaptionEl =
+          typeof Element !== 'undefined' && element instanceof Element ? element.querySelector('figcaption') : null;
         if (figcaptionEl) return getAccNameAndDescription(figcaptionEl);
         // 3. title
         return nameFrom(
-          element.getAttribute('title') ||
+          attr(element, 'title') ||
             // 4. no accname
             undefined,
         );
       }
 
       // 4.1.10 img Element Accessible Name Computation
-      case 'IMG': {
+      case 'img': {
         // 1. aria-label (handled below)
         return nameFrom(
           // 2. alt
-          element.getAttribute('alt') ||
+          attr(element, 'alt') ||
             // 3. title
-            element.getAttribute('title') ||
+            attr(element, 'title') ||
             // 4. no accname
             undefined,
         );
       }
 
       // 4.1.11 table Element Accessible Name Computation
-      case 'TABLE': {
+      case 'table': {
         // 1. aria-label (handled below)
         // 2. <caption>
-        const captionEl = element.querySelector('caption');
+        const captionEl =
+          typeof Element !== 'undefined' && element instanceof Element ? element.querySelector('caption') : null;
         if (captionEl) return getAccNameAndDescription(captionEl);
         return nameFrom(
           // 3. title
-          element.getAttribute('title') ||
+          attr(element, 'title') ||
             // 4. no accname
             undefined,
         );
       }
 
       // 4.1.12 tr, td, th Elements Accessible Name Computation
-      case 'TR':
-      case 'TD':
-      case 'TH': {
+      case 'tr':
+      case 'td':
+      case 'th': {
         // 1. aria-label (handled below)
         return nameFrom(
           // 2. title
-          element.getAttribute('title') ||
+          attr(element, 'title') ||
             // 3. no accname
             undefined,
         );
       }
 
       // 4.1.13 a Element Accessible Name Computation
-      case 'A': {
+      case 'a': {
         // 1. aria-label (handled below)
         // 2. subtree
         const subtree = computeName(element, { nodesReferenced });
         if (subtree) return nameFrom(subtree);
         return nameFrom(
           // 3. title
-          element.getAttribute('title') ||
+          attr(element, 'title') ||
             // 4. no accname
             undefined,
         );
       }
 
       // 4.1.14 area Element Accessible Name Computation
-      case 'AREA': {
+      case 'area': {
         // 1. aria-label (handled below)
         return nameFrom(
           // 2. alt
-          element.getAttribute('alt') ||
+          attr(element, 'alt') ||
             // 3. title
-            element.getAttribute('title') ||
+            attr(element, 'title') ||
             // 4. no accname
             undefined,
         );
       }
 
       // 4.1.15 iframe Element Accessible Name Computation
-      case 'IFRAME': {
+      case 'iframe': {
         // 1. aria-label (handled below)
         return nameFrom(
           // 2. title
-          element.getAttribute('title') ||
+          attr(element, 'title') ||
             // 3. no accname
             undefined,
         );
       }
 
       // 4.1.16 Section and Grouping Element Accessible Name Computation
-      case 'SECTION': {
+      case 'section': {
         // TODO: what other tags are “grouping?”
         // 1. aria-label (handled below)
         return nameFrom(
           // 2. title
-          element.getAttribute('title') ||
+          attr(element, 'title') ||
             // 3. no accname
             undefined,
         );
       }
 
       // 4.1.17 Text-level Element Accessible Name Computation
-      case 'ABBR':
-      case 'B':
-      case 'BDI':
-      case 'BDO':
-      case 'BR':
-      case 'CITE':
-      case 'CODE':
-      case 'DFN':
-      case 'EM':
-      case 'I':
-      case 'KBD':
-      case 'MARK':
-      case 'Q':
-      case 'RP':
-      case 'RUBY':
-      case 'S':
-      case 'SAMP':
-      case 'SMALL':
-      case 'STRONG':
-      case 'SUB':
-      case 'SUP':
-      case 'TIME':
-      case 'U':
-      case 'VAR':
-      case 'WBR': {
+      case 'abbr':
+      case 'b':
+      case 'bdi':
+      case 'bdo':
+      case 'br':
+      case 'cite':
+      case 'code':
+      case 'dfn':
+      case 'em':
+      case 'i':
+      case 'kbd':
+      case 'mark':
+      case 'q':
+      case 'rp':
+      case 'ruby':
+      case 's':
+      case 'samp':
+      case 'small':
+      case 'strong':
+      case 'sub':
+      case 'sup':
+      case 'time':
+      case 'u':
+      case 'var':
+      case 'wbr': {
         // 1. aria-label (handled below)
         return nameFrom(
           // 2. title
-          element.getAttribute('title') ||
+          attr(element, 'title') ||
             // 3. no accname
             undefined,
         );
@@ -346,11 +347,16 @@ export function getAccNameAndDescription(
  * @see https://w3c.github.io/accname/#mapping_additional_nd_description
  */
 function concatIDRefList(
-  element: Element,
-  attr: 'aria-labelledby' | 'aria-describedby' | 'aria-owns',
+  element: Element | VirtualElement,
+  attribute: 'aria-labelledby' | 'aria-describedby' | 'aria-owns',
   { nodesReferenced }: Options,
 ): string {
-  const idRefList = element.getAttribute(attr)?.trim();
+  // In faked DOM environments, we can’t traverse the ID list, so just return the attribute
+  if (typeof document === 'undefined' || typeof Element === 'undefined' || !(element instanceof Element)) {
+    return attr(element, attribute)?.trim() || '';
+  }
+
+  const idRefList = attr(element, attribute)?.trim();
   if (!idRefList) return '';
   const idList = idRefList.split(/\s+/);
   const nameList: (string | undefined)[] = [];
@@ -360,7 +366,7 @@ function concatIDRefList(
       // edge case: eleemnts can reference themselves, but we have to remove the infinite loop first
       if (nextEl === element) {
         nextEl = nextEl.cloneNode(false) as Element;
-        nextEl.removeAttribute(attr);
+        nextEl.removeAttribute(attribute);
       }
       nameList.push(
         computeName(nextEl, {
@@ -379,7 +385,7 @@ function concatIDRefList(
  * @see https://www.w3.org/TR/accname-1.2/#computation-steps
  */
 function computeName(
-  element: Element,
+  element: Element | VirtualElement,
   {
     nodesReferenced,
     includeHidden = false,
@@ -391,8 +397,6 @@ function computeName(
     includeNamingProhibitedText?: boolean;
   },
 ): string {
-  const ariaLabel = element.getAttribute('aria-label')?.trim();
-
   // Important: Each node in the subtree is consulted only once. If text has
   // been collected from a descendant, but is referenced by another IDREF in
   // some descendant node, then that second, or subsequent, reference is not
@@ -402,10 +406,10 @@ function computeName(
   }
   nodesReferenced.add(element);
 
-  const ariaLabelledby = element.getAttribute('aria-labelledby')?.trim();
-  const role = getRole(element);
-
   // 1. Initialization
+  const role = getRoleLazy(element);
+  const ariaLabel = attr(element, 'aria-label');
+  const ariaLabelledby = attr(element, 'aria-labelledby');
   if (
     role?.prohibited.includes('aria-label') &&
     includeNamingProhibitedText !== true &&
@@ -426,6 +430,14 @@ function computeName(
     return concatIDRefList(element, 'aria-labelledby', { nodesReferenced });
   }
 
+  // Name from author
+  // https://w3c.github.io/aria/#namecalculation
+  const tooltip = getTooltip(element);
+  const hll = calculateHostLanguageLabel(element, { nodesReferenced });
+  if (role?.nameFrom === 'author' && (ariaLabel || hll || tooltip)) {
+    return ariaLabel?.trim() || hll || tooltip;
+  }
+
   // 2.3 embedded control
   // 2.3.1 embedded control: textbox
   if (role?.name === 'textbox') {
@@ -433,7 +445,11 @@ function computeName(
     if (value) return value;
   }
   // 2.3.2 embedded control: combobox/listbox
-  if (role?.name === 'combobox' || role?.name === 'listbox') {
+  if (
+    (role?.name === 'combobox' || role?.name === 'listbox') &&
+    typeof Element !== 'undefined' &&
+    element instanceof Element
+  ) {
     const value = (element as HTMLInputElement).value?.trim() || '';
     if (value) return value;
     const option =
@@ -452,8 +468,8 @@ function computeName(
   // 2.3.3 embedded control: range
   if (['meter', 'progressbar', 'scrollbar', 'slider', 'spinbutton'].includes(role?.name!)) {
     const value =
-      element.getAttribute('aria-valuetext')?.trim() ||
-      element.getAttribute('aria-valuenow')?.trim() ||
+      attr(element, 'aria-valuetext')?.trim() ||
+      attr(element, 'aria-valuenow')?.trim() ||
       (element as HTMLInputElement).value?.trim();
     if (value) return value;
   }
@@ -467,7 +483,7 @@ function computeName(
   if (
     ['INPUT', 'IMG', 'OUTPUT', 'SELECT', 'TEXTAREA', 'SVG'].includes(element.tagName) &&
     !['presentation', 'none'].includes(role?.name!) &&
-    element.getAttribute('alt') !== ''
+    attr(element, 'alt') !== ''
   ) {
     return calculateHostLanguageLabel(element, { nodesReferenced });
   }
@@ -477,24 +493,25 @@ function computeName(
   let totalAccumulatedText = '';
 
   // 2.6.2 pseudo + 2.6.3, 2.6.4, 2.6.5 child nodes, 2.6.8 tooltips
-  const childNodes = Array.from(element.childNodes);
+  const childNodes = typeof Element !== 'undefined' && element instanceof Element ? Array.from(element.childNodes) : [];
   const { before, after, marker } = {
     before: getCSSContent(element, '::before'),
     after: getCSSContent(element, '::after'),
     marker: getCSSContent(element, '::marker'),
   };
-  if (before) childNodes.unshift(document.createTextNode(before));
-  const tooltip = getTooltip(element);
-  if (tooltip) childNodes.push(document.createTextNode(` ${tooltip} `));
-  if (marker) childNodes.push(document.createTextNode(marker));
-  if (after) childNodes.push(document.createTextNode(after));
+  if (before) childNodes.unshift(createTextNode(before));
+  if (tooltip) childNodes.push(createTextNode(` ${tooltip} `));
+  if (marker) childNodes.push(createTextNode(marker));
+  if (after) childNodes.push(createTextNode(after));
   for (const node of childNodes) {
     switch (node.nodeType) {
-      case Node.TEXT_NODE: {
+      // TEXT_NODE. Declared manually to work in Node.js
+      case 3: {
         if (node.nodeValue) totalAccumulatedText += node.nodeValue;
         break;
       }
-      case Node.ELEMENT_NODE: {
+      // ELEMENT_NODE. Declared manually to work in Node.
+      case 1: {
         if (nodesReferenced.has(node as Element)) {
           continue;
         }
@@ -535,19 +552,20 @@ function computeName(
  * Calculate label for <img>, <svg>, and <input>.
  * @see https://www.w3.org/TR/accname-1.2/#comp_host_language_label
  */
-function calculateHostLanguageLabel(element: Element, { nodesReferenced }: Options): string {
+function calculateHostLanguageLabel(element: Element | VirtualElement, { nodesReferenced }: Options): string {
+  if (typeof Element === 'undefined' || !(element instanceof Element)) return '';
   if (nodesReferenced.has(element)) {
     return '';
   }
   nodesReferenced.add(element);
-  switch (element.tagName) {
-    case 'IMG': {
+  switch (getTagName(element)) {
+    case 'img': {
       return element.getAttribute('alt')?.trim() || element.getAttribute('title')?.trim() || '';
     }
-    case 'INPUT':
-    case 'OUTPUT':
-    case 'SELECT':
-    case 'TEXTAREA': {
+    case 'input':
+    case 'output':
+    case 'select':
+    case 'textarea': {
       let totalAccumulatedText = '';
       // Note: <label>s all have to be calculated in DOM order, which means neither
       // parent <label>s or <label for>s take precedence. Also, a <label> may not be
@@ -563,9 +581,38 @@ function calculateHostLanguageLabel(element: Element, { nodesReferenced }: Optio
       }
       return totalAccumulatedText.trim();
     }
-    case 'SVG': {
+    case 'svg': {
       return element.querySelector('title,desc')?.textContent?.trim() || '';
     }
   }
   return '';
+}
+
+/** Universal helper for text nodes */
+function createTextNode(content: string): ChildNode {
+  if (typeof document !== 'undefined') return document.createTextNode(content);
+  return { type: 3, nodeValue: content } as unknown as ChildNode;
+}
+
+/**
+ * @deprecated DO NOT USE EXTERNALLY!
+ * This is only a shortcut for accname to discern a few properties.
+ * If we included the full role calc in here, which accname is also used as part
+ * of full role calc, we’d have an infinite loop.
+ */
+function getRoleLazy(element: Element | VirtualElement): RoleData | undefined {
+  const roleAttr = attr(element, 'role');
+  if (roleAttr && roleAttr in roles) return roles[roleAttr as keyof typeof roles];
+  const tagName = getTagName(element);
+  for (const role of Object.values(roles)) {
+    if (
+      role.elements.some(
+        (el) =>
+          el.tagName === tagName &&
+          (!el.attributes || Object.entries(el.attributes).every(([k, v]) => attr(element, k) === v)),
+      )
+    ) {
+      return role;
+    }
+  }
 }
