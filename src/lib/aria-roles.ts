@@ -920,7 +920,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     allowedChildRoles: [],
     childrenPresentational: false,
     defaultAttributeValues: {},
-    elements: [{ tagName: 'b' }, { tagName: 'i' }, { tagName: 'pre' }, { tagName: 'q' }, { tagName: 'samp' }, { tagName: 'small' }, { tagName: 'span' }, { tagName: 'u' }], // biome-ignore format: long list
+    elements: [{ tagName: 'b' }, { tagName: 'div' }, { tagName: 'i' }, { tagName: 'pre' }, { tagName: 'q' }, { tagName: 'samp' }, { tagName: 'small' }, { tagName: 'span' }, { tagName: 'u' }], // biome-ignore format: long list
     name: 'generic',
     nameFrom: 'prohibited',
     nameRequired: false,
@@ -968,7 +968,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-level', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['document'],
   },
-  /** Synonym of img. */
+  /** A container for a collection of elements that form an image. See synonym image. */
   image: {
     allowedChildRoles: [],
     childrenPresentational: true,
@@ -985,7 +985,7 @@ export const documentRoles: Record<DocumentStructureRole, RoleData> = {
     supported: ['aria-atomic', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant', 'aria-roledescription'], // biome-ignore format: long list
     type: ['document'],
   },
-  /** A container for a collection of elements that form an image. See synonym image. */
+  /** Synonym of image. */
   img: {
     allowedChildRoles: [],
     childrenPresentational: true,

@@ -1,6 +1,7 @@
+import { getAccNameAndDescription } from './get-acc-name.js';
 import { ALL_ROLES, type RoleData, roles } from './lib/aria-roles.js';
 import { tags } from './lib/html.js';
-import { attr, calculateAccessibleName, firstMatchingToken, getTagName } from './lib/util.js';
+import { attr, firstMatchingToken, getTagName } from './lib/util.js';
 import { getAsideRole } from './tags/aside.js';
 import { getFooterRole } from './tags/footer.js';
 import { getHeaderRole } from './tags/header.js';
@@ -80,22 +81,20 @@ export function getRole(element: Element | VirtualElement, options?: GetRoleOpti
       return typeof href === 'string' ? defaultRole : roles.generic;
     }
     case 'aside': {
-      const name = calculateAccessibleName(element, roles.complementary);
+      const { name } = getAccNameAndDescription(element);
       return name ? defaultRole : getAsideRole(element, options);
     }
     case 'header': {
       return getHeaderRole(element, options);
     }
     case 'img': {
-      const name = calculateAccessibleName(element, roles.image);
-
-      if (name) {
-        return roles.image;
-      }
-
-      const alt = attr(element, 'alt');
-
-      return alt === '' ? roles.none : roles.image;
+      // Note: there is a tiny conflict between:
+      // - https://www.w3.org/TR/html-aam-1.0/ says use "title" attribute to calculate name
+      // - WPT tests ignore it?
+      // The discrepancy is resolved here by checking for "alt" ahead of the name calc
+      if (attr(element, 'alt') === null) return roles.image;
+      const { name } = getAccNameAndDescription(element);
+      return name ? roles.image : roles.none;
     }
     case 'li': {
       return getLIRole(element, options);
@@ -107,7 +106,7 @@ export function getRole(element: Element | VirtualElement, options?: GetRoleOpti
       return getFooterRole(element, options);
     }
     case 'section': {
-      const name = calculateAccessibleName(element, roles.region);
+      const { name } = getAccNameAndDescription(element);
       return name ? defaultRole : roles.generic;
     }
     case 'select': {

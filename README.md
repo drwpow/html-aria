@@ -277,9 +277,6 @@ isValidAttribute("aria-valuenow", 0); // true
 
 ### getAccNameAndDescription()
 
-> [!NOTE]
-> Only available in the DOM API.
-
 Get the [accessible name and description](https://www.w3.org/TR/html-aam-1.0/#accessible-name-and-description-computation) for an HTML element.
 
 ```ts
@@ -287,6 +284,9 @@ const el = document.querySelector("input");
 getAccNameAndDescription(el);
 // { name: "My Input", description: undefined }
 ```
+
+> [!NOTE]
+> There are limitations in Node.js with complex accessible name calculation such as `aria-labelledby`. But simple calculations like `aria-label` are well-supported.
 
 ## Reference
 

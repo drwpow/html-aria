@@ -41,7 +41,7 @@ describe('getElements', () => {
       'generic',
       {
         given: 'generic',
-        want: [{ tagName: 'b' }, { tagName: 'i' }, { tagName: 'pre' }, { tagName: 'q' }, { tagName: 'samp' }, { tagName: 'small' }, { tagName: 'span' }, { tagName: 'u' }], // biome-ignore format: long list
+        want: [{ tagName: 'b' }, { tagName: 'div',}, { tagName: 'i' }, { tagName: 'pre' }, { tagName: 'q' }, { tagName: 'samp' }, { tagName: 'small' }, { tagName: 'span' }, { tagName: 'u' }], // biome-ignore format: long list
       },
     ],
     [
