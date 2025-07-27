@@ -1,6 +1,7 @@
-import { ALL_ROLES, roles } from './lib/aria-roles.js';
+import { getAccNameAndDescription } from './get-acc-name.js';
+import { ALL_ROLES } from './lib/aria-roles.js';
 import { tags } from './lib/html.js';
-import { attr, calculateAccessibleName, getTagName, hasListParent, hasTableParent } from './lib/util.js';
+import { attr, getTagName, hasListParent, hasTableParent } from './lib/util.js';
 import { getFooterRole } from './tags/footer.js';
 import { getInputSupportedRoles } from './tags/input.js';
 import { getSelectSupportedRoles } from './tags/select.js';
@@ -54,7 +55,7 @@ export function getSupportedRoles(element: Element | VirtualElement, options?: S
       return options?.ancestors?.[0]?.tagName === 'dl' ? DL_PARENT_ROLES : tagData.supportedRoles;
     }
     case 'img': {
-      const name = calculateAccessibleName(element, roles.image);
+      const { name } = getAccNameAndDescription(element);
       if (name) {
         /** @see https://www.w3.org/TR/html-aria/#el-img */
         return ['button', 'checkbox', 'image', 'img', 'link', 'math', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'meter', 'option', 'progressbar', 'radio', 'scrollbar', 'separator', 'slider', 'switch', 'tab', 'treeitem']; // biome-ignore format: long list

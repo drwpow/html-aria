@@ -1,15 +1,9 @@
+import { getAccNameAndDescription } from './get-acc-name.js';
 import { type GetRoleOptions, getRole } from './get-role.js';
 import { attributes, globalAttributes } from './lib/aria-attributes.js';
 import { roles } from './lib/aria-roles.js';
 import { tags } from './lib/html.js';
-import {
-  attr,
-  calculateAccessibleName,
-  concatDedupeAndSort,
-  getTagName,
-  parseTokenList,
-  removeProhibited,
-} from './lib/util.js';
+import { attr, concatDedupeAndSort, getTagName, parseTokenList, removeProhibited } from './lib/util.js';
 import type { ARIAAttribute, VirtualElement } from './types.js';
 
 const GLOBAL_ATTRIBUTES = Object.keys(globalAttributes) as ARIAAttribute[];
@@ -41,7 +35,7 @@ export function getSupportedAttributes(element: Element | VirtualElement, option
       return roles.application.supported;
     }
     case 'img': {
-      const name = calculateAccessibleName(element, roles.image);
+      const { name } = getAccNameAndDescription(element);
       // if no accessible name, only aria-hidden allowed
       return name && roleData?.supported?.length ? roleData.supported : ['aria-hidden'];
     }

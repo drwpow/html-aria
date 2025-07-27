@@ -49,7 +49,7 @@
     "version": "pnpm run build && changeset version"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.1.1",
+    "@biomejs/biome": "^2.1.2",
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.5",
     "@types/aria-query": "^5.0.4",
@@ -61,7 +61,7 @@
     "playwright": "^1.54.1",
     "tinyglobby": "^0.2.14",
     "typescript": "^5.8.3",
-    "unbuild": "^3.5.0",
+    "unbuild": "^3.6.0",
     "vitest": "^3.2.4"
   }
 }

@@ -61,11 +61,15 @@ export function setUpDOM(
   if (options?.after) {
     element.after(...options.after);
   }
-  if (options?.mount) {
-    document.body.appendChild(root);
-    cleanup = () => {
-      document.body.removeChild(root);
-    };
+  if (options?.mount && !['html', 'body', 'head'].includes(querySelector)) {
+    try {
+      document.body.appendChild(root);
+      cleanup = () => {
+        document.body.removeChild(root);
+      };
+    } catch (err) {
+      console.error(err);
+    }
   }
   return {
     root,

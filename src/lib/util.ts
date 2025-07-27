@@ -7,7 +7,7 @@ import type {
   VirtualAncestorList,
   VirtualElement,
 } from '../types.js';
-import { landmarkRoles, type RoleData } from './aria-roles.js';
+import { landmarkRoles } from './aria-roles.js';
 
 /** Parse a list of roles, e.g. role="graphics-symbol img" */
 export function parseTokenList(tokenList: string): string[] {
@@ -42,59 +42,12 @@ export function getTagName(element: Element | VirtualElement): TagName {
 /**
  * Get attribute from any type of element. Optimized for performance.
  */
-export function attr(element: Element | VirtualElement, attribute: string) {
-  // Note: this is type-safe; don’t add more runtime checks to satify TypeScript
-  return typeof (element as Element).getAttribute === 'function'
-    ? (element as Element).getAttribute(attribute)
-    : (element as VirtualElement).attributes?.[attribute];
-}
-
-/**
- * Determine accessible names for SOME tags (not all)
- * @see https://www.w3.org/TR/wai-aria-1.3/#namecalculation
- */
-export function calculateAccessibleName(element: Element | VirtualElement, role: RoleData): string | undefined {
-  if (role.nameFrom === 'prohibited') {
-    return;
+export function attr(element: Element | VirtualElement, attribute: string): string | null {
+  if (typeof Element !== 'undefined' && element instanceof Element) {
+    return (element as Element).getAttribute(attribute) ?? null;
   }
-  if (role.nameFrom === 'contents') {
-    return 'innerText' in (element as HTMLElement) ? (element as HTMLElement).innerText : undefined;
-  }
-
-  // for author + authorAndContents, handle special cases first
-  const tagName = getTagName(element);
-  switch (tagName) {
-    /**
-     * @see https://www.w3.org/TR/html-aam-1.0/#img-element-accessible-name-computation
-     */
-    case 'img': {
-      const label =
-        (attr(element, 'aria-label') as string | undefined)?.trim() ||
-        (attr(element, 'aria-labelledby') as string | undefined)?.trim();
-
-      if (label) {
-        return label;
-      }
-
-      const alt = attr(element, 'alt');
-
-      if (typeof alt !== 'undefined') {
-        return alt as string;
-      }
-
-      return (attr(element, 'title') as string | undefined) || undefined;
-    }
-  }
-
-  return (
-    (attr(element, 'aria-label') as string | undefined)?.trim() ||
-    (attr(element, 'aria-labelledby') as string | undefined)?.trim() ||
-    (attr(element, 'title') as string | undefined) ||
-    (role.nameFrom === 'authorAndContents' &&
-      'innerText' in (element as HTMLElement) &&
-      (element as HTMLElement).innerText) ||
-    undefined
-  );
+  const { attributes = {} } = element as VirtualElement;
+  return attribute in attributes ? String(attributes[attribute]) : null;
 }
 
 export const NAME_PROHIBITED_ATTRIBUTES = new Set<string>([
@@ -119,6 +72,7 @@ export function hasLandmarkParent(element: Element | VirtualElement, ancestors?:
   );
 }
 
+/** Used to calculate some host language labels */
 const LIST_ELEMENTS: TagName[] = ['ul', 'ol', 'menu'];
 const LIST_ROLES: ARIARole[] = ['list'];
 const LIST_CSS_SELECTOR = LIST_ROLES.map((role) => `[role=${role}]`)
@@ -130,7 +84,7 @@ export function hasListParent(element: Element | VirtualElement, ancestors?: Vir
     return !!element.parentElement?.closest(LIST_CSS_SELECTOR);
   }
   // special behavior: outside the DOM, if we’re testing a list-like element, assume it’s within a list
-  if (ancestors?.length !== 0 && element.tagName === 'li') {
+  if (ancestors?.length !== 0 && getTagName(element) === 'li') {
     return true;
   }
   return !!ancestors?.some(
@@ -161,7 +115,7 @@ export function hasTableParent(element: Element | VirtualElement, ancestors?: Vi
   // special behavior: outside the DOM, if we’re testing a table-like element, assume it’s within a table
   if (
     ancestors?.length !== 0 &&
-    ['tbody', 'thead', 'tfoot', 'tr', 'td', 'th', 'col', 'colgroup', 'rowgroup'].includes(element.tagName)
+    ['tbody', 'thead', 'tfoot', 'tr', 'td', 'th', 'col', 'colgroup', 'rowgroup'].includes(getTagName(element))
   ) {
     return true;
   }
@@ -222,4 +176,72 @@ export function isDisabled(element: Element | VirtualElement): boolean {
   }
   const ariaDisabled = String(attr(element, 'aria-disabled'));
   return ariaDisabled === '' || ariaDisabled === 'true';
+}
+
+/**
+ * Is a given element hidden?
+ * @see https://w3c.github.io/accname/#dfn-hidden
+ */
+export function isHidden(element: Element | VirtualElement): boolean {
+  // Note: <div aria-hidden> will yield "", so equate that with "true"
+  if (['true', ''].includes(attr(element, 'aria-hidden') as string)) {
+    return true;
+  }
+
+  // Check if the element is hidden by CSS
+  // https://w3c.github.io/accname/#computation-steps
+  if (!('getComputedStyle' in globalThis) || typeof Element === 'undefined' || !(element instanceof Element)) {
+    return false;
+  }
+  const style = globalThis.getComputedStyle(element);
+  return (
+    style.display === 'none' ||
+    style.visibility === 'hidden' ||
+    style.visibility === 'collapse' ||
+    style.contentVisibility === 'hidden'
+    // Note: opacity: 0 is NOT hidden
+  );
+}
+
+/** Get CSS `content` */
+export function getCSSContent(
+  element: Element | VirtualElement,
+  pseudoElt?: '::before' | '::after' | '::marker',
+): string | undefined {
+  if (!('getComputedStyle' in globalThis) || typeof Element === 'undefined' || !(element instanceof Element))
+    return undefined;
+  const styles = globalThis.getComputedStyle(element, pseudoElt);
+  let content = styles.getPropertyValue('content');
+
+  // remove default/fallback placeholders
+  if (
+    !content ||
+    ((pseudoElt === '::before' || pseudoElt === '::after') && content === 'none') ||
+    (pseudoElt === '::marker' && (content === 'normal' || styles.display !== 'list-item')) // "list-item" needed to support ::marker, otherwise it’s ignored
+  ) {
+    return undefined;
+  }
+
+  // remove surrounding quotes (if any)
+  if ((content.startsWith('"') && content.endsWith('"')) || (content.startsWith("'") && content.endsWith("'"))) {
+    content = content.slice(1, -1);
+  }
+
+  const isInline = styles.display === 'inline';
+  return isInline ? content : ` ${content} `;
+}
+
+/** Get calculated `display` property */
+export function getDisplay(element: Element, pseudoElt?: string | null): string {
+  if (!('getComputedStyle' in globalThis || typeof Element === 'undefined')) return 'block';
+  return globalThis.getComputedStyle(element, pseudoElt).display || 'block';
+}
+
+/** Get tooltip content */
+export function getTooltip(element: Element | VirtualElement): string {
+  // Already handled in Host Language Label above; this would only result in duplicate/inaccurate names
+  if (['input', 'img', 'output', 'select', 'svg', 'textarea'].includes(getTagName(element))) {
+    return '';
+  }
+  return attr(element, 'title') ?? '';
 }
