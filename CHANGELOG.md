@@ -1,5 +1,11 @@
 # html-aria
 
+## 0.5.3
+
+### Patch Changes
+
+- [#66](https://github.com/drwpow/html-aria/pull/66) [`ab782e1`](https://github.com/drwpow/html-aria/commit/ab782e18ee2c3ea1979df0b123d38540200df6ea) Thanks [@drwpow](https://github.com/drwpow)! - Improve accuracy with more accurate name calculation
+
 ## 0.5.2
 
 ### Patch Changes
